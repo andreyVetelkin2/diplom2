@@ -18,10 +18,22 @@ class PermissionServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap services.
+     * Пример использования
+     *  @can('edit-users')
+        <button>Редактировать пользователя</button>
+        @endcan
+     *
+     * или
+     *
+     * if (auth()->user()->can('edit-users')) {
+        // Логика редактирования
+        }
      */
     public function boot()
     {
         //Пример вернёт true для текущего пользователя, если ему дано право управлять пользователями
+
+        //Провайдер позволяет использовать стандартную директиву и метод can.
         //Gate::allows('manage-users');
         try {
             Permission::get()->map(function ($permission) {
