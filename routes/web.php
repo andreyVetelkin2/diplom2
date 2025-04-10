@@ -19,10 +19,9 @@ Route::view('/', 'index')
     ->middleware(['auth'])
     ->name('index');
 
-//
-//Route::view('dashboard', 'dashboard')
-//    ->middleware(['auth', 'verified'])
-//    ->name('dashboard');
+Route::view('upload', 'upload')
+    ->middleware(['auth'])
+    ->name('upload');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])

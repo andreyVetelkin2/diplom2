@@ -13,10 +13,10 @@
 
                                 {{-- Если не последняя крошка - выводим ссылку --}}
                                 @if (!$crumb['is_last'])
-                                    <a href="{{ $crumb['url'] }}">{{ $crumb['text'] }}</a>
+                                    <a href="{{ $crumb['url'] }}">{{ __('breadcrumbs.'.$crumb['text']) }}</a>
                                     {{-- Если последняя крошка - выводим просто текст --}}
                                 @else
-                                    {{ $crumb['text'] }}
+                                    {{ __('breadcrumbs.'.$crumb['text']) }}
                                 @endif
                             </li>
                         @endforeach

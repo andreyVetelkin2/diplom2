@@ -5,9 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{{ config('app.name', 'Laravel') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+          integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous"/>
     <link rel="stylesheet" href="{{ asset('css/overlayscrollbars.min.css') }}"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI=" crossorigin="anonymous"/>
     <link rel="stylesheet" href="{{ asset('css/adminlte.css') }} "/>
     <link rel="stylesheet" href="{{ asset('css/apexcharts.css') }}"/>
     <link rel="stylesheet" href="{{ asset('css/jsvectormap.min.css') }}"/>
@@ -22,10 +24,47 @@
 {{--            <livewire:layout.navigation />--}}
 
 <div class="app-wrapper">
-    @if (isset($header))
-        {{ $header }}
-    @endif
-    {{ $slot }}
+    <livewire:header :links="[
+    ['url' => route('index'), 'name' => 'Главная'],
+
+    ]"/>
+
+    @php
+        //$user = App\Models\User::find(7);
+        //dd($user->hasRole('web-developer')); //вернёт true
+        //dd($user->hasRole('project-manager')); //вернёт false
+        //$user->givePermissionsTo('manage-users'); //выдаём разрешение
+        //dd($user->hasPermission('manage-users')); //вернёт true
+    @endphp
+    <livewire:menu.left-menu/>
+
+    <!--begin::App Main-->
+    <main class="app-main">
+
+        <livewire:breadcrumbs/>
+
+        <!--begin::App Content-->
+        <div class="app-content">
+            {{ $slot }}
+
+        </div>
+        <!--end::App Content-->
+    </main>
+    <!--end::App Main-->
+    <!--begin::Footer-->
+    <footer class="app-footer">
+        <!--begin::To the end-->
+        <div class="float-end d-none d-sm-inline">Anything you want</div>
+        <!--end::To the end-->
+        <!--begin::Copyright-->
+        <strong>
+            Copyright &copy; 2014-2024&nbsp;
+            <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
+        </strong>
+        All rights reserved.
+        <!--end::Copyright-->
+    </footer>
+    <!--end::Footer-->
 </div>
 
 {{-- Заменено CDN на локальный путь --}}
@@ -197,10 +236,10 @@
                         data: [1000, 1200, 920, 927, 931, 1027, 819, 930, 1021],
                     },
                 ],
-                chart: { type: 'area', height: 50, sparkline: { enabled: true } },
-                stroke: { curve: 'straight' },
-                fill: { opacity: 0.3 },
-                yaxis: { min: 0 },
+                chart: {type: 'area', height: 50, sparkline: {enabled: true}},
+                stroke: {curve: 'straight'},
+                fill: {opacity: 0.3},
+                yaxis: {min: 0},
                 colors: ['#DCE6EC'],
             };
             const sparkline1 = new ApexCharts(sparkline1El, option_sparkline1);
@@ -218,10 +257,10 @@
                         data: [515, 519, 520, 522, 652, 810, 370, 627, 319, 630, 921],
                     },
                 ],
-                chart: { type: 'area', height: 50, sparkline: { enabled: true } },
-                stroke: { curve: 'straight' },
-                fill: { opacity: 0.3 },
-                yaxis: { min: 0 },
+                chart: {type: 'area', height: 50, sparkline: {enabled: true}},
+                stroke: {curve: 'straight'},
+                fill: {opacity: 0.3},
+                yaxis: {min: 0},
                 colors: ['#DCE6EC'],
             };
             const sparkline2 = new ApexCharts(sparkline2El, option_sparkline2);
@@ -238,10 +277,10 @@
                         data: [15, 19, 20, 22, 33, 27, 31, 27, 19, 30, 21],
                     },
                 ],
-                chart: { type: 'area', height: 50, sparkline: { enabled: true } },
-                stroke: { curve: 'straight' },
-                fill: { opacity: 0.3 },
-                yaxis: { min: 0 },
+                chart: {type: 'area', height: 50, sparkline: {enabled: true}},
+                stroke: {curve: 'straight'},
+                fill: {opacity: 0.3},
+                yaxis: {min: 0},
                 colors: ['#DCE6EC'],
             };
             const sparkline3 = new ApexCharts(sparkline3El, option_sparkline3);

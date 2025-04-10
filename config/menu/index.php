@@ -19,7 +19,7 @@ return [
     ],
     [
         'label' => 'Загрузить достижение',
-        'route' => 'upload.achievement',
-        'active' => 'upload/achievement',
+        'route' => 'upload',
+        'active' => 'upload',
     ],
 ];
