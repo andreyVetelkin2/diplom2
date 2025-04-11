@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
     });
 
 
-    Route::prefix('admin')->group(function() {//префикс добавляется так как оба маршрута лежат по пути /admin/../
+    Route::middleware('role:admin')->prefix('admin')->group(function() {//префикс добавляется так как оба маршрута лежат по пути /admin/../
         Route::get('users', Users::class)
             ->name('users');
 

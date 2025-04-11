@@ -54,12 +54,16 @@ class Users extends Component
 
     public function update()
     {
+
+
         $this->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $this->user_id,
         ]);
 
         $user = User::findOrFail($this->user_id);
+
+        $this->authorize('update', $user);
         $user->update([
             'name' => $this->name,
             'email' => $this->email,
