@@ -38,9 +38,9 @@ class RoleSeeder extends Seeder
         $guest->save();
 
         $user = new Role();
-        $guest->name = 'User';
-        $guest->slug = 'user';
-        $guest->save();
+        $user->name = 'User';
+        $user->slug = 'user';
+        $user->save();
 
 
     }

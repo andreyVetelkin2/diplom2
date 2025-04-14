@@ -17,9 +17,6 @@ class RolesServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap services.
-     */
-    /**
-     * Bootstrap services.
      *
      * @return void
      */

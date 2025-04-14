@@ -9,9 +9,15 @@ class LeftMenu extends Component
 
     public $arMenu;
 
+
+
     public function mount()
     {
-        $this->arMenu = config('menu.index');
+        if (auth()->user()->hasRole('admin')){
+            $this->arMenu = array_merge(config('menu.index'), config('menu.admin.index'));
+        }else{
+            $this->arMenu = config('menu.index');
+        }
     }
 
     public function render()

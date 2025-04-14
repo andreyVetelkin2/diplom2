@@ -22,4 +22,9 @@ return [
         'route' => 'upload',
         'active' => 'upload',
     ],
+    [
+        'label' => 'Шаблоны',
+        'route' => 'templates',
+        'active' => 'templates',
+    ],
 ];
