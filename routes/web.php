@@ -1,5 +1,8 @@
 <?php
 
+use App\Livewire\CRUD\Permissions;
+use App\Livewire\CRUD\RoleDetail;
+use App\Livewire\CRUD\Roles;
 use App\Livewire\CRUD\UserDetail;
 use App\Livewire\CRUD\Users;
 use Illuminate\Support\Facades\Route;
@@ -35,11 +38,28 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
 
     Route::middleware('role:admin')->prefix('admin')->group(function() {//префикс добавляется так как оба маршрута лежат по пути /admin/../
-        Route::get('users', Users::class)
-            ->name('users');
 
-        Route::get('users/{user}', UserDetail::class)//передаем сразу livewire компонент как вьюшку чтоб не искать пользователя по id руками
-        ->name('user-detail');
+
+        Route::prefix('users')->group(function() {
+            Route::get('/', Users::class)
+                ->name('users');
+            Route::get('/{user}', UserDetail::class)//передаем сразу livewire компонент как вьюшку чтоб не искать пользователя по id руками
+            ->name('user-detail');
+        });
+
+        Route::prefix('permissions')->group(function() {
+            Route::get('/', Permissions::class)
+                ->name('permissions');
+
+        });
+
+        Route::prefix('roles')->group(function() {
+            Route::get('/', Roles::class)
+                ->name('roles');
+            Route::get('/{role}', RoleDetail::class)
+            ->name('role-detail');
+        });
+
     });
 });
 
