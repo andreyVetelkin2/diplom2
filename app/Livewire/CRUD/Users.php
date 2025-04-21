@@ -12,10 +12,14 @@ class Users extends Component
 
     public $name, $email, $password, $user_id;
     public $isEdit = false;
-    public $perPage = 5;
+    public $perPage = 0;
 
     protected $paginationTheme = 'bootstrap'; // для совместимости с Bootstrap
 
+    public function mount()
+    {
+        $this->perPage = config('view.page_elem');
+    }
     public function resetFields()
     {
         $this->name = '';

@@ -13,9 +13,15 @@ class Roles extends Component
 
     public $name, $slug, $role_id;
     public $isEdit = false;
-    public $perPage = 5;
+    public $perPage = 0;
 
     protected $paginationTheme = 'bootstrap'; // для совместимости с Bootstrap
+
+    public function mount()
+    {
+        $this->perPage = config('view.page_elem');
+
+    }
 
     public function resetFields()
     {
@@ -29,8 +35,10 @@ class Roles extends Component
     {
         $this->validate([
             'name' => 'required',
-            'slug' => 'required|unique:permissions,slug',
+            'slug' => 'required|unique:roles,slug',
         ]);
+
+        $this->authorize('create', Role::class);
 
         Role::create([
             'name' => $this->name,
@@ -54,12 +62,13 @@ class Roles extends Component
     {
         $this->validate([
             'name' => 'required',
-            'slug' => 'required|unique:permissions,slug',
+            'slug' => 'required|unique:roles,slug,' . $this->role_id,
         ]);
 
         $role = Role::findOrFail($this->role_id);
 
-        $this->authorize('update', $role);
+        $this->authorize('update', Role::class);
+
         $role->update([
             'name' => $this->name,
             'slug' => $this->slug,
@@ -71,6 +80,7 @@ class Roles extends Component
 
     public function delete($id)
     {
+        $this->authorize('delete', Role::class);
         Role::findOrFail($id)->delete();
         session()->flash('message', 'Роль удалена');
     }

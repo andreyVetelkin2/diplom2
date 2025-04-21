@@ -14,10 +14,13 @@ class Permissions extends Component
 
     public $name, $slug, $permission_id;
     public $isEdit = false;
-    public $perPage = 5;
-
+    public $perPage = 0;
     protected $paginationTheme = 'bootstrap'; // для совместимости с Bootstrap
 
+    public function mount()
+    {
+        $this->perPage = config('view.page_elem');
+    }
     public function resetFields()
     {
         $this->name = '';
@@ -32,6 +35,8 @@ class Permissions extends Component
             'name' => 'required',
             'slug' => 'required|unique:permissions,slug',
         ]);
+
+        $this->authorize('create', Permission::class);
 
         Permission::create([
             'name' => $this->name,
@@ -60,7 +65,7 @@ class Permissions extends Component
 
         $permission = Permission::findOrFail($this->permission_id);
 
-        $this->authorize('update', $permission);
+        $this->authorize('update', Permission::class);
         $permission->update([
             'name' => $this->name,
             'slug' => $this->slug,
@@ -72,6 +77,7 @@ class Permissions extends Component
 
     public function delete($id)
     {
+        $this->authorize('delete', Permission::class);
         Permission::findOrFail($id)->delete();
         session()->flash('message', 'Право удалено');
     }

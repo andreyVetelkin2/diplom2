@@ -108,6 +108,6 @@ trait HasRolesAndPermissions
     public function refreshPermissions(... $permissions )
     {
         $this->permissions()->detach();
-        return $this->givePermissionsTo($permissions);
+        return $this->givePermissionsTo(...$permissions);
     }
 }
