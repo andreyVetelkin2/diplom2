@@ -2,10 +2,28 @@
 
 return [
 
+
     [
-        'label' => 'Пользователи',
-        'route' => '/admin/users',
-        'active' => '/admin/users',
+        'label' => 'Администрирование',
+        'links' => [
+
+                [
+                    'label' => 'Пользователи',
+                    'route' => 'users',
+                    'active' => 'admin/users',
+                ],
+                [
+                    'label' => 'Права',
+                    'route' => 'permissions',
+                    'active' => 'admin/permissions',
+                ],
+                [
+                    'label' => 'Роли',
+                    'route' => 'roles',
+                    'active' => 'admin/roles',
+                ],
+
+            ],
     ],
 
 ];

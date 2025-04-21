@@ -4,7 +4,7 @@ return [
 
     [
         'label' => 'Главная',
-        'route' => '/',
+        'route' => 'index',
         'active' => '/',
     ],
     [
@@ -12,19 +12,19 @@ return [
         'route' => 'profile',
         'active' => 'profile',
     ],
-    [
-        'label' => 'Отчеты',
-        'route' => 'reports',
-        'active' => 'reports',
-    ],
+//    [
+//        'label' => 'Отчеты',
+//        'route' => 'reports',
+//        'active' => 'reports',
+//    ],
     [
         'label' => 'Загрузить достижение',
         'route' => 'upload',
         'active' => 'upload',
     ],
-    [
-        'label' => 'Шаблоны',
-        'route' => 'templates',
-        'active' => 'templates',
-    ],
+//    [
+//        'label' => 'Шаблоны',
+//        'route' => 'templates',
+//        'active' => 'templates',
+//    ],
 ];
