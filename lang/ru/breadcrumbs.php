@@ -8,4 +8,5 @@ return [
     'Users' => 'Пользователи',
     'Permissions' => 'Права',
     'Roles' => 'Роли',
+    'Templates' => 'Шаблоны',
 ];
