@@ -34,6 +34,9 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
         Route::view('profile', 'profile')
             ->name('profile');
+
+        Route::view('templates', 'templates')
+            ->name('templates');
     });
 
 

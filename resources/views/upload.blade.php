@@ -1,3 +1,3 @@
 <x-app-layout>
-    <livewire:achievement-form />
+    <livewire:form />
 </x-app-layout>
