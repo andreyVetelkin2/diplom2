@@ -9,4 +9,5 @@ return [
     'Permissions' => 'Права',
     'Roles' => 'Роли',
     'Templates' => 'Шаблоны',
+    'Forms' => 'Формы',
 ];

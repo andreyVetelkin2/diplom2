@@ -27,4 +27,9 @@ return [
         'route' => 'templates',
         'active' => 'templates',
     ],
+    [
+        'label' => 'Формы',
+        'route' => 'forms',
+        'active' => 'forms',
+    ],
 ];
