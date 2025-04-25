@@ -75,6 +75,11 @@
                                                 <option value="{{ $opt->value }}">{{ $opt->label }}</option>
                                             @endforeach
                                         </select>
+
+                                    @elseif($field->type === 'file')
+                                        <input type="file" class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
+                                               wire:model.defer="fieldValues.{{ $field->id }}"
+                                               accept="image/*,.pdf"> <!-- Restrict file types -->
                                     @endif
 
                                     @error('fieldValues.' . $field->id)
@@ -102,7 +107,13 @@
                                     @foreach($rows as $row)
                                         <tr>
                                             @foreach($templateFields as $field)
-                                                <td>{{ $row[$field->id] ?? '' }}</td>
+                                                <td>
+                                                    @if($field->type === 'file' && isset($row[$field->id]['path']))
+                                                        <a href="{{ Storage::url($row[$field->id]['path']) }}" target="_blank">View File</a>
+                                                    @else
+                                                        {{ is_array($row[$field->id]) ? '' : $row[$field->id] ?? '' }}
+                                                    @endif
+                                                </td>
                                             @endforeach
                                         </tr>
                                     @endforeach

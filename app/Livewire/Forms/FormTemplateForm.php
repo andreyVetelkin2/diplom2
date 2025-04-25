@@ -18,7 +18,7 @@ class FormTemplateForm extends Form
         return [
             'fields.*.name'     => ['required', 'string', 'max:255'],
             'fields.*.label'    => ['required', 'string', 'max:255'],
-            'fields.*.type'     => ['required', 'in:string,datetime,checkbox,list'],
+            'fields.*.type'     => ['required', 'in:string,datetime,checkbox,list,file'],
             'fields.*.required' => ['boolean'],
             'fields.*.options'  => ['nullable', 'array'],
             'fields.*.options.*.label' => ['required_with:fields.*.options', 'string', 'max:255'],
