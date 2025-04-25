@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire;
 
 use Livewire\Component;
@@ -15,6 +14,7 @@ class UserFillForm extends Component
     public ?Form $selectedForm = null;
     public Collection $templateFields;
     public array $fieldValues = [];
+    public array $rows = [];
 
     protected function rules(): array
     {
@@ -55,31 +55,57 @@ class UserFillForm extends Component
     {
         $this->selectedForm = $form;
         $this->templateFields = $form->template->fields->load('options')->sortBy('sort_order');
+        $this->rows = [];
+        $this->resetFieldValues();
+    }
+
+    private function resetFieldValues(): void
+    {
         $this->fieldValues = [];
+        foreach ($this->templateFields as $field) {
+            if ($field->type === 'checkbox') {
+                $this->fieldValues[$field->id] = false;
+            } else {
+                $this->fieldValues[$field->id] = null;
+            }
+        }
+    }
+
+    public function addRow(): void
+    {
+        $this->validate();
+        $this->rows[] = $this->fieldValues;
+        $this->resetFieldValues();
+        $this->resetErrorBag();
     }
 
     public function submit(): void
     {
-        $validated = $this->validate();
-
-        $entry = FormEntry::create([
-            'form_template_id' => $this->selectedForm->form_template_id,
-            'user_id'          => auth()->id(),
-        ]);
-
-        foreach ($this->templateFields as $field) {
-            FieldEntryValue::create([
-                'form_entry_id'    => $entry->id,
-                'template_field_id'=> $field->id,
-                'value'            => (string)($this->fieldValues[$field->id] ?? ''),
-            ]);
+        if (empty($this->rows)) {
+            $this->addError('rows', 'Пожалуйста, добавьте хотя бы один результат.');
+            return;
         }
 
-        session()->flash('success', 'Ваша форма успешно отправлена.');
-        // Optionally reset
+        foreach ($this->rows as $row) {
+            $entry = FormEntry::create([
+                'form_template_id' => $this->selectedForm->form_template_id,
+                'user_id'          => auth()->id(),
+            ]);
+
+            foreach ($this->templateFields as $field) {
+                FieldEntryValue::create([
+                    'form_entry_id'    => $entry->id,
+                    'template_field_id'=> $field->id,
+                    'value'            => (string)($row[$field->id] ?? ''),
+                ]);
+            }
+        }
+
+        session()->flash('success', 'Ваши результаты формы успешно сохранены.');
         $this->selectedForm = null;
         $this->templateFields = collect();
         $this->fieldValues = [];
+        $this->rows = [];
     }
 
     public function render()

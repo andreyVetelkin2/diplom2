@@ -2,17 +2,23 @@
 
 namespace App\Livewire\CRUD;
 
+use App\Interfaces\Crudable;
+use App\Livewire\Forms\RoleForm;
 use App\Models\Role;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class Roles extends Component
+//TODO Добавить проверку прав на просмотр всех ролей
+
+class Roles extends Component implements Crudable
 {
 
     use WithPagination;
 
-    public $name, $slug, $role_id;
-    public $isEdit = false;
+    public RoleForm $form;
+
+    public  $role_id;
+    public $editMode = false;
     public $perPage = 0;
 
     protected $paginationTheme = 'bootstrap'; // для совместимости с Bootstrap
@@ -25,24 +31,21 @@ class Roles extends Component
 
     public function resetFields()
     {
-        $this->name = '';
-        $this->slug = '';
-        $this->role_id = null;
-        $this->isEdit = false;
+        $this->form->resetFields();
+        $this->editMode = false;
+        $this->role_id = 0;
+
     }
 
     public function store()
     {
-        $this->validate([
-            'name' => 'required',
-            'slug' => 'required|unique:roles,slug',
-        ]);
+        $validated = $this->form->validate();
 
         $this->authorize('create', Role::class);
 
         Role::create([
-            'name' => $this->name,
-            'slug' => $this->slug,
+            'name' => $validated['name'],
+            'slug' => $validated['slug'],
         ]);
 
         $this->resetFields();
@@ -52,26 +55,24 @@ class Roles extends Component
     public function edit($id)
     {
         $role = Role::findOrFail($id);
+        $this->form->setRole($role);
         $this->role_id = $role->id;
-        $this->name = $role->name;
-        $this->slug = $role->slug;
-        $this->isEdit = true;
+        $this->form->name = $role->name;
+        $this->form->slug = $role->slug;
+        $this->editMode = true;
     }
 
     public function update()
     {
-        $this->validate([
-            'name' => 'required',
-            'slug' => 'required|unique:roles,slug,' . $this->role_id,
-        ]);
+        $validated = $this->form->validate();
 
         $role = Role::findOrFail($this->role_id);
 
         $this->authorize('update', Role::class);
 
         $role->update([
-            'name' => $this->name,
-            'slug' => $this->slug,
+            'name' => $validated['name'],
+            'slug' => $validated['slug'],
         ]);
 
         $this->resetFields();

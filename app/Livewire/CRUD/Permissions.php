@@ -2,45 +2,46 @@
 
 namespace App\Livewire\CRUD;
 
+use App\Interfaces\Crudable;
+use App\Livewire\Forms\PermissionForm;
 use App\Models\Permission;
-use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class Permissions extends Component
+//TODO Добавить проверку прав на просмотр всех прав
+class Permissions extends Component implements Crudable
 {
 
     use WithPagination;
 
-    public $name, $slug, $permission_id;
-    public $isEdit = false;
+    public PermissionForm $form;
+
+    public $permission_id;
+    public $editMode = false;
     public $perPage = 0;
-    protected $paginationTheme = 'bootstrap'; // для совместимости с Bootstrap
+    protected $paginationTheme = 'bootstrap';
 
     public function mount()
     {
         $this->perPage = config('view.page_elem');
     }
+
     public function resetFields()
     {
-        $this->name = '';
-        $this->slug = '';
+        $this->form->resetFields();
         $this->permission_id = null;
-        $this->isEdit = false;
+        $this->editMode = false;
     }
 
     public function store()
     {
-        $this->validate([
-            'name' => 'required',
-            'slug' => 'required|unique:permissions,slug',
-        ]);
+        $validated = $this->form->validate();
 
         $this->authorize('create', Permission::class);
 
         Permission::create([
-            'name' => $this->name,
-            'slug' => $this->slug,
+            'name' => $validated['name'],
+            'slug' => $validated['slug'],
         ]);
 
         $this->resetFields();
@@ -50,25 +51,24 @@ class Permissions extends Component
     public function edit($id)
     {
         $permission = Permission::findOrFail($id);
+        $this->form->setPermission($permission);
         $this->permission_id = $permission->id;
-        $this->name = $permission->name;
-        $this->slug = $permission->slug;
-        $this->isEdit = true;
+        $this->form->name = $permission->name;
+        $this->form->slug = $permission->slug;
+        $this->editMode = true;
     }
 
     public function update()
     {
-        $this->validate([
-            'name' => 'required',
-            'slug' => 'required|unique:permissions,slug',
-        ]);
+        $validated = $this->form->validate();
 
         $permission = Permission::findOrFail($this->permission_id);
+        $this->form->setPermission($permission);
 
         $this->authorize('update', Permission::class);
         $permission->update([
-            'name' => $this->name,
-            'slug' => $this->slug,
+            'name' => $validated['name'],
+            'slug' => $validated['slug'],
         ]);
 
         $this->resetFields();
@@ -85,6 +85,7 @@ class Permissions extends Component
     #[Layout('layouts.app')]
     public function render()
     {
+
         return view('livewire.c-r-u-d.permissions', [
             'permissions' => Permission::paginate($this->perPage)
         ]);

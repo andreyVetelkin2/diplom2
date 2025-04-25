@@ -40,7 +40,7 @@
                     <div class="card-body">
                         <p>{{ $selectedForm->description }}</p>
                         <p><strong>Баллы:</strong> {{ $selectedForm->points }}</p>
-                        <form wire:submit.prevent="submit">
+                        <form>
                             @foreach($templateFields as $field)
                                 <div class="mb-3">
                                     <label class="form-label">{{ $field->label }}
@@ -83,8 +83,33 @@
                                 </div>
                             @endforeach
 
-                            <button type="submit" class="btn btn-primary">Отправить</button>
+                            <button type="button" wire:click="addRow" class="btn btn-secondary me-2">Добавить результат</button>
+                            <button type="button" wire:click="submit" class="btn btn-primary" @if(empty($rows)) disabled @endif>Сохранить все</button>
                         </form>
+
+                        @if(!empty($rows))
+                            <div class="mt-3">
+                                <h5>Добавленные результаты ({{ count($rows) }})</h5>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        @foreach($templateFields as $field)
+                                            <th>{{ $field->label }}</th>
+                                        @endforeach
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($rows as $row)
+                                        <tr>
+                                            @foreach($templateFields as $field)
+                                                <td>{{ $row[$field->id] ?? '' }}</td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @else

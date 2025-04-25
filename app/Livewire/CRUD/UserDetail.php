@@ -4,6 +4,7 @@ namespace App\Livewire\CRUD;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
@@ -19,6 +20,12 @@ class UserDetail extends Component
 
     public $allRoles;
     public $allPermissions;
+    protected UserService $userService;
+
+    public function boot(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
 
     public function mount()
     {
@@ -35,32 +42,26 @@ class UserDetail extends Component
             'password' => 'required|min:6|confirmed',
         ]);
 
-        $this->user->password = Hash::make($this->password);
-        $this->user->save();
+        $this->userService->updatePassword($this->user, $this->password);
 
         session()->flash('success', 'Пароль успешно обновлён!');
         $this->reset(['password', 'password_confirmation']);
     }
 
+
     public function updateRolesAndPermissions()
     {
         $permission = Permission::where('slug', 'assign-roles-to-users')->first();
-        if (auth()->user()->hasPermissionTo($permission)) {
-            $this->user->roles()->sync($this->selectedRoles);
-        }else{
+        if (!auth()->user()->hasPermissionTo($permission)) {
             abort(403);
         }
 
-        $permission = Permission::where('slug', 'assign-roles-to-users')->first();
-        if (auth()->user()->hasPermissionTo($permission)) {
-            $slugs = Permission::whereIn('id', $this->selectedPermissions)->pluck('slug')->toArray();
-            $this->user->refreshPermissions(...$slugs);
-        }else{
-            abort(403);
-        }
+        $this->userService->syncRoles($this->user, $this->selectedRoles);
+        $this->userService->syncPermissions($this->user, $this->selectedPermissions);
 
         session()->flash('success_roles', 'Роли и права успешно обновлены!');
     }
+
 
     public function render()
     {
