@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
         Route::view('/', 'index')
             ->name('index');
 
-        Route::view('upload', 'user-fill-form')
+        Route::view('upload', 'upload')
             ->name('upload');
 
         Route::view('profile', 'profile')

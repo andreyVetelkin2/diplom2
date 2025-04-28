@@ -1,28 +1,31 @@
 <div class="container-fluid">
     <div class="card mb-4">
         <div class="card-header">
-            <h3 class="card-title">{{ $isEdit ? 'Редактировать пользователя' : 'Создать пользователя' }}</h3>
+            <h3 class="card-title">{{ $editMode ? 'Редактировать пользователя' : 'Создать пользователя' }}</h3>
         </div>
         <div class="card-body">
             @if (session()->has('message'))
                 <div class="alert alert-success">{{ session('message') }}</div>
             @endif
 
-            <form wire:submit.prevent="{{ $isEdit ? 'update' : 'store' }}" class="mb-4 row g-2">
+            <form wire:submit.prevent="{{ $editMode ? 'update' : 'store' }}" class="mb-4 row g-2">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Имя" wire:model.defer="name">
+                    <input type="text" class="form-control" placeholder="Имя" wire:model.defer="form.name">
+                    @error('form.name') <span class="error">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-4">
-                    <input type="email" class="form-control" placeholder="Email" wire:model.defer="email">
+                    <input type="email" class="form-control" placeholder="Email" wire:model.defer="form.email">
+                    @error('form.email') <span class="error">{{ $message }}</span> @enderror
                 </div>
-                @if (!$isEdit)
+                @if (!$editMode)
                     <div class="col-md-4">
-                        <input type="password" class="form-control" placeholder="Пароль" wire:model.defer="password">
+                        <input type="password" class="form-control" placeholder="Пароль" wire:model.defer="form.password">
+                        @error('form.password') <span class="error">{{ $message }}</span> @enderror
                     </div>
                 @endif
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-primary">{{ $isEdit ? 'Обновить' : 'Создать' }}</button>
-                    @if ($isEdit)
+                    <button type="submit" class="btn btn-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
+                    @if ($editMode)
                         <button type="button" class="btn btn-secondary" wire:click="resetFields">Отмена</button>
                     @endif
                 </div>

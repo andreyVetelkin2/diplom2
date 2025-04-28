@@ -2,38 +2,26 @@
 
 namespace App\Livewire;
 
+use App\Interfaces\FormServiceInterface;
+use App\Livewire\Forms\FormData;
 use Livewire\Component;
-
-use App\Models\Category;
 use App\Models\Form;
-use App\Models\FormTemplate;
 use Illuminate\Support\Collection;
-
+//TODO Создать права на действия с формами и добавить проверки
 class ManageForms extends Component
 {
     public Collection $categories;
     public Collection $templates;
     public ?Form $currentForm = null;
-    public array $formData;
+    public FormData $formData;
     public string $newCategoryName = '';
 
-    protected function rules(): array
-    {
-        return [
-            'formData.title'             => 'required|string|max:255',
-            'formData.description'       => 'nullable|string',
-            'formData.category_id'       => 'required|exists:categories,id',
-            'formData.points'            => 'nullable|string|max:50',
-            'formData.form_template_id'  => 'required|exists:form_templates,id',
-            'formData.is_active'         => 'boolean',
-            'formData.single_entry'      => 'boolean',
-            'newCategoryName'            => 'required_with:newCategoryName|string|max:100',
-        ];
-    }
+    protected FormServiceInterface $formService;
 
-    protected $validationAttributes = [
-        'newCategoryName' => 'название категории',
-    ];
+    public function boot(FormServiceInterface $formService)
+    {
+        $this->formService = $formService;
+    }
 
     public function mount(): void
     {
@@ -42,47 +30,27 @@ class ManageForms extends Component
 
     private function initializeData(): void
     {
-        $this->categories = Category::with('forms')->orderBy('name')->get();
-        $this->templates  = FormTemplate::select('id', 'name')->orderBy('name')->get();
-        $this->resetFormData();
+        $this->categories = $this->formService->getCategories();
+        $this->templates  = $this->formService->getTemplates();
     }
 
     public function selectForm(Form $form): void
     {
         $this->currentForm = $form;
-        $this->formData = $form->only([
-            'title', 'description', 'category_id',
-            'points', 'form_template_id', 'is_active', 'single_entry'
-        ]);
+        $this->formData->fillFromForm($form);
     }
 
     public function createNewForm(): void
     {
         $this->currentForm = null;
-        $this->resetFormData();
-    }
-
-    private function resetFormData(): void
-    {
-        $this->formData = [
-            'title'            => '',
-            'description'      => '',
-            'category_id'      => null,
-            'points'           => '',
-            'form_template_id' => null,
-            'is_active'        => true,
-            'single_entry'     => false,
-        ];
+        $this->formData->resetFields();
     }
 
     public function save(): void
     {
         $validated = $this->validate();
-        $data      = $validated['formData'];
 
-        Form::updateOrCreate([
-            'id' => $this->currentForm->id ?? null
-        ], $data);
+        $this->formService->saveForm($validated, $this->currentForm?->id);
 
         session()->flash('success', 'Форма успешно сохранена.');
         $this->initializeData();
@@ -92,7 +60,7 @@ class ManageForms extends Component
     {
         $this->validateOnly('newCategoryName');
 
-        Category::create(['name' => $this->newCategoryName]);
+        $this->formService->addCategory($this->newCategoryName);
         session()->flash('success', 'Категория добавлена.');
 
         $this->newCategoryName = '';
@@ -104,4 +72,3 @@ class ManageForms extends Component
         return view('livewire.manage-forms');
     }
 }
-

@@ -40,7 +40,7 @@
                     </div>
 
                     {{-- Форма добавления новой категории --}}
-                    <div class="px-3 mt-3">
+                    <div class="px-3 mt-3 mb-3">
                         <div class="input-group">
                             <input type="text"
                                    class="form-control @error('newCategoryName') is-invalid @enderror"

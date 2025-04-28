@@ -1,23 +1,27 @@
 <div class="container-fluid">
     <div class="card mb-4">
         <div class="card-header">
-            <h3 class="card-title">{{ $isEdit ? 'Редактировать право' : 'Создать право' }}</h3>
+            <h3 class="card-title">{{ $editMode ? 'Редактировать право' : 'Создать право' }}</h3>
         </div>
         <div class="card-body">
             @if (session()->has('message'))
                 <div class="alert alert-success">{{ session('message') }}</div>
             @endif
 
-            <form wire:submit.prevent="{{ $isEdit ? 'update' : 'store' }}" class="mb-4 row g-2">
+            <form wire:submit.prevent="{{ $editMode ? 'update' : 'store' }}" class="mb-4 row g-2">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Название права (пример Редактирование пользователей)" wire:model.defer="name">
+                    <input type="text" class="form-control" placeholder="Название права (пример Редактирование пользователей)" wire:model.defer="form.name">
+                    @error('form.name') <span class="error">{{ $message }}</span> @enderror
+
                 </div>
                 <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Право (пример edit-users)" wire:model.defer="slug">
+                    <input type="text" class="form-control" placeholder="Право (пример edit-users)" wire:model.defer="form.slug">
+                    @error('form.slug') <span class="error">{{ $message }}</span> @enderror
+
                 </div>
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-primary">{{ $isEdit ? 'Обновить' : 'Создать' }}</button>
-                    @if ($isEdit)
+                    <button type="submit" class="btn btn-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
+                    @if ($editMode)
                         <button type="button" class="btn btn-secondary" wire:click="resetFields">Отмена</button>
                     @endif
                 </div>
