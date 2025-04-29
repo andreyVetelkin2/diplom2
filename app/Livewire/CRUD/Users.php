@@ -2,47 +2,39 @@
 
 namespace App\Livewire\CRUD;
 
+use App\Interfaces\Crudable;
+use App\Livewire\Forms\UserForm;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class Users extends Component
+class Users extends Component implements Crudable
 {
     use WithPagination;
 
-    public $name, $email, $password, $user_id;
-    public $isEdit = false;
-    public $perPage = 0;
+    public UserForm $form;
 
-    protected $paginationTheme = 'bootstrap'; // для совместимости с Bootstrap
+    public bool $editMode = false;
+    public int $perPage = 10;
+    public int $user_id;
+
+    protected $paginationTheme = 'bootstrap';
 
     public function mount()
     {
-        $this->perPage = config('view.page_elem');
-    }
-    public function resetFields()
-    {
-        $this->name = '';
-        $this->email = '';
-        $this->password = '';
-        $this->user_id = null;
-        $this->isEdit = false;
+        $this->perPage = config('view.page_elem', 10);
     }
 
     public function store()
     {
-        $this->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-        ]);
+
+        $validated = $this->form->validate();
 
         User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => bcrypt($this->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
         ]);
-
         $this->resetFields();
         session()->flash('message', 'Пользователь создан');
     }
@@ -50,30 +42,36 @@ class Users extends Component
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $this->user_id = $user->id;
-        $this->name = $user->name;
-        $this->email = $user->email;
-        $this->isEdit = true;
+        $this->form->setUser($user);
+        $this->form->name = $user->name;
+        $this->user_id = $id;
+        $this->form->email = $user->email;
+        $this->editMode = true;
+    }
+
+    public function resetFields(){
+
+        $this->form->resetFields();
+        $this->editMode = false;
+        $this->user_id = 0;
     }
 
     public function update()
     {
-
-
-        $this->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $this->user_id,
-        ]);
+        $validated = $this->form->validate();
 
         $user = User::findOrFail($this->user_id);
 
         $this->authorize('update', $user);
+
         $user->update([
-            'name' => $this->name,
-            'email' => $this->email,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
         ]);
 
         $this->resetFields();
+
+        $this->editMode = false;
         session()->flash('message', 'Пользователь обновлён');
     }
 
@@ -87,7 +85,8 @@ class Users extends Component
     public function render()
     {
         return view('livewire.c-r-u-d.users', [
-            'users' => User::paginate($this->perPage)
+            'users' => User::paginate($this->perPage),
         ]);
     }
 }
+
