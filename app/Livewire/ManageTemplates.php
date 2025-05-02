@@ -6,7 +6,9 @@ use App\Interfaces\FormTemplateServiceInterface;
 use App\Livewire\Forms\FormTemplateForm;
 use Illuminate\Support\Arr;
 use Livewire\Component;
-//TODO Создать права на действия с шаблонами и добавить проверки
+use function Laravel\Prompts\alert;
+
+//TODO Создать права на действия с шаблонами и добавить проверки, при создании шаблона надо предусмотреть множественные нажатия
 class ManageTemplates extends Component
 {
     public $templates;
@@ -35,7 +37,7 @@ class ManageTemplates extends Component
     {
         $template = $this->formTemplateService->getTemplateDataById($id);
 
-        $this->selectedTemplateId = $template['id'];
+        $this->selectedTemplateId = $id;
         $this->form->fillFromTemplate($template);
     }
 
@@ -60,6 +62,13 @@ class ManageTemplates extends Component
     {
         Arr::forget($this->form->fields, $index);
         $this->form->fields = array_values($this->form->fields);
+    }
+
+    public function deleteTemplate($id)
+    {
+            $this->formTemplateService->deleteTemplate($id);
+            $this->loadTemplates();
+            session()->flash('message', 'Шаблон удален.');
     }
 
     public function addOption($fieldIndex)

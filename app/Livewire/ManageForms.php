@@ -71,4 +71,6 @@ class ManageForms extends Component
     {
         return view('livewire.manage-forms');
     }
+
+
 }

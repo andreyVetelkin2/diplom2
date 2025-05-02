@@ -12,9 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(RoleSeeder::class);
-        $this->call(PermissionSeeder::class);
-        $this->call(UserSeeder::class);
-        $this->call(ScientificAchievementFormSeeder::class);
+//        $this->call(RoleSeeder::class);
+//        $this->call(PermissionSeeder::class);
+//        $this->call(UserSeeder::class);
+//        $this->call(ScientificAchievementFormSeeder::class);
     }
 }

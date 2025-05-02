@@ -8,8 +8,15 @@
             <ul class="list-group list-group-flush">
                 @foreach($templates as $tpl)
                     <li class="list-group-item d-flex justify-content-between align-items-center {{ $selectedTemplateId === $tpl->id ? 'active' : '' }}"
-                        wire:click="selectTemplate({{ $tpl->id }})" style="cursor:pointer;">
-                        {{ $tpl->name }}
+                        wire:key="template-{{ $tpl->id }}">
+                        <div wire:click="selectTemplate({{ $tpl->id }})" style="cursor: pointer; flex-grow: 1;">
+                            {{ $tpl->name }}
+                        </div>
+                        <button class="btn btn-danger btn-sm"
+                                wire:click.stop="deleteTemplate({{ $tpl->id }})"
+                                title="Удалить шаблон">
+                            <i class="fas bi-trash"></i>
+                        </button>
                     </li>
                 @endforeach
             </ul>
