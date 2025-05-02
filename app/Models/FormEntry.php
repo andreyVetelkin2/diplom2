@@ -12,6 +12,7 @@ class FormEntry extends Model
     protected $fillable = [
         'form_template_id',
         'user_id',
-
+        'form_id',
+        'status'
     ];
 }

@@ -77,9 +77,9 @@
                                         </select>
 
                                     @elseif($field->type === 'file')
-                                        <input type="file" class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
+                                        <input type="file"
                                                wire:model.defer="fieldValues.{{ $field->id }}"
-                                               accept="image/*,.pdf"> <!-- Restrict file types -->
+                                               class="form-control @error('fieldValues.'.$field->id) is-invalid @enderror">
                                     @endif
 
                                     @error('fieldValues.' . $field->id)
@@ -104,14 +104,14 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($rows as $row)
+                                    @foreach($rows as $rowIndex => $row)
                                         <tr>
                                             @foreach($templateFields as $field)
                                                 <td>
-                                                    @if($field->type === 'file' && isset($row[$field->id]['path']))
-                                                        <a href="{{ Storage::url($row[$field->id]['path']) }}" target="_blank">View File</a>
+                                                    @if($field->type === 'file' && isset($files[$rowIndex]))
+                                                        {{ $files[$rowIndex]->getClientOriginalName() }}
                                                     @else
-                                                        {{ is_array($row[$field->id]) ? '' : $row[$field->id] ?? '' }}
+                                                        {{ $row[$field->id] ?? '' }}
                                                     @endif
                                                 </td>
                                             @endforeach

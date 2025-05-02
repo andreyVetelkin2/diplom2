@@ -17,6 +17,7 @@ class Form extends Model
         'form_template_id',
         'is_active',
         'single_entry',
+        'slug',
     ];
 
     protected $casts = [
