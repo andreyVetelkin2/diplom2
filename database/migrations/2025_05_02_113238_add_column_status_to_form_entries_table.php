@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_entries', function (Blueprint $table) {
-            $table->enum('status', ['review', 'approved', 'rejected']);
+            $table->enum('status', ['review', 'approved', 'rejected'])->nullable();
         });
     }
 
