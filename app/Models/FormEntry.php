@@ -13,6 +13,18 @@ class FormEntry extends Model
         'form_template_id',
         'user_id',
         'form_id',
-        'status'
+        'status',
+        'date_achievement'
     ];
+
+    public function form()
+    {
+        return $this->belongsTo(Form::class,'form_id');
+    }
+    public function fieldValues()
+    {
+        return $this->belongsToMany(FieldEntryValue::class,'form_entry_id');
+    }
+
+
 }

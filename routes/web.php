@@ -5,6 +5,10 @@ use App\Livewire\CRUD\RoleDetail;
 use App\Livewire\CRUD\Roles;
 use App\Livewire\CRUD\UserDetail;
 use App\Livewire\CRUD\Users;
+use App\Livewire\ManageForms;
+use App\Livewire\ManageTemplates;
+use App\Livewire\Reports;
+use App\Livewire\UserFillForm;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,17 +33,20 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
         Route::view('/', 'index')
             ->name('index');
 
-        Route::view('upload', 'upload')
+        Route::get('upload', UserFillForm::class)
             ->name('upload');
 
 //        Route::view('profile', 'profile')
 //            ->name('profile');
 
-        Route::view('templates', 'templates')
+        Route::get('templates', ManageTemplates::class)
             ->name('templates');
 
-        Route::view('forms', 'forms')
+        Route::get('forms', ManageForms::class)
             ->name('forms');
+
+        Route::get('reports', Reports::class)
+            ->name('reports');
     });
 
 

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('forms', function (Blueprint $table) {
-            $table->string('slug')->comment('Обозначение формы');
+            $table->string('slug')->comment('Обозначение формы')->nullable();
         });
     }
 

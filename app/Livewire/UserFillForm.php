@@ -2,6 +2,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\Features\SupportValidation\BaseValidate;
 use Livewire\WithFileUploads; // Add this trait
 use App\Models\Category;
 use App\Models\Form;
@@ -9,6 +10,7 @@ use App\Models\FormEntry;
 use App\Models\FieldEntryValue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Validate;
 
 class UserFillForm extends Component
 {
@@ -18,6 +20,10 @@ class UserFillForm extends Component
     public ?Form $selectedForm = null;
     public Collection $templateFields;
     public array $fieldValues = [];
+
+    #[Validate('required|date')]
+    public $dateAchievement;
+
     public array $rows = [];
     public array $files = [];
 
@@ -117,6 +123,7 @@ class UserFillForm extends Component
                 'user_id' => auth()->id(),
                 'form_id' => $this->selectedForm->id,
                 'status' => 'review',
+                'date_achievement' => $this->dateAchievement,
             ]);
 
             foreach ($this->templateFields as $field) {
