@@ -2,6 +2,7 @@
 
 use App\Livewire\Profile;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\FormEntryEdit;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,5 +20,9 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
         Route::get('profile', Profile::class)
             ->name('profile');
+        Route::get('/form-entry/{entry}', FormEntryEdit::class)
+            ->middleware('auth')
+            ->name('form-entry');
+
     });
 });

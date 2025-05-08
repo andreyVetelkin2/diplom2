@@ -21,10 +21,11 @@ class FormEntry extends Model
     {
         return $this->belongsTo(Form::class,'form_id');
     }
-    public function fieldValues()
+    public function fieldEntryValues()
     {
-        return $this->belongsToMany(FieldEntryValue::class,'form_entry_id');
+        return $this->hasMany(FieldEntryValue::class);
     }
+
 
 
 }

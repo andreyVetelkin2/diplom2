@@ -106,11 +106,11 @@ new #[Layout('layouts.guest')] class extends Component
                 </form>
 
                 <!-- /.social-auth-links -->
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>
-                        {{ __('Забыли пароль?') }}
-                    </a>
-                @endif
+{{--                @if (Route::has('password.request'))--}}
+{{--                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>--}}
+{{--                        {{ __('Забыли пароль?') }}--}}
+{{--                    </a>--}}
+{{--                @endif--}}
                 <p class="mb-0">
                     <a href="{{route('register')}}" class="text-center"> Зарегистрироваться </a>
                 </p>
