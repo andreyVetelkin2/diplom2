@@ -10,4 +10,7 @@ return [
     'Roles' => 'Роли',
     'Templates' => 'Шаблоны',
     'Forms' => 'Формы',
+    'Institutes' => 'Институты',
+    'Departments' => 'Кафедры',
+    'Reports' => 'Отчеты',
 ];

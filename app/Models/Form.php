@@ -23,6 +23,7 @@ class Form extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'single_entry' => 'boolean',
+        'points' => 'integer'
     ];
 
     public function category(): BelongsTo
