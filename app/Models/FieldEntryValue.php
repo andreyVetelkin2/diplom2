@@ -13,5 +13,17 @@ class FieldEntryValue extends Model
         'value',
         'template_field_id',
         'form_entry_id',
+        'original_name',
     ];
+    // Отношение к полю шаблона
+    public function templateField()
+    {
+        return $this->belongsTo(TemplateField::class, 'template_field_id');
+    }
+
+    // Отношение к записи формы
+    public function formEntry()
+    {
+        return $this->belongsTo(FormEntry::class);
+    }
 }

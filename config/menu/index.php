@@ -12,11 +12,11 @@ return [
         'route' => 'profile',
         'active' => 'profile',
     ],
-//    [
-//        'label' => 'Отчеты',
-//        'route' => 'reports',
-//        'active' => 'reports',
-//    ],
+    [
+        'label' => 'Отчеты',
+        'route' => 'reports',
+        'active' => 'reports',
+    ],
     [
         'label' => 'Загрузить достижение',
         'route' => 'upload',

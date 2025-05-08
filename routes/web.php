@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\CRUD\Departments;
 use App\Livewire\CRUD\Permissions;
 use App\Livewire\CRUD\RoleDetail;
 use App\Livewire\CRUD\Roles;
@@ -9,6 +10,7 @@ use App\Livewire\ManageForms;
 use App\Livewire\ManageTemplates;
 use App\Livewire\Reports;
 use App\Livewire\UserFillForm;
+use App\Livewire\CRUD\Institutes;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -63,6 +65,18 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
         Route::prefix('permissions')->group(function() {
             Route::get('/', Permissions::class)
                 ->name('permissions');
+
+        });
+
+        Route::prefix('departments')->group(function() {
+            Route::get('/', Departments::class)
+                ->name('departments');
+
+        });
+
+        Route::prefix('institutes')->group(function() {
+            Route::get('/', Institutes::class)
+                ->name('institutes');
 
         });
 
