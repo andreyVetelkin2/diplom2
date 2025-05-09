@@ -41,7 +41,7 @@
     <!--begin::App Main-->
     <main class="app-main">
 
-        <livewire:breadcrumbs/>
+
 
         <!--begin::App Content-->
         <div class="app-content">

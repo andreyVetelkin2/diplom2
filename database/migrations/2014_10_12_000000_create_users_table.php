@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->integer('hirsh')->nullable();
+            $table->integer('citations')->nullable();
         });
     }
 

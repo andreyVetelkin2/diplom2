@@ -37,6 +37,7 @@ class PermissionPolicy
     public function create(User $user): Response
     {
         $permission = Permission::where('slug', 'create-permissions')->first();
+        dd($user->hasPermissionTo($permission));
         return $user->hasPermissionTo($permission)
             ? Response::allow()
             : Response::denyAsNotFound();
