@@ -50,6 +50,7 @@ class ManageTemplates extends Component
     public function addField()
     {
         $this->form->fields[] = [
+            'id'     => '',
             'name'     => '',
             'label'    => '',
             'type'     => 'string',

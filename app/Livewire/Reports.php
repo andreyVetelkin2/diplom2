@@ -6,6 +6,8 @@ namespace App\Livewire;
 use App\Models\Permission;
 use App\Models\Category;
 use App\Models\Department;
+use App\Services\ScientificReportExporter;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class Reports extends Component
@@ -15,6 +17,11 @@ class Reports extends Component
     public $activeTab = 'individual'; // вкладка по умолчанию
     public $selectedDepartment = null;
     public $departments = [];
+    public $dateFrom;
+    public $dateTo;
+    public $docxFilePath;
+    public string $downloadLink = '';
+
 
     public function mount()
     {
@@ -53,6 +60,8 @@ class Reports extends Component
 
     public function loadGroupedData($startDate, $endDate)
     {
+
+
         if ($this->activeTab === 'individual') {
             $userId = auth()->id();
         } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
@@ -62,6 +71,9 @@ class Reports extends Component
             $this->groupedData = [];
             return;
         }
+
+        $this->dateFrom = $startDate;
+        $this->dateTo = $endDate;
 
         $this->groupedData = Category::with(['forms' => function ($query) use ($startDate, $endDate, $userId) {
             $query->whereHas('entries', function ($q) use ($startDate, $endDate, $userId) {
@@ -98,7 +110,67 @@ class Reports extends Component
                     })->filter(fn($form) => $form['count'] > 0)
                 ];
             })->filter(fn($category) => !empty($category['forms']));
+
+
     }
+
+    public function getExportData()
+    {
+        $user = auth()->user();
+
+        $data = [
+            'position' => $user->position ?? '',
+            'full_name' => $user->name,
+            'department' => $user->department->name ?? '',
+            'date_from' => $this->dateFrom,
+            'date_to' => $this->dateTo,
+            'hirsch' => $user->hirsch_index ?? '',
+            'citations' => $user->citation_count ?? '',
+            'sections' => [],
+        ];
+
+        foreach ($this->groupedData as $category) {
+            $forms = [];
+
+            foreach ($category['forms'] as $form) {
+                foreach ($form['entries'] as $entry) {
+                    $forms[] = [
+                        'name' => $form['name'],
+                        'code' => $form['slug'],
+                        'points' => $form['points'],
+                        'justification' => $entry->justification ?? '',
+                    ];
+                }
+            }
+
+            if (!empty($forms)) {
+                $data['sections'][$category['category']] = $forms;
+            }
+        }
+
+        return $data;
+    }
+
+
+
+    public function exportIndividual()
+    {
+        $exporter = new ScientificReportExporter();
+        $filename = $exporter->exportIndividual($this->getExportData());
+
+        $this->downloadLink = route('download.report', ['filename' => $filename]);
+        $this->redirect($this->downloadLink);
+    }
+
+    public function exportDepartment()
+    {
+        $exporter = new ScientificReportExporter();
+        $filename = $exporter->exportDepartment($this->getExportData());
+
+        $this->downloadLink = route('download.report', ['filename' => $filename]);
+        $this->redirect($this->downloadLink);
+    }
+
 
     public function render()
     {

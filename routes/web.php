@@ -7,6 +7,7 @@ use App\Livewire\CRUD\Roles;
 use App\Livewire\CRUD\UserDetail;
 use App\Livewire\CRUD\Users;
 use App\Livewire\ManageForms;
+use App\Livewire\ManagerCabinet;
 use App\Livewire\ManageTemplates;
 use App\Livewire\Reports;
 use App\Livewire\UserFillForm;
@@ -52,7 +53,15 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
     });
 
 
+    Route::middleware('role:,manage')->group(function (){
+        Route::get('/manager-cabinet', ManagerCabinet::class)
+            ->name('manager-cabinet');
+    });
+
+
     Route::middleware('role:admin')->prefix('admin')->group(function() {//префикс добавляется так как оба маршрута лежат по пути /admin/../
+
+        Route::get('/', fn () => redirect()->route('index'))->name('admin');
 
 
         Route::prefix('users')->group(function() {
@@ -88,7 +97,18 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
         });
 
     });
+
+    Route::get('/download-report/{filename}', function ($filename) {
+        $path = storage_path("app/exports/reports/{$filename}");
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->download($path);
+    })->name('download.report');
 });
+
 
 
 

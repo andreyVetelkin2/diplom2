@@ -1,4 +1,4 @@
-<div class="container my-4">
+<div class="container my-4 p-0">
     <div class="card shadow-sm">
         <div class="card-header">
             <h5 class="card-title ">Фильтр по дате</h5>
