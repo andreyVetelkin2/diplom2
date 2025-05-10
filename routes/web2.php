@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Dashboard;
 use App\Livewire\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\FormEntryEdit;
@@ -14,7 +15,7 @@ use App\Livewire\FormEntryEdit;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::middleware('auth')->group(function() { //группируем чтобы указать что посредник применяется к обоим группам
+Route::middleware('auth')->group(function () { //группируем чтобы указать что посредник применяется к обоим группам
 
     Route::prefix('')->group(function () {//префикса нет юзаем только для получения метода груп
 
@@ -23,6 +24,8 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
         Route::get('/form-entry/{entry}', FormEntryEdit::class)
             ->middleware('auth')
             ->name('form-entry');
+        Route::get('/', Dashboard::class)
+            ->name('index');
 
     });
 });

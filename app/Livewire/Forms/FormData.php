@@ -45,6 +45,7 @@ class FormData extends Form
         $this->slug = $form->slug;
     }
 
+
     public function resetFields()
     {
         $this->title = '';

@@ -13,6 +13,9 @@ class Profile extends Component
     public int $loaded = 10;
     public array $achivments = [];
     public int $totalAchivments = 0;
+    public int $ratingPoints;
+    public $user;
+    public $publicationCount = 0;
 
     public function mount()
     {
@@ -50,6 +53,18 @@ class Profile extends Component
 
             }
         }
+
+        // Сумма баллов по заявкам со статусом 'approved'
+        $this->user = auth()->user();
+        $this->ratingPoints = FormEntry::where('user_id', $this->user->id)
+            ->where('status', 'approved')
+            ->with('form') // предполагается, что у FormEntry есть связь ->form()
+            ->get()
+            ->sum(function ($entry) {
+                return (int) optional($entry->form)->points ?? 0;
+            });
+
+        $this->publicationCount = FormEntry::where('user_id', $this->user->id)->count();
 
         $this->totalAchivments = count($all);
         $this->achivments = array_slice($all, 0, $this->loaded);

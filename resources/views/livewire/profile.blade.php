@@ -28,20 +28,18 @@
             <div class="card-header">
                 <h3 class="profile-username text-center">{{$username}}</h3>
 
-                <p class="text-muted text-center">Должность</p>
+                <p class="text-muted text-center">Должность (????????)</p>
 
             </div>
             <div class="card-body">
                 <ul class="list-group list-group-unbordered">
                     <li class="list-group-item">
-                        <b>Рейтенг</b> <a class="pull-right">1,322</a>
+                        <b>Рейтенг</b> <a class="pull-right">{{$ratingPoints}}</a>
                     </li>
                     <li class="list-group-item">
-                        <b>Кол-во публикаций</b> <a class="pull-right">543</a>
+                        <b>Кол-во публикаций</b> <a class="pull-right">{{$publicationCount}}</a>
                     </li>
                 </ul>
-
-                <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
             </div>
             <!-- /.box-body -->
         </div>
