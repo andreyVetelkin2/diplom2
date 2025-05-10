@@ -5,15 +5,24 @@
             <div class="card-title">Информация о пользователе</div>
         </div>
         <div class="card-body">
+            <!-- Имя пользователя -->
             <div class="mb-3">
                 <label class="form-label">Имя</label>
-                <input type="text" class="form-control" value="{{ $user->name }}" disabled>
+                <p>Текущее: {{$user->name}}</p>
+                <input type="text" class="form-control" wire:model="user.name">
             </div>
 
+            <!-- Email (или Логин) пользователя -->
             <div class="mb-3">
-                <label class="form-label">Email адрес</label>
-                <input type="email" class="form-control" value="{{ $user->email }}" disabled>
-                <div class="form-text">Мы никогда не делимся email'ом</div>
+                <label class="form-label">Email</label>
+                <p>Текущее: {{$user->email}}</p>
+                <input type="email" class="form-control" wire:model="user.email">
+                <div class="form-text">Email — это ваш логин.</div>
+            </div>
+
+            <!-- Кнопка для сохранения изменений -->
+            <div class="mb-3">
+                <button wire:click="updateProfile" class="btn btn-primary">Сохранить изменения</button>
             </div>
         </div>
 
@@ -55,43 +64,43 @@
     </div>
 
     {{-- Блок назначения ролей и прав --}}
-    <div class="card card-secondary card-outline">
-        <div class="card-header">
-            <div class="card-title">Роли и права</div>
-        </div>
+{{--    <div class="card card-secondary card-outline">--}}
+{{--        <div class="card-header">--}}
+{{--            <div class="card-title">Роли и права</div>--}}
+{{--        </div>--}}
 
-        <form wire:submit.prevent="updateRolesAndPermissions">
-            <div class="card-body">
-                <div class="mb-4">
-                    <label class="form-label">Роли</label>
-                    <select wire:model="selectedRoles" multiple class="form-control" size="5">
-                        @foreach ($allRoles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('selectedRoles') <small class="text-danger">{{ $message }}</small> @enderror
-                </div>
+{{--        <form wire:submit.prevent="updateRolesAndPermissions">--}}
+{{--            <div class="card-body">--}}
+{{--                <div class="mb-4">--}}
+{{--                    <label class="form-label">Роли</label>--}}
+{{--                    <select wire:model="selectedRoles" multiple class="form-control" size="5">--}}
+{{--                        @foreach ($allRoles as $role)--}}
+{{--                            <option value="{{ $role->id }}">{{ $role->name }}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                    @error('selectedRoles') <small class="text-danger">{{ $message }}</small> @enderror--}}
+{{--                </div>--}}
 
-                <div class="mb-4">
-                    <label class="form-label">Права</label>
-                    <select wire:model="selectedPermissions" multiple class="form-control" size="10">
-                        @foreach ($allPermissions as $permission)
-                            <option value="{{ $permission->id }}">{{ $permission->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('selectedPermissions') <small class="text-danger">{{ $message }}</small> @enderror
-                </div>
+{{--                <div class="mb-4">--}}
+{{--                    <label class="form-label">Права</label>--}}
+{{--                    <select wire:model="selectedPermissions" multiple class="form-control" size="10">--}}
+{{--                        @foreach ($allPermissions as $permission)--}}
+{{--                            <option value="{{ $permission->id }}">{{ $permission->name }}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                    @error('selectedPermissions') <small class="text-danger">{{ $message }}</small> @enderror--}}
+{{--                </div>--}}
 
-                @if (session()->has('success_roles'))
-                    <div class="alert alert-success mt-3">
-                        {{ session('success_roles') }}
-                    </div>
-                @endif
-            </div>
+{{--                @if (session()->has('success_roles'))--}}
+{{--                    <div class="alert alert-success mt-3">--}}
+{{--                        {{ session('success_roles') }}--}}
+{{--                    </div>--}}
+{{--                @endif--}}
+{{--            </div>--}}
 
-            <div class="card-footer">
-                <button type="submit" class="btn btn-success">Сохранить роли и права</button>
-            </div>
-        </form>
-    </div>
+{{--            <div class="card-footer">--}}
+{{--                <button type="submit" class="btn btn-success">Сохранить роли и права</button>--}}
+{{--            </div>--}}
+{{--        </form>--}}
+{{--    </div>--}}
 </div>

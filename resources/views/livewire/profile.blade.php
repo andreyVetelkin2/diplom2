@@ -34,12 +34,15 @@
             <div class="card-body">
                 <ul class="list-group list-group-unbordered">
                     <li class="list-group-item">
-                        <b>Рейтенг</b> <a class="pull-right">{{$ratingPoints}}</a>
+                        <b>Рейтинг</b> <a class="pull-right">{{$ratingPoints}}</a>
                     </li>
                     <li class="list-group-item">
                         <b>Кол-во публикаций</b> <a class="pull-right">{{$publicationCount}}</a>
                     </li>
                 </ul>
+            </div>
+            <div class="card-footer">
+                <a href="{{ route('user.detail', ['user' => $user->id]) }}" class="btn btn-primary btn-block">Изменить профиль</a>
             </div>
             <!-- /.box-body -->
         </div>

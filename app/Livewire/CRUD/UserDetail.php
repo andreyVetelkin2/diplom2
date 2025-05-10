@@ -27,8 +27,9 @@ class UserDetail extends Component
         $this->userService = $userService;
     }
 
-    public function mount()
+    public function mount(User $user)
     {
+        $this->user = $user;
         $this->allRoles = Role::all();
         $this->allPermissions = Permission::all();
 
@@ -48,6 +49,25 @@ class UserDetail extends Component
         $this->reset(['password', 'password_confirmation']);
     }
 
+    public function updateProfile()
+    {
+        // Валидация данных
+        $this->validate([
+            'user.name' => 'required|string|max:255',
+            'user.email' => 'required|email|max:255|unique:users,email,' . $this->user->id,
+        ]);
+
+        // Обновление данных пользователя
+        $this->user->save();
+
+        // Сообщение об успешном обновлении
+        session()->flash('success', 'Данные успешно обновлены!');
+    }
+
+    public function render()
+    {
+        return view('livewire.c-r-u-d.user-detail');
+    }
 
     public function updateRolesAndPermissions()
     {
@@ -60,12 +80,6 @@ class UserDetail extends Component
         $this->userService->syncPermissions($this->user, $this->selectedPermissions);
 
         session()->flash('success_roles', 'Роли и права успешно обновлены!');
-    }
-
-
-    public function render()
-    {
-        return view('livewire.c-r-u-d.user-detail');
     }
 }
 
