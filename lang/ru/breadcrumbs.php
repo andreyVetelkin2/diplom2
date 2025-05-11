@@ -13,6 +13,7 @@ return [
     'Institutes' => 'Институты',
     'Departments' => 'Кафедры',
     'Reports' => 'Отчеты',
+    'Manager Cabinet' => 'Кабинет руководителя',
     'Author' => 'Автор',
     'Search' => 'Поиск аккаунта',
     'Choice' => 'Выбор аккаунта',

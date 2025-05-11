@@ -10,9 +10,11 @@ class Users extends Component
 {
     use WithPagination;
 
-    public $name, $email, $password, $user_id;
-    public $isEdit = false;
-    public $perPage = 0;
+    public UserForm $form;
+    public bool $editMode = false;
+    public int $user_id;
+    public int $perPage = 10;
+
 
     protected $paginationTheme = 'bootstrap'; // для совместимости с Bootstrap
 

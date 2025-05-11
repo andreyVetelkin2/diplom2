@@ -15,6 +15,7 @@
                            href="#individual-tab"
                            role="tab">Индивидуальный</a>
                     </li>
+                    @can('report-on-the-departments')
                     <li class="nav-item">
                         <a class="nav-link {{ $activeTab === 'department' ? 'active' : '' }}"
                            wire:click.prevent="switchTab('department')"
@@ -22,6 +23,7 @@
                            href="#department-tab"
                            role="tab">По кафедрам</a>
                     </li>
+                    @endcan
                 </ul>
 
                 {{-- Общие фильтры --}}
@@ -83,6 +85,24 @@
             </div>
 
 
+        </div>
+        <div class="card-footer">
+            @if($groupedData && $activeTab === 'individual')
+                <div class="mt-4 text-end">
+                    <button class="btn btn-success" wire:click="exportIndividual">
+                        Скачать индивидуальный отчет в DOCX
+                    </button>
+                </div>
+
+            @endif
+                @if($groupedData && $activeTab === 'department')
+                    <div class="mt-4 text-end">
+                        <button class="btn btn-success" wire:click="exportDepartment">
+                            Скачать отчет кафедрам в DOCX
+                        </button>
+                    </div>
+
+                @endif
         </div>
     </div>
 </div>

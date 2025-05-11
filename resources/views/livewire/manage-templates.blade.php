@@ -52,7 +52,7 @@
                 </div>
 
                 @foreach($form->fields as $index => $field)
-                    <div class="card mb-3" wire:key="field-{{ $index }}">
+                    <div class="card mb-3" wire:key="field-{{ $field['id'] }}">
                         <div class="card-body">
                             <div class="form-row">
                                 <div class="row mb-3">
