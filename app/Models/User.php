@@ -24,7 +24,8 @@ class User extends Authenticatable
         'password',
         'department_id',
         'citations',
-        'hirsh'
+        'hirsh',
+        'position',
     ];
 
     /**

@@ -99,14 +99,15 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
     });
 
     Route::get('/download-report/{filename}', function ($filename) {
-        $path = storage_path("app/exports/reports/{$filename}");
+        $userid = auth()->id();
+        $path = storage_path("app/exports/reports/{$userid}/{$filename}");
 
         if (!file_exists($path)) {
             abort(404);
         }
 
         return response()->download($path);
-    })->name('download.report');
+    })->where('filename', '.*')->name('download.report');
 });
 
 

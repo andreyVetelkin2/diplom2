@@ -30,7 +30,7 @@ class ScientificReportExporter
 
         $section->addText("с «{$data['date_from']}» ____________ 202__ г. по «{$data['date_to']}» ____________ 202__ г.");
 
-        $section->addText("Индекс Хирша \t\t" . ($data['hirsch'] ?? '_____'));
+        $section->addText("Индекс Хирша \t" . ($data['hirsh'] ?? '_____'));
         $section->addText("Количество цитирований \t" . ($data['citations'] ?? '_____'));
 
         $section->addTextBreak(1);
@@ -64,7 +64,7 @@ class ScientificReportExporter
                 $table->addCell(800)->addText($index++);
                 $table->addCell(3000)->addText($item['name']);
                 $table->addCell(2000)->addText($item['code']);
-                $table->addCell(1500)->addText($item['points']);
+                $table->addCell(1500)->addText($item['total']);
                 $table->addCell(4000)->addText($item['justification']);
             }
         }
@@ -73,7 +73,7 @@ class ScientificReportExporter
 
         // Подписи
         $section->addText('___________________________________');
-        $section->addText(($data['position'] ?? 'должность'));
+        $section->addText( '(должность)',['align' => 'center']);
 
         $section->addText(" ______________ \t __________________ \t ____________________________");
         $section->addText(" (воинское звание) \t\t (подпись) \t\t\t\t (ФИО)");
@@ -87,9 +87,10 @@ class ScientificReportExporter
         // Сохраняем файл
         Storage::makeDirectory('exports/reports/'.auth()->user()->id); // создаёт при необходимости
 
+        $userid = auth()->id();
         $writer = IOFactory::createWriter($phpWord, 'Word2007');
         $filename = "report-individual-" . now()->format('Y-m-d_H-i-s') . ".docx";
-        $relativePath = "exports/reports/{$filename}";
+        $relativePath = "exports/reports/{$userid}/{$filename}";
         $fullPath = storage_path("app/{$relativePath}");
 
         $phpWord->save($fullPath, 'Word2007');
@@ -144,7 +145,7 @@ class ScientificReportExporter
                 $table->addCell(800)->addText($index++);
                 $table->addCell(3000)->addText($item['name']);
                 $table->addCell(2000)->addText($item['code']);
-                $table->addCell(1500)->addText($item['points']);
+                $table->addCell(1500)->addText($item['total']);
                 $table->addCell(4000)->addText($item['justification']);
             }
         }
@@ -165,10 +166,10 @@ class ScientificReportExporter
 
         // Сохраняем файл
         Storage::makeDirectory('exports/reports/'.auth()->user()->id); // создаёт при необходимости
-
+        $userid = auth()->id();
         $writer = IOFactory::createWriter($phpWord, 'Word2007');
         $filename = "report-department-" . now()->format('Y-m-d_H-i-s') . ".docx";
-        $relativePath = "exports/reports/{$filename}";
+        $relativePath = "exports/reports/{$userid}/{$filename}";
         $fullPath = storage_path("app/{$relativePath}");
 
         $phpWord->save($fullPath, 'Word2007');

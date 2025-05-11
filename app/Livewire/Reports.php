@@ -114,33 +114,39 @@ class Reports extends Component
 
     }
 
-    public function getExportData()
+    public function getExportData(): array
     {
         $user = auth()->user();
 
         $data = [
-            'position' => $user->position ?? '',
-            'full_name' => $user->name,
-            'department' => $user->department->name ?? '',
-            'date_from' => $this->dateFrom,
-            'date_to' => $this->dateTo,
-            'hirsch' => $user->hirsch_index ?? '',
-            'citations' => $user->citation_count ?? '',
-            'sections' => [],
+            'position'    => $user->position ?? '',
+            'full_name'   => $user->name,
+            'department'  => $user->department->name ?? '',
+            'date_from'   => $this->dateFrom,
+            'date_to'     => $this->dateTo,
+            'hirsh'       => $user->hirsh ?? '',
+            'citations'   => $user->citations ?? '',
+            'sections'    => [],  // заполним далее
         ];
 
         foreach ($this->groupedData as $category) {
             $forms = [];
 
             foreach ($category['forms'] as $form) {
-                foreach ($form['entries'] as $entry) {
-                    $forms[] = [
-                        'name' => $form['name'],
-                        'code' => $form['slug'],
-                        'points' => $form['points'],
-                        'justification' => $entry->justification ?? '',
-                    ];
-                }
+                // Собирать все обоснования в одну строку
+                $justifications = collect($form['entries'])
+                    ->pluck('justification')
+                    ->filter()
+                    ->implode('; ');
+
+                $forms[] = [
+                    'name'          => $form['name'],
+                    'code'          => $form['slug'],    // либо 'code' если в groupedData так называется
+                    'points'        => $form['points'],
+                    'count'         => $form['count'],
+                    'total'         => $form['total'],
+                    'justification' => $justifications,
+                ];
             }
 
             if (!empty($forms)) {
@@ -155,20 +161,26 @@ class Reports extends Component
 
     public function exportIndividual()
     {
+        $userid = auth()->id();
         $exporter = new ScientificReportExporter();
         $filename = $exporter->exportIndividual($this->getExportData());
+        $path = storage_path("app/exports/reports/{$userid}/{$filename}");
 
-        $this->downloadLink = route('download.report', ['filename' => $filename]);
-        $this->redirect($this->downloadLink);
+        return response()->download($path, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ]);
     }
 
     public function exportDepartment()
     {
+        $userid = auth()->id();
         $exporter = new ScientificReportExporter();
         $filename = $exporter->exportDepartment($this->getExportData());
+        $path = storage_path("app/exports/reports/{$userid}/{$filename}");
 
-        $this->downloadLink = route('download.report', ['filename' => $filename]);
-        $this->redirect($this->downloadLink);
+        return response()->download($path, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ]);
     }
 
 
