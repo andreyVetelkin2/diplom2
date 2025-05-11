@@ -13,4 +13,5 @@ return [
     'Institutes' => 'Институты',
     'Departments' => 'Кафедры',
     'Reports' => 'Отчеты',
+    'Manager Cabinet' => 'Кабинет руководителя',
 ];

@@ -1,4 +1,4 @@
-<div class="container mt-4">
+<div class=" ">
     <h3>Редактирование достижения</h3>
 
     @if (session()->has('success'))
@@ -9,10 +9,17 @@
     @endif
 
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between">
             <h4>{{ $entry->form->title }}</h4>
         </div>
         <div class="card-body">
+            <!-- Отображение статуса -->
+            <div class="alert alert-info my-3">
+                Текущий статус: <strong>{{ $entry->status_label }}</strong>
+            </div>
+            <div class="alert alert-success my-3">
+                Автор достяжения: <strong>{{ $user->name }}</strong>
+            </div>
             <form wire:submit.prevent="save">
                 @foreach($templateFields as $field)
                     <div class="mb-3">
@@ -67,12 +74,60 @@
                         @error('fieldValues.' . $field->id)
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+
+
                     </div>
                 @endforeach
+                <div class="mb-3 d-flex flex-column">
+                    <label class="form-label">Комментарий руководителя</label>
+                    <span class="">{{$entry->comment}}</span>
 
-                <button type="submit" class="btn btn-primary">Сохранить</button>
-                <a href="{{ route('profile') }}" class="btn btn-secondary">Отмена</a>
+                </div>
+
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a href="javascript:history.back()" class="btn btn-secondary">Отмена</a>
+                    @can('manage')
+                        <button class="btn btn-success" wire:click="confirmAction('approve')">Принять</button>
+                        <button class="btn btn-danger" wire:click="confirmAction('reject')">Отклонить</button>
+                    @endcan
             </form>
         </div>
     </div>
+
+
+
+
+
+<!-- Модальное окно подтверждения -->
+    @if($showConfirmModal)
+        <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            @if($modalAction === 'approve') Подтвердить принятие?
+                            @else Отклонить достижение?
+                            @endif
+                        </h5>
+                        <button type="button" class="btn-close" wire:click="$set('showConfirmModal', false)"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        @if($modalAction === 'reject')
+                            <label class="form-label">Причина отклонения</label>
+                            <textarea wire:model.defer="rejectionComment" class="form-control"></textarea>
+                        @else
+                            <p>Вы уверены, что хотите принять это достижение?</p>
+                        @endif
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" wire:click="$set('showConfirmModal', false)">Отмена</button>
+                        <button type="button" class="btn btn-primary" wire:click="executeAction">Подтвердить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
 </div>

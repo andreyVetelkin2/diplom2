@@ -9,26 +9,36 @@ use Symfony\Component\HttpFoundation\Response;
 class RoleMiddleware
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    /**
-     * Handle an incoming request.
-     * @param $request
-     * @param Closure $next
-     * @param $role
-     * @param null $permission
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
+     * @param string|null $role
+     * @param string|null $permission
      * @return mixed
      */
-    public function handle($request, Closure $next, $role, $permission = null)
+    public function handle($request, Closure $next, $role = null, $permission = null)
     {
-        if(!auth()->user()->hasRole($role)) {
-            abort(404);
+        $user = auth()->user();
+
+        // Если оба заданы: и роль, и право
+        if ($role && $permission) {
+            if (!$user->hasRole($role) || !$user->can($permission)) {
+                abort(404);
+            }
         }
-        if($permission !== null && !auth()->user()->can($permission)) {
-            abort(404);
+        // Только роль
+        elseif ($role && !$permission) {
+            if (!$user->hasRole($role)) {
+                abort(404);
+            }
         }
+        // Только право (если роль пропущена, но право передано первым)
+        elseif (!$role && $permission) {
+            if (!$user->can($permission)) {
+                abort(404);
+            }
+        }
+
         return $next($request);
     }
 }
+
