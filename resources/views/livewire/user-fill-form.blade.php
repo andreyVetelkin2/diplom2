@@ -41,6 +41,13 @@
                         <p>{{ $selectedForm->description }}</p>
                         <p><strong>Баллы:</strong> {{ $selectedForm->points }}</p>
                         <form>
+                            <div class="mb-3">
+                                <label class="form-label">Дата достижения
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" class="form-control @error('dateAchievement') is-invalid @enderror"
+                                       wire:model.defer="dateAchievement">
+                            </div>
                             @foreach($templateFields as $field)
                                 <div class="mb-3">
                                     <label class="form-label">{{ $field->label }}
@@ -48,15 +55,18 @@
                                     </label>
 
                                     @if($field->type === 'string')
-                                        <input type="text" class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
+                                        <input type="text"
+                                               class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
                                                wire:model.defer="fieldValues.{{ $field->id }}">
 
                                     @elseif($field->type === 'textarea')
-                                        <textarea class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
-                                                  wire:model.defer="fieldValues.{{ $field->id }}"></textarea>
+                                        <textarea
+                                            class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
+                                            wire:model.defer="fieldValues.{{ $field->id }}"></textarea>
 
                                     @elseif($field->type === 'datetime')
-                                        <input type="datetime-local" class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
+                                        <input type="datetime-local"
+                                               class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
                                                wire:model.defer="fieldValues.{{ $field->id }}">
 
                                     @elseif($field->type === 'checkbox')
@@ -68,8 +78,9 @@
                                         </div>
 
                                     @elseif($field->type === 'list')
-                                        <select class="form-select @error('fieldValues.' . $field->id) is-invalid @enderror"
-                                                wire:model.defer="fieldValues.{{ $field->id }}">
+                                        <select
+                                            class="form-select @error('fieldValues.' . $field->id) is-invalid @enderror"
+                                            wire:model.defer="fieldValues.{{ $field->id }}">
                                             <option value="">-- выберите --</option>
                                             @foreach($field->options as $opt)
                                                 <option value="{{ $opt->value }}">{{ $opt->label }}</option>
@@ -77,19 +88,25 @@
                                         </select>
 
                                     @elseif($field->type === 'file')
-                                        <input type="file" class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
+                                        <input type="file"
                                                wire:model.defer="fieldValues.{{ $field->id }}"
-                                               accept="image/*,.pdf"> <!-- Restrict file types -->
+                                               class="form-control @error('fieldValues.'.$field->id) is-invalid @enderror">
                                     @endif
 
                                     @error('fieldValues.' . $field->id)
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+
+
                                 </div>
                             @endforeach
 
-                            <button type="button" wire:click="addRow" class="btn btn-secondary me-2">Добавить результат</button>
-                            <button type="button" wire:click="submit" class="btn btn-primary" @if(empty($rows)) disabled @endif>Сохранить все</button>
+                            <button type="button" wire:click="addRow" class="btn btn-secondary me-2">Добавить
+                                результат
+                            </button>
+                            <button type="button" wire:click="submit" class="btn btn-primary"
+                                    @if(empty($rows)) disabled @endif>Сохранить все
+                            </button>
                         </form>
 
                         @if(!empty($rows))
@@ -104,14 +121,14 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($rows as $row)
+                                    @foreach($rows as $rowIndex => $row)
                                         <tr>
                                             @foreach($templateFields as $field)
                                                 <td>
-                                                    @if($field->type === 'file' && isset($row[$field->id]['path']))
-                                                        <a href="{{ Storage::url($row[$field->id]['path']) }}" target="_blank">View File</a>
+                                                    @if($field->type === 'file' && isset($files[$rowIndex]))
+                                                        {{ $files[$rowIndex]->getClientOriginalName() }}
                                                     @else
-                                                        {{ is_array($row[$field->id]) ? '' : $row[$field->id] ?? '' }}
+                                                        {{ $row[$field->id] ?? '' }}
                                                     @endif
                                                 </td>
                                             @endforeach

@@ -1,3 +1,22 @@
 /*@tailwind base;
 @tailwind components;
 @tailwind utilities;*/
+.pagination {
+    @apply flex items-center justify-center space-x-2;
+}
+
+.pagination .page-item {
+    @apply px-3 py-1 rounded-md;
+}
+
+.pagination .page-item.active {
+    @apply bg-blue-500 text-white;
+}
+
+.pagination .page-item:not(.active):not(.disabled) {
+    @apply bg-white text-blue-500 hover:bg-blue-50;
+}
+
+.pagination .page-item.disabled {
+    @apply text-gray-400 cursor-not-allowed;
+}

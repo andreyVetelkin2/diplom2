@@ -10,4 +10,11 @@ return [
     'Roles' => 'Роли',
     'Templates' => 'Шаблоны',
     'Forms' => 'Формы',
+    'Institutes' => 'Институты',
+    'Departments' => 'Кафедры',
+    'Reports' => 'Отчеты',
+    'Author' => 'Автор',
+    'Search' => 'Поиск аккаунта',
+    'Choice' => 'Выбор аккаунта',
+    'Scholar' => 'Настройки Google Scholar'
 ];

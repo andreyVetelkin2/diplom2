@@ -12,6 +12,20 @@ class FormEntry extends Model
     protected $fillable = [
         'form_template_id',
         'user_id',
-
+        'form_id',
+        'status',
+        'date_achievement'
     ];
+
+    public function form()
+    {
+        return $this->belongsTo(Form::class,'form_id');
+    }
+    public function fieldEntryValues()
+    {
+        return $this->hasMany(FieldEntryValue::class);
+    }
+
+
+
 }

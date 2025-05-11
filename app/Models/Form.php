@@ -17,11 +17,13 @@ class Form extends Model
         'form_template_id',
         'is_active',
         'single_entry',
+        'slug',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'single_entry' => 'boolean',
+        'points' => 'integer'
     ];
 
     public function category(): BelongsTo

@@ -1,10 +1,16 @@
 <?php
 
+use App\Livewire\CRUD\Departments;
 use App\Livewire\CRUD\Permissions;
 use App\Livewire\CRUD\RoleDetail;
 use App\Livewire\CRUD\Roles;
 use App\Livewire\CRUD\UserDetail;
 use App\Livewire\CRUD\Users;
+use App\Livewire\ManageForms;
+use App\Livewire\ManageTemplates;
+use App\Livewire\Reports;
+use App\Livewire\UserFillForm;
+use App\Livewire\CRUD\Institutes;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,17 +35,20 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
         Route::view('/', 'index')
             ->name('index');
 
-        Route::view('upload', 'upload')
+        Route::get('upload', UserFillForm::class)
             ->name('upload');
 
-        Route::view('profile', 'profile')
-            ->name('profile');
+//        Route::view('profile', 'profile')
+//            ->name('profile');
 
-        Route::view('templates', 'templates')
+        Route::get('templates', ManageTemplates::class)
             ->name('templates');
 
-        Route::view('forms', 'forms')
+        Route::get('forms', ManageForms::class)
             ->name('forms');
+
+        Route::get('reports', Reports::class)
+            ->name('reports');
     });
 
 
@@ -59,6 +68,18 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
         });
 
+        Route::prefix('departments')->group(function() {
+            Route::get('/', Departments::class)
+                ->name('departments');
+
+        });
+
+        Route::prefix('institutes')->group(function() {
+            Route::get('/', Institutes::class)
+                ->name('institutes');
+
+        });
+
         Route::prefix('roles')->group(function() {
             Route::get('/', Roles::class)
                 ->name('roles');
@@ -73,3 +94,4 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
 require __DIR__.'/web2.php';
 require __DIR__.'/auth.php';
+require __DIR__.'/scholar.php';

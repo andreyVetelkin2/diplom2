@@ -17,11 +17,13 @@ class FormData extends Form
     public ?int $form_template_id = null;
     public bool $is_active = true;
     public bool $single_entry = false;
+    public string $slug = '';
 
     protected function rules(): array
     {
         return [
             'title'             => 'required|string|max:255',
+            'slug'             => 'required|string|max:255',
             'description'       => 'nullable|string',
             'category_id'       => 'required|exists:categories,id',
             'points'            => 'nullable|string|max:50',
@@ -40,6 +42,7 @@ class FormData extends Form
         $this->form_template_id = $form->form_template_id;
         $this->is_active = $form->is_active;
         $this->single_entry = $form->single_entry;
+        $this->slug = $form->slug;
     }
 
     public function resetFields()
@@ -51,5 +54,6 @@ class FormData extends Form
         $this->form_template_id = null;
         $this->is_active = true;
         $this->single_entry = false;
+        $this->slug = '';
     }
 }

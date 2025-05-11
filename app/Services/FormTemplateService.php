@@ -66,4 +66,11 @@ class FormTemplateService implements FormTemplateServiceInterface
             }
         }
     }
+
+    public function deleteTemplate(int $id): void
+    {
+        $template = FormTemplate::with('fields.options')->findOrFail($id);
+
+        $template->delete();
+    }
 }

@@ -72,7 +72,12 @@
                                    wire:model.defer="formData.title">
                             @error('formData.title') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-
+                        <div class="mb-3">
+                            <label class="form-label">Обозначение</label>
+                            <input type="text" class="form-control @error('formData.slug') is-invalid @enderror"
+                                   wire:model.defer="formData.slug">
+                            @error('formData.slug') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Описание</label>
                             <textarea class="form-control @error('formData.description') is-invalid @enderror"
