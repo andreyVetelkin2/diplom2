@@ -114,3 +114,4 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
 require __DIR__.'/web2.php';
 require __DIR__.'/auth.php';
+require __DIR__.'/scholar.php';
