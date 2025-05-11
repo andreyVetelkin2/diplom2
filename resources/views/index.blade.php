@@ -85,18 +85,18 @@
         <!--end::Col-->
     </div>
     <!--end::Row-->
-    <!--begin::Row-->
-    <!-- Start col -->
-    <div class="col-12 connectedSortable">
-        <div class="card mb-4">
-            <div class="card-header"><h3 class="card-title">ГРАФИК С Кол-вом публикаций и рейтенгом (??????????)</h3></div>
-            <div class="card-body">
-                <div id="revenue-chart"></div>
-            </div>
-        </div>
-        <!-- /.card -->
-    </div>
-    <!-- /.Start col -->
+{{--    <!--begin::Row-->--}}
+{{--    <!-- Start col -->--}}
+{{--    <div class="col-12 connectedSortable">--}}
+{{--        <div class="card mb-4">--}}
+{{--            <div class="card-header"><h3 class="card-title">ГРАФИК С Кол-вом публикаций и рейтенгом (??????????)</h3></div>--}}
+{{--            <div class="card-body">--}}
+{{--                <div id="revenue-chart"></div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--        <!-- /.card -->--}}
+{{--    </div>--}}
+{{--    <!-- /.Start col -->--}}
     <!-- /.row (main row) -->
 </div>
 <!--end::Container-->

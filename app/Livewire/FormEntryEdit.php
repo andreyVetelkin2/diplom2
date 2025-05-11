@@ -70,7 +70,7 @@ class FormEntryEdit extends Component
                     $rules[$key] .= '|in:' . $field->options->pluck('value')->implode(',');
                     break;
                 case 'file':
-                    $rules[$key] .= '|file|mimes:jpg,jpeg,png,pdf|max:10240';
+                    //$rules[$key] .= '|nullable|file|mimes:jpg,jpeg,png,pdf|max:10240';
                     break;
                 default:
                     $rules[$key] .= '|string';
