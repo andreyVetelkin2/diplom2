@@ -17,6 +17,11 @@ return [
         'route' => 'reports',
         'active' => 'reports',
     ],
+    [
+        'label' => 'Архив отчетов',
+        'route' => 'reports-archive',
+        'active' => 'reports-archive',
+    ],
 
     [
         'label' => 'Загрузить достижение',

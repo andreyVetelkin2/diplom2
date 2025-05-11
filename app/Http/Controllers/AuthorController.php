@@ -159,12 +159,6 @@ class AuthorController extends Controller
         ];
     }
 
-
-
-
-
-
-
         protected function findAuthor(Request $request)
         {
             $mauthors = $request->input('mauthors');
