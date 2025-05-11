@@ -42,7 +42,7 @@
                 </ul>
             </div>
             <div class="card-footer">
-                <a href="{{ route('user.detail', ['user' => $user->id]) }}" class="btn btn-primary btn-block">Изменить профиль</a>
+                <a href="{{ route('profile.changer', ['user' => $user->id]) }}" class="btn btn-primary btn-block">Изменить профиль</a>
             </div>
             <!-- /.box-body -->
         </div>

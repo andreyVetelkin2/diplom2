@@ -1,6 +1,6 @@
 <?php
 
-use App\Livewire\CRUD\UserDetail;
+use App\Livewire\CRUD\ProfileChanger;
 use App\Livewire\Dashboard;
 use App\Livewire\Profile;
 use Illuminate\Support\Facades\Route;
@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () { //группируем чтобы
             ->name('form-entry');
         Route::get('/', Dashboard::class)
             ->name('index');
-        Route::get('/profile/detail/{user}', UserDetail::class)->name('user.detail');
+        Route::get('/profile/detail/{user}', ProfileChanger::class)->name('profile.changer');
 
 
     });

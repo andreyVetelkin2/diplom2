@@ -8,9 +8,12 @@ use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
-class UserDetail extends Component
+class ProfileChanger extends Component
 {
     public User $user;
+
+    public string $username;
+    public string $useremail;
 
     public string $password = '';
     public string $password_confirmation = '';
@@ -27,8 +30,9 @@ class UserDetail extends Component
         $this->userService = $userService;
     }
 
-    public function mount()
+    public function mount(User $user)
     {
+        $this->user = $user;
         $this->allRoles = Role::all();
         $this->allPermissions = Permission::all();
 
@@ -48,6 +52,23 @@ class UserDetail extends Component
         $this->reset(['password', 'password_confirmation']);
     }
 
+    public function updateProfile()
+    {
+        // Валидация данных
+        $this->validate([
+            'user.name' => 'required|string|max:255',
+            'user.email' => 'required|email|max:255|unique:users,email,' . $this->user->id,
+        ]);
+
+        $this->user->name = $this->username;
+        $this->user->email = $this->useremail;
+
+        // Обновление данных пользователя
+        $this->user->save();
+
+        // Сообщение об успешном обновлении
+        session()->flash('success', 'Данные успешно обновлены!');
+    }
 
     public function updateRolesAndPermissions()
     {
@@ -62,9 +83,9 @@ class UserDetail extends Component
         session()->flash('success_roles', 'Роли и права успешно обновлены!');
     }
 
-
     public function render()
     {
-        return view('livewire.c-r-u-d.user-detail');
+        return view('livewire.profile-changer');
     }
 }
+
