@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\CRUD;
 
 use App\Models\Role;
@@ -12,8 +13,9 @@ class ProfileChanger extends Component
 {
     public User $user;
 
-    public string $username;
-    public string $useremail;
+    public string $username = '';
+    public string $useremail = '';
+    public string $userpos = '';
 
     public string $password = '';
     public string $password_confirmation = '';
@@ -36,8 +38,8 @@ class ProfileChanger extends Component
         $this->allRoles = Role::all();
         $this->allPermissions = Permission::all();
 
-        $this->selectedRoles = $this->user->roles->pluck('id')->map(fn($id) => (string) $id)->toArray();
-        $this->selectedPermissions = $this->user->permissions->pluck('id')->map(fn($id) => (string) $id)->toArray();
+        $this->selectedRoles = $this->user->roles->pluck('id')->map(fn($id) => (string)$id)->toArray();
+        $this->selectedPermissions = $this->user->permissions->pluck('id')->map(fn($id) => (string)$id)->toArray();
     }
 
     public function updatePassword()
@@ -56,12 +58,23 @@ class ProfileChanger extends Component
     {
         // Валидация данных
         $this->validate([
-            'user.name' => 'required|string|max:255',
-            'user.email' => 'required|email|max:255|unique:users,email,' . $this->user->id,
+            'user.name' => 'string|max:255',
+            'user.email' => 'email|max:255|unique:users,email,' . $this->user->id,
+            'user.position' => 'string|max:255',
         ]);
 
-        $this->user->name = $this->username;
-        $this->user->email = $this->useremail;
+        if ($this->username)
+        {
+            $this->user->name = $this->username;
+        }
+        if ($this->useremail)
+        {
+            $this->user->email = $this->useremail;
+        }
+        if ($this->userpos)
+        {
+            $this->user->position = $this->userpos;
+        }
 
         // Обновление данных пользователя
         $this->user->save();

@@ -17,5 +17,7 @@ return [
     'Author' => 'Автор',
     'Search' => 'Поиск аккаунта',
     'Choice' => 'Выбор аккаунта',
-    'Scholar' => 'Настройки Google Scholar'
+    'Scholar' => 'Настройки Google Scholar',
+    'Detail' => 'Редактирование',
+    'Form Entry' => 'Редактировать достижение'
 ];

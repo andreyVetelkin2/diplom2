@@ -18,13 +18,19 @@
                 <p>Текущее: {{$user->email}}</p>
                 <input type="email" class="form-control" wire:model="useremail">
                 <div class="form-text">Email — это ваш логин.</div>
-
-                @if (session()->has('success'))
-                    <div class="alert alert-success mt-3">
-                        {{ session('success') }}
-                    </div>
-                @endif
             </div>
+
+            <div class="mb-3">
+                <label class="form-label">Должность</label>
+                <p>Текущее: {{$user->position}}</p>
+                <input type="text" class="form-control" wire:model="userpos">
+            </div>
+
+            @if (session()->has('success'))
+                <div class="alert alert-success mt-3">
+                    {{ session('success') }}
+                </div>
+        @endif
 
             <!-- Кнопка для сохранения изменений -->
             <div class="mb-3">

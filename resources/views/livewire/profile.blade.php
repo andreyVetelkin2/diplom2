@@ -28,7 +28,7 @@
             <div class="card-header">
                 <h3 class="profile-username text-center">{{$username}}</h3>
 
-                <p class="text-muted text-center">Должность (????????)</p>
+                <p class="text-muted text-center">{{$user->position}}</p>
 
             </div>
             <div class="card-body">
