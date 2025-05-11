@@ -60,59 +60,65 @@ class Reports extends Component
 
     public function loadGroupedData($startDate, $endDate)
     {
-
-
         if ($this->activeTab === 'individual') {
             $userId = auth()->id();
         } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
             // выбираем всех пользователей из выбранной кафедры
-            $userId = \App\Models\User::where('department_id', $this->selectedDepartment)->pluck('id')->toArray();
+            $userId = \App\Models\User::where('department_id', $this->selectedDepartment)
+                ->pluck('id')
+                ->toArray();
         } else {
             $this->groupedData = [];
             return;
         }
 
         $this->dateFrom = $startDate;
-        $this->dateTo = $endDate;
+        $this->dateTo   = $endDate;
 
         $this->groupedData = Category::with(['forms' => function ($query) use ($startDate, $endDate, $userId) {
             $query->whereHas('entries', function ($q) use ($startDate, $endDate, $userId) {
                 $q->whereIn('user_id', (array) $userId)
-                    ->whereBetween('date_achievement', [$startDate, $endDate]);
+                    ->whereBetween('date_achievement', [$startDate, $endDate])
+                    ->where('status', 'approved');              // ← фильтрация
             })
-                ->withCount(['entries as user_entries_count' => function ($query) use ($startDate, $endDate, $userId) {
-                    $query->whereIn('user_id', (array) $userId)
-                        ->whereBetween('date_achievement', [$startDate, $endDate]);
-                }])
-                ->with(['entries' => function ($query) use ($startDate, $endDate, $userId) {
-                    $query->whereIn('user_id', (array) $userId)
+                ->withCount(['entries as user_entries_count' => function ($q) use ($startDate, $endDate, $userId) {
+                    $q->whereIn('user_id', (array) $userId)
                         ->whereBetween('date_achievement', [$startDate, $endDate])
+                        ->where('status', 'approved');              // ← фильтрация
+                }])
+                ->with(['entries' => function ($q) use ($startDate, $endDate, $userId) {
+                    $q->whereIn('user_id', (array) $userId)
+                        ->whereBetween('date_achievement', [$startDate, $endDate])
+                        ->where('status', 'approved')               // ← фильтрация
                         ->latest();
                 }]);
         }])
             ->whereHas('forms.entries', function ($q) use ($startDate, $endDate, $userId) {
                 $q->whereIn('user_id', (array) $userId)
-                    ->whereBetween('date_achievement', [$startDate, $endDate]);
+                    ->whereBetween('date_achievement', [$startDate, $endDate])
+                    ->where('status', 'approved');                      // ← фильтрация
             })
             ->get()
             ->map(function ($category) {
                 return [
                     'category' => $category->name,
-                    'forms' => $category->forms->map(function ($form) {
-                        return [
-                            'name' => $form->title,
-                            'slug' => $form->slug,
-                            'points' => $form->points,
-                            'count' => $form->user_entries_count,
-                            'total' => $form->points * $form->user_entries_count,
-                            'entries' => $form->entries,
-                        ];
-                    })->filter(fn($form) => $form['count'] > 0)
+                    'forms'    => $category->forms
+                        ->map(function ($form) {
+                            return [
+                                'name'    => $form->title,
+                                'slug'    => $form->slug,
+                                'points'  => $form->points,
+                                'count'   => $form->user_entries_count,
+                                'total'   => $form->points * $form->user_entries_count,
+                                'entries' => $form->entries,
+                            ];
+                        })
+                        ->filter(fn($form) => $form['count'] > 0),
                 ];
-            })->filter(fn($category) => !empty($category['forms']));
-
-
+            })
+            ->filter(fn($category) => !empty($category['forms']));
     }
+
 
     public function getExportData(): array
     {
