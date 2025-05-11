@@ -26,6 +26,7 @@ class FormTemplateService implements FormTemplateServiceInterface
                     'required' => (bool)$field->required,
                     'options'  => $field->type === 'list'
                         ? $field->options->map(fn($opt) => [
+                            'id' => $opt->id,
                             'label' => $opt->label,
                             'value' => $opt->value,
                         ])->toArray()
