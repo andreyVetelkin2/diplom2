@@ -65,8 +65,10 @@
 
 
 <div class=" col-md-12 card mt-4">
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between">
         <h5>График достижений за последние 6 месяцев</h5>
+
+        <a href="{{route('reports')}}" class="btn btn-outline-primary btn-sm mt-2"> Перейти к отчетам</a>
     </div>
     <div class="card-body">
         <div id="achievements-chart"></div>

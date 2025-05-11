@@ -15,4 +15,8 @@ class FormTemplate extends Model
     {
         return $this->hasMany(TemplateField::class);
     }
+    public function forms()
+    {
+        return $this->hasMany(Form::class);
+    }
 }

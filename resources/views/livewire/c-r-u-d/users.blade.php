@@ -17,6 +17,10 @@
                     <input type="email" class="form-control" placeholder="Email" wire:model.defer="form.email">
                     @error('form.email') <span class="error">{{ $message }}</span> @enderror
                 </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Должность" wire:model.defer="form.position">
+                    @error('form.position') <span class="error">{{ $message }}</span> @enderror
+                </div>
                 <div class="col-md-6">
                     <select class="form-select" wire:model.defer="form.department_id">
                         <option value="">Выберите кафедру</option>
@@ -45,6 +49,7 @@
                 <tr>
                     <th style="width: 10px">ID</th>
                     <th>Имя</th>
+                    <th>Должность</th>
                     <th>Email</th>
                     <th>Кафедра</th>
                     <th style="width: 120px">Действия</th>
@@ -55,6 +60,7 @@
                     <tr class="align-middle">
                         <td>{{ $user->id }}</td>
                         <td><a href="{{ route('user-detail', $user->id) }}">{{ $user->name }}</a></td>
+                        <td>{{ $user->position }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->department?->name }}</td>
                         <td>

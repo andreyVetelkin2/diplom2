@@ -79,7 +79,7 @@ class FormTemplateService implements FormTemplateServiceInterface
                 $incomingOptions = [];
 
                 foreach ($fieldData['options'] as $optionData) {
-                    if (isset($optionData['id'])) {
+                    if (isset($optionData['id'])&& $optionData['id']) {
                         $option = $field->options()->find($optionData['id']);
                         if ($option) {
                             $option->update([
