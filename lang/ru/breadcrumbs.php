@@ -19,5 +19,6 @@ return [
     'Choice' => 'Выбор аккаунта',
     'Scholar' => 'Настройки Google Scholar',
     'Detail' => 'Редактирование',
-    'Form Entry' => 'Редактировать достижение'
+    'Form Entry' => 'Редактировать достижение',
+    'Reports Archive' => 'Архив отчетов'
 ];

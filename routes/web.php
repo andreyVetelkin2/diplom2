@@ -13,7 +13,8 @@ use App\Livewire\Reports;
 use App\Livewire\UserFillForm;
 use App\Livewire\CRUD\Institutes;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -50,6 +51,9 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
         Route::get('reports', Reports::class)
             ->name('reports');
+
+        Route::get('reports-archive', \App\Livewire\ReportArchive::class)
+            ->name('reports-archive');
     });
 
 
@@ -98,16 +102,32 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
     });
 
+
+
     Route::get('/download-report/{filename}', function ($filename) {
-        $userid = auth()->id();
-        $path = storage_path("app/exports/reports/{$userid}/{$filename}");
+        $userId = auth()->id();
+        $path = storage_path("app/exports/reports/{$userId}/{$filename}");
 
         if (!file_exists($path)) {
             abort(404);
         }
 
-        return response()->download($path);
-    })->where('filename', '.*')->name('download.report');
+        // Очистка буфера перед отправкой файла (важно!)
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        return response()->streamDownload(function () use ($path) {
+            readfile($path);
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition' => 'attachment; filename="' . rawurlencode($filename) . '"',
+            'Content-Length' => filesize($path),
+            'Cache-Control' => 'no-cache, must-revalidate',
+            'Pragma' => 'no-cache',
+        ]);
+    })->where('filename', '.*')->middleware('auth')->name('download.report');
+
 });
 
 
