@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\FormEntry;
 use App\Models\FieldEntryValue;
+use App\Models\User;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Http\UploadedFile;
@@ -17,6 +18,34 @@ class FormEntryEdit extends Component
     public $templateFields;
     public $fieldValues = [];
     public $files = [];
+    public $comment;
+
+    public User $user;
+    public $showConfirmModal = false;
+    public $modalAction = null; // 'approve' | 'reject'
+    public $rejectionComment = '';
+
+    public function confirmAction(string $action)
+    {
+        $this->modalAction = $action;
+        $this->showConfirmModal = true;
+    }
+
+    public function executeAction()
+    {
+        if ($this->modalAction === 'approve') {
+            $this->entry->status = 'approved';
+            $this->entry->comment = $this->comment;
+        } elseif ($this->modalAction === 'reject') {
+            $this->entry->status = 'rejected';
+            $this->entry->comment = $this->rejectionComment;
+        }
+
+        $this->entry->save();
+        $this->showConfirmModal = false;
+        session()->flash('success', 'Статус достижения обновлен.');
+    }
+
 
     public function updated($property)
     {
@@ -87,12 +116,16 @@ class FormEntryEdit extends Component
             $existing->save();
         }
 
+        $this->entry->comment = $this->comment;
+
         session()->flash('success', 'Данные успешно обновлены.');
     }
 
 
     public function mount(FormEntry $entry)
     {
+        $this->user = User::find($entry->user_id);
+
         $this->entry = $entry->load([
             'form.template.fields.options',
             'fieldEntryValues'
@@ -113,6 +146,8 @@ class FormEntryEdit extends Component
                 $this->fieldValues[$field->id] = $raw;
             }
         }
+        $this->comment =  $this->entry->comment;
+
 
 
         //dd($this->templateFields);

@@ -6,6 +6,8 @@ namespace App\Livewire;
 use App\Models\Permission;
 use App\Models\Category;
 use App\Models\Department;
+use App\Services\ScientificReportExporter;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class Reports extends Component
@@ -15,6 +17,11 @@ class Reports extends Component
     public $activeTab = 'individual'; // вкладка по умолчанию
     public $selectedDepartment = null;
     public $departments = [];
+    public $dateFrom;
+    public $dateTo;
+    public $docxFilePath;
+    public string $downloadLink = '';
+
 
     public function mount()
     {
@@ -53,6 +60,8 @@ class Reports extends Component
 
     public function loadGroupedData($startDate, $endDate)
     {
+
+
         if ($this->activeTab === 'individual') {
             $userId = auth()->id();
         } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
@@ -62,6 +71,9 @@ class Reports extends Component
             $this->groupedData = [];
             return;
         }
+
+        $this->dateFrom = $startDate;
+        $this->dateTo = $endDate;
 
         $this->groupedData = Category::with(['forms' => function ($query) use ($startDate, $endDate, $userId) {
             $query->whereHas('entries', function ($q) use ($startDate, $endDate, $userId) {
@@ -98,7 +110,79 @@ class Reports extends Component
                     })->filter(fn($form) => $form['count'] > 0)
                 ];
             })->filter(fn($category) => !empty($category['forms']));
+
+
     }
+
+    public function getExportData(): array
+    {
+        $user = auth()->user();
+
+        $data = [
+            'position'    => $user->position ?? '',
+            'full_name'   => $user->name,
+            'department'  => $user->department->name ?? '',
+            'date_from'   => $this->dateFrom,
+            'date_to'     => $this->dateTo,
+            'hirsh'       => $user->hirsh ?? '',
+            'citations'   => $user->citations ?? '',
+            'sections'    => [],  // заполним далее
+        ];
+
+        foreach ($this->groupedData as $category) {
+            $forms = [];
+
+            foreach ($category['forms'] as $form) {
+                // Собирать все обоснования в одну строку
+                $justifications = collect($form['entries'])
+                    ->pluck('justification')
+                    ->filter()
+                    ->implode('; ');
+
+                $forms[] = [
+                    'name'          => $form['name'],
+                    'code'          => $form['slug'],    // либо 'code' если в groupedData так называется
+                    'points'        => $form['points'],
+                    'count'         => $form['count'],
+                    'total'         => $form['total'],
+                    'justification' => $justifications,
+                ];
+            }
+
+            if (!empty($forms)) {
+                $data['sections'][$category['category']] = $forms;
+            }
+        }
+
+        return $data;
+    }
+
+
+
+    public function exportIndividual()
+    {
+        $userid = auth()->id();
+        $exporter = new ScientificReportExporter();
+        $filename = $exporter->exportIndividual($this->getExportData());
+        $path = storage_path("app/exports/reports/{$userid}/{$filename}");
+
+        return response()->download($path, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ]);
+    }
+
+    public function exportDepartment()
+    {
+        $userid = auth()->id();
+        $exporter = new ScientificReportExporter();
+        $filename = $exporter->exportDepartment($this->getExportData());
+        $path = storage_path("app/exports/reports/{$userid}/{$filename}");
+
+        return response()->download($path, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ]);
+    }
+
 
     public function render()
     {

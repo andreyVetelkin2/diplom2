@@ -13,9 +13,9 @@
                             {{ $tpl->name }}
                         </div>
                         <button class="btn btn-danger btn-sm"
-                                wire:click.stop="deleteTemplate({{ $tpl->id }})"
+                                wire:click.stop="confirmDelete({{ $tpl->id }})"
                                 title="Удалить шаблон">
-                            <i class="fas bi-trash"></i>
+                        <i class="fas bi-trash"></i>
                         </button>
                     </li>
                 @endforeach
@@ -26,23 +26,39 @@
             </div>
         </div>
     </div>
+    <div class="modal fade @if($confirmingDelete) show d-block @endif" tabindex="-1" role="dialog"
+         style="@if($confirmingDelete) background-color: rgba(0, 0, 0, 0.5); @else display: none; @endif">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" wire:click="cancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить этот шаблон? Удаление приведет к удалению всех заполненых достижений, использующих этот шаблон.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" wire:click="cancelDelete">Отмена</button>
+                    <button type="button" class="btn btn-danger" wire:click="deleteConfirmed">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">Редактор шаблона</h5>
             </div>
-            <div class="w-100 d-flex justify-content-center">
-                <div wire:loading wire:target="selectTemplate, newTemplate">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            </div>
+
             <div class="card-body">
                 @if(session()->has('message'))
                     <div class="alert alert-success">{{ session('message') }}</div>
                 @endif
+                    @if(session()->has('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
 
                 <div class="form-group mb-3">
                     <label>Название шаблона</label>
@@ -52,7 +68,7 @@
                 </div>
 
                 @foreach($form->fields as $index => $field)
-                    <div class="card mb-3" wire:key="field-{{ $index }}">
+                    <div class="card mb-3" wire:key="field-{{ $field['id'] }}">
                         <div class="card-body">
                             <div class="form-row">
                                 <div class="row mb-3">
@@ -103,7 +119,7 @@
                                 <div class="mt-3" wire:key="options-{{ $index }}">
                                     <label class="mb-3">Элементы списка</label>
                                     @foreach($field['options'] as $optIndex => $opt)
-                                        <div class="form-row row mb-2" wire:key="option-{{ $index }}-{{ $optIndex }}">
+                                        <div class="form-row row mb-2" wire:key="option{{ $opt['id'] }}">
                                             <div class="col-5">
                                                 <input type="text" class="form-control" placeholder="Метка"
                                                        wire:model.defer="form.fields.{{ $index }}.options.{{ $optIndex }}.label">

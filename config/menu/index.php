@@ -17,6 +17,7 @@ return [
         'route' => 'reports',
         'active' => 'reports',
     ],
+
     [
         'label' => 'Загрузить достижение',
         'route' => 'upload',
@@ -27,9 +28,21 @@ return [
         'route' => 'templates',
         'active' => 'templates',
     ],
+
     [
         'label' => 'Формы',
         'route' => 'forms',
         'active' => 'forms',
     ],
+    [
+        'label' => 'Публикации',
+        'route' => 'author.prep',
+        'active' => 'author.prep',
+    ],
+    [
+        'label' => 'Scholar',
+        'route' => 'scholar',
+        'active' => 'scholar',
+    ],
+
 ];

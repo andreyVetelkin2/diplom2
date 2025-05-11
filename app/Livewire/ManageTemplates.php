@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Interfaces\FormTemplateServiceInterface;
 use App\Livewire\Forms\FormTemplateForm;
+use App\Models\FormTemplate;
 use Illuminate\Support\Arr;
 use Livewire\Component;
 use function Laravel\Prompts\alert;
@@ -13,6 +14,8 @@ class ManageTemplates extends Component
 {
     public $templates;
     public $selectedTemplateId;
+    public $confirmingDelete = false;
+    public $templateToDeleteId = null;
 
     public FormTemplateForm $form;
 
@@ -50,6 +53,7 @@ class ManageTemplates extends Component
     public function addField()
     {
         $this->form->fields[] = [
+            'id'     => '',
             'name'     => '',
             'label'    => '',
             'type'     => 'string',
@@ -66,6 +70,12 @@ class ManageTemplates extends Component
 
     public function deleteTemplate($id)
     {
+
+            $template = FormTemplate::find($id);
+            if ($template->forms){
+                session()->flash('error', 'Шаблон не может быть удален, так как некоторые формы используют его.');
+                return;
+            }
             $this->formTemplateService->deleteTemplate($id);
             $this->loadTemplates();
             session()->flash('message', 'Шаблон удален.');
@@ -73,7 +83,7 @@ class ManageTemplates extends Component
 
     public function addOption($fieldIndex)
     {
-        $this->form->fields[$fieldIndex]['options'][] = ['label' => '', 'value' => ''];
+        $this->form->fields[$fieldIndex]['options'][] = ['id'=>'', 'label' => '', 'value' => ''];
     }
 
     public function removeOption($fieldIndex, $optIndex)
@@ -95,6 +105,26 @@ class ManageTemplates extends Component
         session()->flash('message', 'Шаблон успешно сохранен.');
         $this->loadTemplates();
     }
+
+
+    public function confirmDelete($id)
+    {
+        $this->templateToDeleteId = $id;
+        $this->confirmingDelete = true;
+    }
+
+    public function cancelDelete()
+    {
+        $this->confirmingDelete = false;
+        $this->templateToDeleteId = null;
+    }
+
+    public function deleteConfirmed()
+    {
+        $this->deleteTemplate($this->templateToDeleteId);
+        $this->cancelDelete();
+    }
+
 
     public function render()
     {

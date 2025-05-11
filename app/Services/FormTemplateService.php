@@ -47,25 +47,67 @@ class FormTemplateService implements FormTemplateServiceInterface
 
     public function saveTemplate(?int $id, string $name, array $fields): void
     {
-        $template = $id ? FormTemplate::findOrFail($id) : new FormTemplate();
+        $template = $id ? FormTemplate::with('fields.options')->findOrFail($id) : new FormTemplate();
         $template->name = $name;
         $template->save();
 
-        $template->fields()->delete();
+        $existingFieldIds = $template->fields->pluck('id')->toArray();
+        $incomingFieldIds = [];
 
         foreach ($fields as $fieldData) {
-            $field = $template->fields()->create([
-                'name'     => $fieldData['name'],
-                'label'    => $fieldData['label'],
-                'type'     => $fieldData['type'],
-                'required' => $fieldData['required'],
-            ]);
+            if (isset($fieldData['id']) && $fieldData['id']) {
+                // Обновление существующего поля
+                $field = $template->fields()->find($fieldData['id']);
+                if ($field) {
+                    $field->update([
+                        'name'     => $fieldData['name'],
+                        'label'    => $fieldData['label'],
+                        'type'     => $fieldData['type'],
+                        'required' => $fieldData['required'],
+                    ]);
+                    $incomingFieldIds[] = $field->id;
+                }
+            } else {
+                // Новое поле
+                $field = $template->fields()->create($fieldData);
+                $incomingFieldIds[] = $field->id;
+            }
 
-            if ($fieldData['type'] === 'list' && !empty($fieldData['options'])) {
-                $field->options()->createMany($fieldData['options']);
+            // Работа с опциями (только если тип "list")
+            if ($fieldData['type'] === 'list') {
+                $existingOptions = $field->options()->pluck('id')->toArray();
+                $incomingOptions = [];
+
+                foreach ($fieldData['options'] as $optionData) {
+                    if (isset($optionData['id'])&& $optionData['id']) {
+                        $option = $field->options()->find($optionData['id']);
+                        if ($option) {
+                            $option->update([
+                                'label' => $optionData['label'],
+                                'value' => $optionData['value'],
+                            ]);
+                            $incomingOptions[] = $option->id;
+                        }
+                    } else {
+                        $newOption = $field->options()->create([
+                            'label' => $optionData['label'],
+                            'value' => $optionData['value'],
+                        ]);
+                        $incomingOptions[] = $newOption->id;
+                    }
+                }
+
+//                // Удаление устаревших опций
+//                $toDeleteOptions = array_diff($existingOptions, $incomingOptions);
+//                $field->options()->whereIn('id', $toDeleteOptions)->delete();
             }
         }
+
+        // Удаление удалённых полей
+        $toDeleteFields = array_diff($existingFieldIds, $incomingFieldIds);
+        $template->fields()->whereIn('id', $toDeleteFields)->delete();
     }
+
 
     public function deleteTemplate(int $id): void
     {

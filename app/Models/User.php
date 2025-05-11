@@ -22,7 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'department_id'
+        'department_id',
+        'citations',
+        'hirsh',
+        'position',
     ];
 
     /**
@@ -49,4 +52,8 @@ class User extends Authenticatable
         return $this->belongsTo(Department::class);
     }
 
+     public function author()
+        {
+            return $this->hasOne(Author::class);
+        }
 }
