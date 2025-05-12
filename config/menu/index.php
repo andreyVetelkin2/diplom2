@@ -13,6 +13,18 @@ return [
         'active' => 'profile',
     ],
     [
+        'label' => 'Шаблоны',
+        'route' => 'templates',
+        'active' => 'templates',
+        'permission' => 'template-edit'
+    ],
+    [
+        'label' => 'Формы',
+        'route' => 'forms',
+        'active' => 'forms',
+        'permission' => 'form-edit',
+    ],
+    [
         'label' => 'Отчеты',
         'route' => 'reports',
         'active' => 'reports',

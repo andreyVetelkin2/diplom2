@@ -40,43 +40,45 @@
             </div>
         @endif
 
-        {{-- Отчёты по кафедре --}}
-        <h6 class="fw-bold text-secondary mb-3">🏫 Отчёты по кафедре</h6>
+        @can('archive-report-on-the-departments')
+            {{-- Отчёты по кафедре --}}
+            <h6 class="fw-bold text-secondary mb-3">🏫 Отчёты по кафедре</h6>
 
-        @if(count($departmentReports) === 0)
-            <div class="alert alert-info py-2 px-3 small">Нет сгенерированных отчётов по кафедре.</div>
-        @else
-            <div class="table-responsive">
-                <table class="table table-hover align-middle table-bordered small">
-                    <thead class="table-light">
-                    <tr>
-                        <th>📄 Файл</th>
-                        <th>📅 Дата создания</th>
-                        <th class="text-end"><i class="bi bi-download"></i> Скачать</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($departmentReports as $r)
+            @if(count($departmentReports) === 0)
+                <div class="alert alert-info py-2 px-3 small">Нет сгенерированных отчётов по кафедре.</div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle table-bordered small">
+                        <thead class="table-light">
                         <tr>
-                            <td class="text-truncate" style="max-width: 200px;">{{ $r['name'] }}</td>
-                            <td>{{ $r['date'] }}</td>
-                            <td class="text-end">
-                                @can('report-on-the-departments')
-                                    <a href="{{ route('download.report', ['filename' => $r['name']]) }}"
-                                       class="btn btn-sm btn-outline-success d-flex justify-content-center align-items-center gap-1">
-                                        <div class="">
-                                             Скачать
-                                        </div>
-                                    </a>
-                                @else
-                                    <span class="text-muted">Недоступно</span>
-                                @endcan
-                            </td>
+                            <th>📄 Файл</th>
+                            <th>📅 Дата создания</th>
+                            <th class="text-end"><i class="bi bi-download"></i> Скачать</th>
                         </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
+                        </thead>
+                        <tbody>
+                        @foreach($departmentReports as $r)
+                            <tr>
+                                <td class="text-truncate" style="max-width: 200px;">{{ $r['name'] }}</td>
+                                <td>{{ $r['date'] }}</td>
+                                <td class="text-end">
+                                    @can('report-on-the-departments')
+                                        <a href="{{ route('download.report', ['filename' => $r['name']]) }}"
+                                           class="btn btn-sm btn-outline-success d-flex justify-content-center align-items-center gap-1">
+                                            <div class="">
+                                                Скачать
+                                            </div>
+                                        </a>
+                                    @else
+                                        <span class="text-muted">Недоступно</span>
+                                    @endcan
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        @endcan
     </div>
 </div>
