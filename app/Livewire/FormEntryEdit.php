@@ -20,6 +20,8 @@ class FormEntryEdit extends Component
     public $files = [];
     public $comment;
 
+    public $date_achievement;
+
     public User $user;
     public $showConfirmModal = false;
     public $modalAction = null; // 'approve' | 'reject'
@@ -117,7 +119,9 @@ class FormEntryEdit extends Component
         }
 
         $this->entry->comment = $this->comment;
-
+        $this->entry->status = 'review';
+        $this->entry->date_achievement = $this->date_achievement;
+        $this->entry->save();
         session()->flash('success', 'Данные успешно обновлены.');
     }
 
@@ -130,7 +134,7 @@ class FormEntryEdit extends Component
             'form.template.fields.options',
             'fieldEntryValues'
         ]);
-
+         $this->date_achievement = $this->entry->date_achievement;
         $this->templateFields = $this->entry->form->template->fields->sortBy('sort_order');
 
         // Заполнение текущих значений

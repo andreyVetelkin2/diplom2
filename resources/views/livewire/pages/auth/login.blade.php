@@ -89,7 +89,7 @@ new #[Layout('layouts.guest')] class extends Component
                     <!--begin::Row-->
                     <div class="row">
                         <div class="col-8">
-                            <div class="form-check">
+                            <div class="form-check form-switch ">
                                 <input wire:model="form.remember" id="remember" class="form-check-input" type="checkbox" value="">
                                 <label class="form-check-label" for="flexCheckDefault"> Запомнить меня </label>
                             </div>
@@ -97,7 +97,7 @@ new #[Layout('layouts.guest')] class extends Component
                         <!-- /.col -->
                         <div class="col-4">
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Войти</button>
+                                <button type="submit" class="btn btn-outline-primary">Войти</button>
                             </div>
                         </div>
                         <!-- /.col -->

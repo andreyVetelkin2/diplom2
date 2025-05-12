@@ -28,17 +28,7 @@ return [
         'route' => 'upload',
         'active' => 'upload',
     ],
-    [
-        'label' => 'Шаблоны',
-        'route' => 'templates',
-        'active' => 'templates',
-    ],
 
-    [
-        'label' => 'Формы',
-        'route' => 'forms',
-        'active' => 'forms',
-    ],
     [
         'label' => 'Публикации',
         'route' => 'author.prep',

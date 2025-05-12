@@ -61,7 +61,7 @@
 
                             <div class="form-group row">
                                 <div class="col-sm-9 offset-sm-3">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-outline-primary">
                                         {{ __('Сохранить') }}
                                     </button>
 

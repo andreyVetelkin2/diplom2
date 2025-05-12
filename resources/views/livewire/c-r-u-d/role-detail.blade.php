@@ -41,7 +41,7 @@
             </div>
 
             <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="submit" class="btn btn-outline-primary">Сохранить</button>
             </div>
         </form>
     </div>

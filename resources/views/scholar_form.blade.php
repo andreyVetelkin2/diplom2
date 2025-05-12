@@ -13,7 +13,7 @@
                 <label for="author_name" class="form-label">Имя преподавателя:</label>
                 <input type="text" class="form-control" id="author_name" name="author_name" required>
             </div>
-            <button type="submit" class="btn btn-primary">Найти</button>
+            <button type="submit" class="btn btn-outline-primary">Найти</button>
         </form>
     </div>
 </body>

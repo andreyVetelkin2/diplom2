@@ -34,7 +34,7 @@ class DateFilter extends Component
     {
         $this->startDate = now()->subDays($days)->format('Y-m-d');
         $this->endDate = now()->format('Y-m-d');
-        $this->applyFilters(); // Автоматически применяем фильтры при быстром выборе
+        //$this->applyFilters(); // Автоматически применяем фильтры при быстром выборе
     }
 
     public function render()

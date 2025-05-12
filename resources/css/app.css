@@ -20,6 +20,9 @@
 .pagination .page-item.disabled {
     @apply text-gray-400 cursor-not-allowed;
 }
+.pagination .page-item {
+    padding: 0;
+}
 
 .card-header::after, .card-body::after, .card-footer::after {
     display: none!important;

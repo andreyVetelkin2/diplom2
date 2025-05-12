@@ -12,7 +12,7 @@
                         <div wire:click="selectTemplate({{ $tpl->id }})" style="cursor: pointer; flex-grow: 1;">
                             {{ $tpl->name }}
                         </div>
-                        <button class="btn btn-danger btn-sm"
+                        <button class="btn btn-outline-danger btn-sm"
                                 wire:click.stop="confirmDelete({{ $tpl->id }})"
                                 title="Удалить шаблон">
                         <i class="fas bi-trash"></i>
@@ -21,7 +21,7 @@
                 @endforeach
             </ul>
             <div class="card-footer">
-                <button class="btn btn-sm btn-success float-right" wire:click="newTemplate">Создать новый шаблон
+                <button class="btn btn-sm btn-outline-success float-right" wire:click="newTemplate">Создать новый шаблон
                 </button>
             </div>
         </div>
@@ -39,7 +39,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" wire:click="cancelDelete">Отмена</button>
-                    <button type="button" class="btn btn-danger" wire:click="deleteConfirmed">Удалить</button>
+                    <button type="button" class="btn btn-outline-danger" wire:click="deleteConfirmed">Удалить</button>
                 </div>
             </div>
         </div>
@@ -152,7 +152,7 @@
                 @endforeach
 
                 <button class="btn btn-outline-secondary" wire:click="addField">Добавить поле</button>
-                <button class="btn btn-primary float-right" wire:click="saveTemplate">Сохранить шаблон</button>
+                <button class="btn btn-outline-primary float-right" wire:click="saveTemplate">Сохранить шаблон</button>
             </div>
         </div>
     </div>

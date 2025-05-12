@@ -23,7 +23,7 @@
                                 @enderror
                                 <small class="text-muted">ID можно найти в URL профиля автора на Google Scholar</small>
                             </div>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-outline-primary">
                                 <i class="fas fa-search me-2"></i> Найти по ID
                             </button>
                         </form>
@@ -39,7 +39,7 @@
                           placeholder="Например: Иванов Иван"
                           required>
                </div>
-               <button type="submit" class="btn btn-primary">
+               <button type="submit" class="btn btn-outline-primary">
                    <i class="fas fa-user me-2"></i> Найти по имени
                </button>
            </form>
