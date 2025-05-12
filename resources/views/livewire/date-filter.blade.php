@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary w-100">
+                        <button type="submit" class="btn btn-outline-primary w-100">
                             <i class="bi bi-funnel me-2"></i>Применить
                         </button>
                     </div>

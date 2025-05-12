@@ -37,7 +37,7 @@
                     </div>
                 @endif
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
+                    <button type="submit" class="btn btn-outline-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
                     @if ($editMode)
                         <button type="button" class="btn btn-secondary" wire:click="resetFields">Отмена</button>
                     @endif
@@ -65,7 +65,7 @@
                         <td>{{ $user->department?->name }}</td>
                         <td>
                             <button wire:click="edit({{ $user->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-danger"
+                            <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-outline-danger"
                                     onclick="return confirm('Удалить пользователя?')">🗑</button>
                         </td>
                     </tr>

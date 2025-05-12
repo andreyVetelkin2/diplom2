@@ -43,12 +43,6 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 //        Route::view('profile', 'profile')
 //            ->name('profile');
 
-        Route::get('templates', ManageTemplates::class)
-            ->name('templates');
-
-        Route::get('forms', ManageForms::class)
-            ->name('forms');
-
         Route::get('reports', Reports::class)
             ->name('reports');
 
@@ -67,6 +61,11 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
         Route::get('/', fn () => redirect()->route('index'))->name('admin');
 
+        Route::get('templates', ManageTemplates::class)
+            ->name('templates');
+
+        Route::get('forms', ManageForms::class)
+            ->name('forms');
 
         Route::prefix('users')->group(function() {
             Route::get('/', Users::class)

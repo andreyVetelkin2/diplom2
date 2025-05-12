@@ -4,20 +4,51 @@
         <div class="card-header">
             <div class="card-title">Информация о пользователе</div>
         </div>
-        <div class="card-body">
-            <div class="mb-3">
-                <label class="form-label">Имя</label>
-                <input type="text" class="form-control" value="{{ $user->name }}" disabled>
+
+        <form wire:submit.prevent="updateUserInfo">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Имя</label>
+                    <input type="text" class="form-control" wire:model.defer="user_field.name">
+                    @error('user.name') <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email адрес</label>
+                    <input type="email" class="form-control" wire:model.defer="user_field.email">
+                    @error('user.email') <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Должность</label>
+                    <input type="text" class="form-control" wire:model.defer="user_field.position">
+                    @error('user.position') <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Кафедра</label>
+                    <select class="form-select" wire:model.defer="user_field.department_id">
+                        <option value="">Выберите кафедру</option>
+                        @foreach ($departments as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                    @error('user.department') <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+
+                @if (session()->has('success_info'))
+                    <div class="alert alert-success mt-3">
+                        {{ session('success_info') }}
+                    </div>
+                @endif
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Email адрес</label>
-                <input type="email" class="form-control" value="{{ $user->email }}" disabled>
-                <div class="form-text">Мы никогда не делимся email'ом</div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-outline-primary">Сохранить информацию</button>
             </div>
-        </div>
-
+        </form>
     </div>
+
 
     <div class="card card-primary card-outline mb-4">
         <div class="card-header">
@@ -49,7 +80,7 @@
             </div>
 
             <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Обновить пароль</button>
+                <button type="submit" class="btn btn-outline-primary">Обновить пароль</button>
             </div>
         </form>
     </div>
@@ -90,7 +121,7 @@
             </div>
 
             <div class="card-footer">
-                <button type="submit" class="btn btn-success">Сохранить роли и права</button>
+                <button type="submit" class="btn btn-outline-success">Сохранить роли и права</button>
             </div>
         </form>
     </div>

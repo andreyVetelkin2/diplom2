@@ -1,118 +1,82 @@
-<div class="container-fluid">
-    {{-- Блок информации и смены пароля --}}
-    <div class="card card-primary card-outline mb-4">
-        <div class="card-header">
-            <div class="card-title">Информация о пользователе</div>
+
+<div class="container py-4">
+    <!-- Блок информации о пользователе -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="bi bi-person-circle me-2 text-primary"></i>Профиль пользователя</h5>
         </div>
         <div class="card-body">
-            <!-- Имя пользователя -->
+            <!-- Имя -->
             <div class="mb-3">
                 <label class="form-label">Имя</label>
-                <p>Текущее: {{$user->name}}</p>
-                <input type="text" class="form-control" wire:model="username">
+                <input type="text" class="form-control" wire:model="username" placeholder="Введите имя">
+                <div class="form-text text-muted">Текущее: {{ $user->name }}</div>
             </div>
 
-            <!-- Email (или Логин) пользователя -->
+            <!-- Email -->
             <div class="mb-3">
                 <label class="form-label">Email</label>
-                <p>Текущее: {{$user->email}}</p>
-                <input type="email" class="form-control" wire:model="useremail">
-                <div class="form-text">Email — это ваш логин.</div>
+                <input type="email" class="form-control" wire:model="useremail" placeholder="Введите email">
+                <div class="form-text text-muted">Текущее: {{ $user->email }} — это ваш логин</div>
             </div>
 
+            <!-- Должность -->
             <div class="mb-3">
                 <label class="form-label">Должность</label>
-                <p>Текущее: {{$user->position}}</p>
-                <input type="text" class="form-control" wire:model="userpos">
+                <input type="text" class="form-control" wire:model="userpos" placeholder="Введите должность">
+                <div class="form-text text-muted">Текущее: {{ $user->position }}</div>
             </div>
 
             @if (session()->has('success'))
-                <div class="alert alert-success mt-3">
-                    {{ session('success') }}
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-        @endif
+            @endif
 
-            <!-- Кнопка для сохранения изменений -->
-            <div class="mb-3">
-                <button wire:click="updateProfile" class="btn btn-primary">Сохранить изменения</button>
+            <div class="d-grid mt-4">
+                <button wire:click="updateProfile" class="btn btn-outline-primary">
+                    <i class="bi bi-save me-1"></i> Сохранить изменения
+                </button>
             </div>
         </div>
-
     </div>
 
-    <div class="card card-primary card-outline mb-4">
-        <div class="card-header">
-            <div class="card-title">Информация о пользователе</div>
+    <!-- Блок смены пароля -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="bi bi-shield-lock me-2 text-danger"></i>Смена пароля</h5>
         </div>
 
         <form wire:submit.prevent="updatePassword">
             <div class="card-body">
-
-                <h6>Смена пароля</h6>
-
                 <div class="mb-3">
                     <label class="form-label">Новый пароль</label>
-                    <input type="password" wire:model="password" class="form-control">
-                    @error('password') <small class="text-danger">{{ $message }}</small> @enderror
+                    <input type="password" wire:model="password" class="form-control" placeholder="Введите новый пароль">
+                    @error('password') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Подтверждение пароля</label>
-                    <input type="password" wire:model="password_confirmation" class="form-control">
-                    @error('password_confirmation') <small class="text-danger">{{ $message }}</small> @enderror
+                    <input type="password" wire:model="password_confirmation" class="form-control" placeholder="Подтвердите пароль">
+                    @error('password_confirmation') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 @if (session()->has('success'))
-                    <div class="alert alert-success mt-3">
-                        {{ session('success') }}
+                    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
             </div>
 
-            <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Обновить пароль</button>
+            <div class="card-footer bg-white border-top-0">
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-arrow-repeat me-1"></i> Обновить пароль
+                    </button>
+                </div>
             </div>
         </form>
     </div>
-
-    {{-- Блок назначения ролей и прав --}}
-    {{--    <div class="card card-secondary card-outline">--}}
-    {{--        <div class="card-header">--}}
-    {{--            <div class="card-title">Роли и права</div>--}}
-    {{--        </div>--}}
-
-    {{--        <form wire:submit.prevent="updateRolesAndPermissions">--}}
-    {{--            <div class="card-body">--}}
-    {{--                <div class="mb-4">--}}
-    {{--                    <label class="form-label">Роли</label>--}}
-    {{--                    <select wire:model="selectedRoles" multiple class="form-control" size="5">--}}
-    {{--                        @foreach ($allRoles as $role)--}}
-    {{--                            <option value="{{ $role->id }}">{{ $role->name }}</option>--}}
-    {{--                        @endforeach--}}
-    {{--                    </select>--}}
-    {{--                    @error('selectedRoles') <small class="text-danger">{{ $message }}</small> @enderror--}}
-    {{--                </div>--}}
-
-    {{--                <div class="mb-4">--}}
-    {{--                    <label class="form-label">Права</label>--}}
-    {{--                    <select wire:model="selectedPermissions" multiple class="form-control" size="10">--}}
-    {{--                        @foreach ($allPermissions as $permission)--}}
-    {{--                            <option value="{{ $permission->id }}">{{ $permission->name }}</option>--}}
-    {{--                        @endforeach--}}
-    {{--                    </select>--}}
-    {{--                    @error('selectedPermissions') <small class="text-danger">{{ $message }}</small> @enderror--}}
-    {{--                </div>--}}
-
-    {{--                @if (session()->has('success_roles'))--}}
-    {{--                    <div class="alert alert-success mt-3">--}}
-    {{--                        {{ session('success_roles') }}--}}
-    {{--                    </div>--}}
-    {{--                @endif--}}
-    {{--            </div>--}}
-
-    {{--            <div class="card-footer">--}}
-    {{--                <button type="submit" class="btn btn-success">Сохранить роли и права</button>--}}
-    {{--            </div>--}}
-    {{--        </form>--}}
-    {{--    </div>--}}
 </div>

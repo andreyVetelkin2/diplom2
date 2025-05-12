@@ -123,7 +123,7 @@ new #[Layout('layouts.guest')] class extends Component
                         <!-- /.col -->
                         <div class="col-4">
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                                <button type="submit" class="btn btn-outline-primary">Зарегистрироваться</button>
                             </div>
                         </div>
                         <!-- /.col -->

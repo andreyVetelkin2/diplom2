@@ -46,8 +46,10 @@
 
         <!--begin::App Content-->
         <div class="app-content">
-            {{ $slot }}
+            <div class="container my-5">
+                {{ $slot }}
 
+            </div>
         </div>
         <!--end::App Content-->
     </main>
@@ -60,7 +62,7 @@
         <!--begin::Copyright-->
         <strong>
             Copyright &copy; 2025&nbsp;
-{{--            <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.--}}
+            {{--            <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.--}}
         </strong>
         All rights reserved.
         <!--end::Copyright-->
