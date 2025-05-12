@@ -39,7 +39,7 @@
                 <div class="col-md-12">
                     <button type="submit" class="btn btn-outline-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
                     @if ($editMode)
-                        <button type="button" class="btn btn-secondary" wire:click="resetFields">Отмена</button>
+                        <button type="button" class="btn btn-outline-secondary" wire:click="resetFields">Отмена</button>
                     @endif
                 </div>
             </form>

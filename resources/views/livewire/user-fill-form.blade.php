@@ -13,7 +13,7 @@
                 @foreach($categories as $cat)
                     <div class="accordion-item mb-2 shadow-sm border-0 rounded">
                         <h2 class="accordion-header" id="heading{{ $cat->id }}">
-                            <button class="accordion-button collapsed bg-light fw-semibold text-dark"
+                            <button class="accordion-button collapsed bg-white  fw-semibold text-dark"
                                     type="button"
                                     data-bs-toggle="collapse"
                                     data-bs-target="#cat{{ $cat->id }}"

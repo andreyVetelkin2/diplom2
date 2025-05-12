@@ -1,9 +1,9 @@
 <!--begin::Sidebar-->
-<aside  class="app-sidebar bg-light" data-bs-theme="light">
+<aside  class="app-sidebar bg-white" data-bs-theme="light">
     <!--begin::Sidebar Brand-->
-    <div class="sidebar-brand">
+    <div class="sidebar-brand ">
         <!--begin::Brand Link-->
-        <a href="/" class="brand-link">
+        <a href="/" class="brand-link ">
             <!--begin::Brand Text-->
             <span class="brand-text fw-light">Административная панель</span>
             <!--end::Brand Text-->
