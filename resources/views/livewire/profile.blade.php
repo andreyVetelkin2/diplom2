@@ -8,15 +8,35 @@
                     <p class="text-muted mb-3">{{ $user->position }}</p>
 
                     <ul class="list-group list-group-flush text-start mb-3">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Рейтинг</span>
-                            <span class="fw-bold">{{ $ratingPoints }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Публикации</span>
-                            <span class="fw-bold">{{ $publicationCount }}</span>
-                        </li>
+                        @if($ratingPoints )
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Рейтинг</span>
+                                <span class="fw-bold">{{ $ratingPoints }}</span>
+                            </li>
+                        @endif
+
+                        @if($publicationCount )
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Публикации</span>
+                                <span class="fw-bold">{{ $publicationCount }}</span>
+                            </li>
+                        @endif
+
+                        @if($user->citations )
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Количество цитирований</span>
+                                <span class="fw-bold">{{ $user->citations }}</span>
+                            </li>
+                        @endif
+
+                        @if($user->hirsh)
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Индекс Хирша</span>
+                                <span class="fw-bold">{{ $user->hirsh }}</span>
+                            </li>
+                        @endif
                     </ul>
+
 
                     <a href="{{ route('profile.changer', ['user' => $user->id]) }}" class="btn btn-outline-primary w-100 rounded-pill">
                         ✏️ Изменить профиль
