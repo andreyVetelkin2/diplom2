@@ -38,7 +38,7 @@
                     <p>Вы уверены, что хотите удалить этот шаблон? Удаление приведет к удалению всех заполненых достижений, использующих этот шаблон.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" wire:click="cancelDelete">Отмена</button>
+                    <button type="button" class="btn btn-outline-secondary" wire:click="cancelDelete">Отмена</button>
                     <button type="button" class="btn btn-outline-danger" wire:click="deleteConfirmed">Удалить</button>
                 </div>
             </div>

@@ -108,7 +108,7 @@
                     <button type="submit" class="btn btn-outline-primary">
                         Сохранить
                     </button>
-                    <a href="javascript:history.back()" class="btn btn-secondary">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
                         Отмена
                     </a>
                     @can('manage')
@@ -150,7 +150,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" wire:click="$set('showConfirmModal', false)">
+                        <button type="button" class="btn btn-outline-secondary" wire:click="$set('showConfirmModal', false)">
                             Отмена
                         </button>
                         <button type="button" class="btn btn-outline-primary" wire:click="executeAction">
