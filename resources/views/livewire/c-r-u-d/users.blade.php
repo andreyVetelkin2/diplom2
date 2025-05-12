@@ -17,6 +17,19 @@
                     <input type="email" class="form-control" placeholder="Email" wire:model.defer="form.email">
                     @error('form.email') <span class="error">{{ $message }}</span> @enderror
                 </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Должность" wire:model.defer="form.position">
+                    @error('form.position') <span class="error">{{ $message }}</span> @enderror
+                </div>
+                <div class="col-md-6">
+                    <select class="form-select" wire:model.defer="form.department_id">
+                        <option value="">Выберите кафедру</option>
+                        @foreach ($departments as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                    @error('form.department_id') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
                 @if (!$editMode)
                     <div class="col-md-4">
                         <input type="password" class="form-control" placeholder="Пароль" wire:model.defer="form.password">
@@ -24,9 +37,9 @@
                     </div>
                 @endif
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
+                    <button type="submit" class="btn btn-outline-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
                     @if ($editMode)
-                        <button type="button" class="btn btn-secondary" wire:click="resetFields">Отмена</button>
+                        <button type="button" class="btn btn-outline-secondary" wire:click="resetFields">Отмена</button>
                     @endif
                 </div>
             </form>
@@ -36,7 +49,9 @@
                 <tr>
                     <th style="width: 10px">ID</th>
                     <th>Имя</th>
+                    <th>Должность</th>
                     <th>Email</th>
+                    <th>Кафедра</th>
                     <th style="width: 120px">Действия</th>
                 </tr>
                 </thead>
@@ -45,10 +60,12 @@
                     <tr class="align-middle">
                         <td>{{ $user->id }}</td>
                         <td><a href="{{ route('user-detail', $user->id) }}">{{ $user->name }}</a></td>
+                        <td>{{ $user->position }}</td>
                         <td>{{ $user->email }}</td>
+                        <td>{{ $user->department?->name }}</td>
                         <td>
                             <button wire:click="edit({{ $user->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-danger"
+                            <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-outline-danger"
                                     onclick="return confirm('Удалить пользователя?')">🗑</button>
                         </td>
                     </tr>

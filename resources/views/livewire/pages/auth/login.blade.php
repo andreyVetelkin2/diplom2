@@ -89,7 +89,7 @@ new #[Layout('layouts.guest')] class extends Component
                     <!--begin::Row-->
                     <div class="row">
                         <div class="col-8">
-                            <div class="form-check">
+                            <div class="form-check form-switch ">
                                 <input wire:model="form.remember" id="remember" class="form-check-input" type="checkbox" value="">
                                 <label class="form-check-label" for="flexCheckDefault"> Запомнить меня </label>
                             </div>
@@ -97,7 +97,7 @@ new #[Layout('layouts.guest')] class extends Component
                         <!-- /.col -->
                         <div class="col-4">
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Войти</button>
+                                <button type="submit" class="btn btn-outline-primary">Войти</button>
                             </div>
                         </div>
                         <!-- /.col -->
@@ -106,11 +106,11 @@ new #[Layout('layouts.guest')] class extends Component
                 </form>
 
                 <!-- /.social-auth-links -->
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>
-                        {{ __('Забыли пароль?') }}
-                    </a>
-                @endif
+{{--                @if (Route::has('password.request'))--}}
+{{--                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>--}}
+{{--                        {{ __('Забыли пароль?') }}--}}
+{{--                    </a>--}}
+{{--                @endif--}}
                 <p class="mb-0">
                     <a href="{{route('register')}}" class="text-center"> Зарегистрироваться </a>
                 </p>

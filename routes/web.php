@@ -1,12 +1,20 @@
 <?php
 
+use App\Livewire\CRUD\Departments;
 use App\Livewire\CRUD\Permissions;
 use App\Livewire\CRUD\RoleDetail;
 use App\Livewire\CRUD\Roles;
 use App\Livewire\CRUD\UserDetail;
 use App\Livewire\CRUD\Users;
+use App\Livewire\ManageForms;
+use App\Livewire\ManagerCabinet;
+use App\Livewire\ManageTemplates;
+use App\Livewire\Reports;
+use App\Livewire\UserFillForm;
+use App\Livewire\CRUD\Institutes;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,22 +37,35 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
         Route::view('/', 'index')
             ->name('index');
 
-        Route::view('upload', 'upload')
+        Route::get('upload', UserFillForm::class)
             ->name('upload');
 
-        Route::view('profile', 'profile')
-            ->name('profile');
+//        Route::view('profile', 'profile')
+//            ->name('profile');
 
-        Route::view('templates', 'templates')
-            ->name('templates');
+        Route::get('reports', Reports::class)
+            ->name('reports');
 
-        Route::view('forms', 'forms')
-            ->name('forms');
+        Route::get('reports-archive', \App\Livewire\ReportArchive::class)
+            ->name('reports-archive');
+    });
+
+
+    Route::middleware('role:,manage')->group(function (){
+        Route::get('/manager-cabinet', ManagerCabinet::class)
+            ->name('manager-cabinet');
     });
 
 
     Route::middleware('role:admin')->prefix('admin')->group(function() {//префикс добавляется так как оба маршрута лежат по пути /admin/../
 
+        Route::get('/', fn () => redirect()->route('index'))->name('admin');
+
+        Route::get('templates', ManageTemplates::class)
+            ->name('templates');
+
+        Route::get('forms', ManageForms::class)
+            ->name('forms');
 
         Route::prefix('users')->group(function() {
             Route::get('/', Users::class)
@@ -59,6 +80,18 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 
         });
 
+        Route::prefix('departments')->group(function() {
+            Route::get('/', Departments::class)
+                ->name('departments');
+
+        });
+
+        Route::prefix('institutes')->group(function() {
+            Route::get('/', Institutes::class)
+                ->name('institutes');
+
+        });
+
         Route::prefix('roles')->group(function() {
             Route::get('/', Roles::class)
                 ->name('roles');
@@ -67,9 +100,38 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
         });
 
     });
+
+
+
+    Route::get('/download-report/{filename}', function ($filename) {
+        $userId = auth()->id();
+        $path = storage_path("app/exports/reports/{$userId}/{$filename}");
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        // Очистка буфера перед отправкой файла (важно!)
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        return response()->streamDownload(function () use ($path) {
+            readfile($path);
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition' => 'attachment; filename="' . rawurlencode($filename) . '"',
+            'Content-Length' => filesize($path),
+            'Cache-Control' => 'no-cache, must-revalidate',
+            'Pragma' => 'no-cache',
+        ]);
+    })->where('filename', '.*')->middleware('auth')->name('download.report');
+
 });
+
 
 
 
 require __DIR__.'/web2.php';
 require __DIR__.'/auth.php';
+require __DIR__.'/scholar.php';

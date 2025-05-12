@@ -2,6 +2,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\Features\SupportValidation\BaseValidate;
 use Livewire\WithFileUploads; // Add this trait
 use App\Models\Category;
 use App\Models\Form;
@@ -9,6 +10,7 @@ use App\Models\FormEntry;
 use App\Models\FieldEntryValue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Validate;
 
 class UserFillForm extends Component
 {
@@ -18,7 +20,12 @@ class UserFillForm extends Component
     public ?Form $selectedForm = null;
     public Collection $templateFields;
     public array $fieldValues = [];
+
+    #[Validate('required|date')]
+    public $dateAchievement;
+
     public array $rows = [];
+    public array $files = [];
 
     protected function rules(): array
     {
@@ -78,27 +85,30 @@ class UserFillForm extends Component
         }
     }
 
+    private function resetForm(): void
+    {
+        $this->selectedForm = null;
+        $this->templateFields = collect();
+        $this->fieldValues = [];
+        $this->rows = [];
+    }
+
     public function addRow(): void
     {
-
         $this->validate();
-        //TODO улучшить сохранение файлов, продумать структуру папок (может называть их по названию пользователя), сохранять оригинальное название
-        $rowValues = $this->fieldValues;
+
+        // Сохраняем файлы во временное хранилище компонента
         foreach ($this->templateFields as $field) {
             if ($field->type === 'file' && isset($this->fieldValues[$field->id])) {
-                $file = $this->fieldValues[$field->id];
-                $path = $file->store('uploads', 'public'); // Store in storage/uploads
-                $rowValues[$field->id] = [
-                    'path' => $path,
-                    'type' => $file->getClientMimeType(),
-                ];
+                $this->files[] = $this->fieldValues[$field->id];
             }
         }
 
-        $this->rows[] = $rowValues;
+        $this->rows[] = $this->fieldValues;
         $this->resetFieldValues();
         $this->resetErrorBag();
     }
+
 
     public function submit(): void
     {
@@ -107,20 +117,41 @@ class UserFillForm extends Component
             return;
         }
 
-        foreach ($this->rows as $row) {
+        foreach ($this->rows as $index => $row) {
             $entry = FormEntry::create([
                 'form_template_id' => $this->selectedForm->form_template_id,
                 'user_id' => auth()->id(),
+                'form_id' => $this->selectedForm->id,
+                'status' => 'review',
+                'date_achievement' => $this->dateAchievement,
             ]);
 
             foreach ($this->templateFields as $field) {
                 $value = $row[$field->id] ?? '';
-                if ($field->type === 'file' && is_array($value)) {
+
+                if ($field->type === 'file' && isset($this->files[$index])) {
+                    $file = $this->files[$index];
+                    $originalName = $file->getClientOriginalName();
+
+                    // Генерируем уникальное имя файла для избежания конфликтов
+                    $fileName = $this->generateUniqueFileName(
+                        'uploads/' . auth()->id(),
+                        $originalName
+                    );
+
+                    // Сохраняем с оригинальным именем
+                    $path = $file->storeAs(
+                        'uploads/' . auth()->id(),
+                        $fileName,
+                        'public'
+                    );
+
                     FieldEntryValue::create([
                         'form_entry_id' => $entry->id,
                         'template_field_id' => $field->id,
-                        'value' => 'storage/'.$value['path'],
-                        'file_type' => $value['type'], // Store file type
+                        'value' => 'storage/' . $path,
+                        'original_name' => $originalName,
+                        'file_type' => $file->getClientMimeType(),
                     ]);
                 } else {
                     FieldEntryValue::create([
@@ -132,11 +163,23 @@ class UserFillForm extends Component
             }
         }
 
-        session()->flash('success', 'Ваши результаты формы успешно сохранены.');
-        $this->selectedForm = null;
-        $this->templateFields = collect();
-        $this->fieldValues = [];
-        $this->rows = [];
+        session()->flash('success', 'Данные сохранены успешно.');
+        $this->resetForm();
+    }
+
+    private function generateUniqueFileName(string $directory, string $originalName): string
+    {
+        $base = pathinfo($originalName, PATHINFO_FILENAME);
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $counter = 1;
+
+        // Проверяем существование файла
+        while (Storage::disk('public')->exists("$directory/$originalName")) {
+            $originalName = "{$base}($counter).{$extension}";
+            $counter++;
+        }
+
+        return $originalName;
     }
 
     public function render()

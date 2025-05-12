@@ -6,8 +6,9 @@ use App\Interfaces\FormServiceInterface;
 use App\Livewire\Forms\FormData;
 use Livewire\Component;
 use App\Models\Form;
+use App\Models\Category;
 use Illuminate\Support\Collection;
-//TODO Создать права на действия с формами и добавить проверки
+
 class ManageForms extends Component
 {
     public Collection $categories;
@@ -15,6 +16,9 @@ class ManageForms extends Component
     public ?Form $currentForm = null;
     public FormData $formData;
     public string $newCategoryName = '';
+
+    public ?int $confirmingFormDeletionId = null;
+    public ?int $confirmingCategoryDeletionId = null;
 
     protected FormServiceInterface $formService;
 
@@ -48,8 +52,8 @@ class ManageForms extends Component
 
     public function save(): void
     {
-        $validated = $this->validate();
 
+        $validated = $this->formData->validate();
         $this->formService->saveForm($validated, $this->currentForm?->id);
 
         session()->flash('success', 'Форма успешно сохранена.');
@@ -65,6 +69,43 @@ class ManageForms extends Component
 
         $this->newCategoryName = '';
         $this->initializeData();
+    }
+
+    public function confirmDeleteForm(int $formId): void
+    {
+        $this->confirmingFormDeletionId = $formId;
+    }
+
+    public function deleteForm(): void
+    {
+        if ($this->confirmingFormDeletionId) {
+            Form::find($this->confirmingFormDeletionId)?->delete();
+            $this->confirmingFormDeletionId = null;
+            $this->currentForm = null;
+            session()->flash('success', 'Форма удалена.');
+            $this->initializeData();
+        }
+    }
+
+    public function confirmDeleteCategory(int $categoryId): void
+    {
+        $this->confirmingCategoryDeletionId = $categoryId;
+    }
+
+    public function deleteCategory(): void
+    {
+        if ($this->confirmingCategoryDeletionId) {
+            Category::find($this->confirmingCategoryDeletionId)?->delete();
+            $this->confirmingCategoryDeletionId = null;
+            session()->flash('success', 'Категория удалена.');
+            $this->initializeData();
+        }
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->confirmingFormDeletionId = null;
+        $this->confirmingCategoryDeletionId = null;
     }
 
     public function render()

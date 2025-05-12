@@ -18,6 +18,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary sidebar-open app-loaded">
 
@@ -45,8 +46,10 @@
 
         <!--begin::App Content-->
         <div class="app-content">
-            {{ $slot }}
+            <div class="container my-5">
+                {{ $slot }}
 
+            </div>
         </div>
         <!--end::App Content-->
     </main>
@@ -58,8 +61,8 @@
         <!--end::To the end-->
         <!--begin::Copyright-->
         <strong>
-            Copyright &copy; 2014-2024&nbsp;
-            <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
+            Copyright &copy; 2025&nbsp;
+            {{--            <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.--}}
         </strong>
         All rights reserved.
         <!--end::Copyright-->
@@ -120,68 +123,68 @@
     });
 </script>
 <script>
-    // NOTICE!! DO NOT USE ANY OF THIS JAVASCRIPT
-    // IT'S ALL JUST JUNK FOR DEMO
-    // ++++++++++++++++++++++++++++++++++++++++++
-
-    const sales_chart_options = {
-        series: [
-            {
-                name: 'Digital Goods',
-                data: [28, 48, 40, 19, 86, 27, 90],
-            },
-            {
-                name: 'Electronics',
-                data: [65, 59, 80, 81, 56, 55, 40],
-            },
-        ],
-        chart: {
-            height: 300,
-            type: 'area',
-            toolbar: {
-                show: false,
-            },
-        },
-        legend: {
-            show: false,
-        },
-        colors: ['#0d6efd', '#20c997'],
-        dataLabels: {
-            enabled: false,
-        },
-        stroke: {
-            curve: 'smooth',
-        },
-        xaxis: {
-            type: 'datetime',
-            categories: [
-                '2023-01-01',
-                '2023-02-01',
-                '2023-03-01',
-                '2023-04-01',
-                '2023-05-01',
-                '2023-06-01',
-                '2023-07-01',
-            ],
-        },
-        tooltip: {
-            x: {
-                format: 'MMMM yy', // Исправлен формат даты для tooltip
-            },
-        },
-    };
-
-    // Проверка наличия элемента перед инициализацией графика
-    const revenueChartEl = document.querySelector('#revenue-chart');
-    if (revenueChartEl && typeof ApexCharts !== 'undefined') {
-        const sales_chart = new ApexCharts(
-            revenueChartEl,
-            sales_chart_options,
-        );
-        sales_chart.render();
-    } else {
-        console.error("Element #revenue-chart not found or ApexCharts library is not loaded.");
-    }
+    // // NOTICE!! DO NOT USE ANY OF THIS JAVASCRIPT
+    // // IT'S ALL JUST JUNK FOR DEMO
+    // // ++++++++++++++++++++++++++++++++++++++++++
+    //
+    // const sales_chart_options = {
+    //     series: [
+    //         {
+    //             name: 'Digital Goods',
+    //             data: [28, 48, 40, 19, 86, 27, 90],
+    //         },
+    //         {
+    //             name: 'Electronics',
+    //             data: [65, 59, 80, 81, 56, 55, 40],
+    //         },
+    //     ],
+    //     chart: {
+    //         height: 300,
+    //         type: 'area',
+    //         toolbar: {
+    //             show: false,
+    //         },
+    //     },
+    //     legend: {
+    //         show: false,
+    //     },
+    //     colors: ['#0d6efd', '#20c997'],
+    //     dataLabels: {
+    //         enabled: false,
+    //     },
+    //     stroke: {
+    //         curve: 'smooth',
+    //     },
+    //     xaxis: {
+    //         type: 'datetime',
+    //         categories: [
+    //             '2023-01-01',
+    //             '2023-02-01',
+    //             '2023-03-01',
+    //             '2023-04-01',
+    //             '2023-05-01',
+    //             '2023-06-01',
+    //             '2023-07-01',
+    //         ],
+    //     },
+    //     tooltip: {
+    //         x: {
+    //             format: 'MMMM yy', // Исправлен формат даты для tooltip
+    //         },
+    //     },
+    // };
+    //
+    // // Проверка наличия элемента перед инициализацией графика
+    // const revenueChartEl = document.querySelector('#revenue-chart');
+    // if (revenueChartEl && typeof ApexCharts !== 'undefined') {
+    //     const sales_chart = new ApexCharts(
+    //         revenueChartEl,
+    //         sales_chart_options,
+    //     );
+    //     sales_chart.render();
+    // } else {
+    //     console.error("Element #revenue-chart not found or ApexCharts library is not loaded.");
+    // }
 </script>
 <script>
     // Проверка наличия элемента и библиотеки перед инициализацией карты
@@ -293,5 +296,7 @@
     }
 
 </script>
+@livewireScripts
+@stack('scripts')
 </body>
 </html>
