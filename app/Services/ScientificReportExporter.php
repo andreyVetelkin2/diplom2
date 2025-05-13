@@ -65,7 +65,7 @@ class ScientificReportExporter
                 $table->addCell(3000)->addText($item['name']);
                 $table->addCell(2000)->addText($item['code']);
                 $table->addCell(1500)->addText($item['total']);
-                $table->addCell(4000)->addText($item['justification']);
+                $table->addCell(4000)->addText($item['entries_data'], [], ['preserveLineBreaks' => true]);
             }
         }
 
@@ -146,7 +146,7 @@ class ScientificReportExporter
                 $table->addCell(3000)->addText($item['name']);
                 $table->addCell(2000)->addText($item['code']);
                 $table->addCell(1500)->addText($item['total']);
-                $table->addCell(4000)->addText($item['justification']);
+                $table->addCell(4000)->addText($item['entries_data'], [], ['preserveLineBreaks' => true]);
             }
         }
 

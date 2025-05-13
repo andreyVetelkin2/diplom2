@@ -21,6 +21,7 @@ class FormEntryEdit extends Component
     public $comment;
 
     public $date_achievement;
+    public $percent;
 
     public User $user;
     public $showConfirmModal = false;
@@ -121,6 +122,7 @@ class FormEntryEdit extends Component
         $this->entry->comment = $this->comment;
         $this->entry->status = 'review';
         $this->entry->date_achievement = $this->date_achievement;
+        $this->entry->percent = $this->percent;
         $this->entry->save();
         session()->flash('success', 'Данные успешно обновлены.');
     }
@@ -135,6 +137,7 @@ class FormEntryEdit extends Component
             'fieldEntryValues'
         ]);
          $this->date_achievement = $this->entry->date_achievement;
+         $this->percent = $this->entry->percent;
         $this->templateFields = $this->entry->form->template->fields->sortBy('sort_order');
 
         // Заполнение текущих значений
