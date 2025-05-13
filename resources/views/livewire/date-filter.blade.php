@@ -43,34 +43,45 @@
                 <div class="row mt-3">
                     <div class="col-12">
                         <div class="btn-group btn-group-sm" role="group">
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                wire:click="setQuickDate(7)"
-                            >
+                            <button type="button" class="btn btn-outline-secondary" wire:click="setQuickDate('week')">
                                 Неделя
                             </button>
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                wire:click="setQuickDate(30)"
-                            >
+                            <button type="button" class="btn btn-outline-secondary" wire:click="setQuickDate('month')">
                                 Месяц
                             </button>
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                wire:click="setQuickDate(90)"
-                            >
-                                Квартал
-                            </button>
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                wire:click="setQuickDate(365)"
-                            >
+                            <button type="button" class="btn btn-outline-secondary" wire:click="setQuickDate('year')">
                                 Год
                             </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                wire:click="setQuarter(1)"
+                            >
+                                I квартал
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                wire:click="setQuarter(2)"
+                            >
+                                II квартал
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                wire:click="setQuarter(3)"
+                            >
+                                III квартал
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                wire:click="setQuarter(4)"
+                            >
+                                IV квартал
+                            </button>
+
                         </div>
                     </div>
                 </div>

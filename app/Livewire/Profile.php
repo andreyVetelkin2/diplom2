@@ -48,9 +48,11 @@ class Profile extends Component
                 $all[] = [
                     'id' => $entry->id,
                     'title' => $forms[$form_id]->title,
-                    'date' => $entry->created_at->format('Y-m-d'),
+                    'date'  => $entry->date_achievement,
                     'status' => $entry->status,
                 ];
+                    //dump($entries->pluck('id')->unique() ?? '');
+
             }
         }
 
@@ -74,10 +76,10 @@ class Profile extends Component
             });
 
         $this->publicationCount = FormEntry::where('user_id', $this->user->id)->count();
+
         $this->totalAchivments = count($all);
         $this->achivments = array_slice($all, 0, $this->loaded);
     }
-
 
     #[\Livewire\Attributes\Layout('layouts.app')]
     public function render()

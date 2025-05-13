@@ -15,8 +15,11 @@ class FormEntry extends Model
         'form_id',
         'comment',
         'status',
+        'percent',
         'date_achievement'
     ];
+
+
 
     public function form()
     {

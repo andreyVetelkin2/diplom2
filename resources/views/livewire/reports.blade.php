@@ -60,11 +60,11 @@
                                 <td><span class="text-muted">{{ $form['slug'] }}</span></td>
                                 <td><span class="badge bg-info text-dark">{{ $form['total'] ?? '—' }}</span></td>
                                 <td class="small text-muted">
-                                    @forelse($form['entries'] as $entry)
-                                        {{ $entry->created_at->format('d.m.Y') }}<br>
-                                    @empty
-                                        <em>—</em>
-                                    @endforelse
+                                    @foreach($form['entries'] as $entry)
+                                        {{ $entry['outputLine'] }}<br>
+                                    @endforeach
+
+
                                 </td>
                             </tr>
                         @endforeach
