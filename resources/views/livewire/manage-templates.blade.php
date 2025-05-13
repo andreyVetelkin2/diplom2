@@ -121,7 +121,7 @@
                                     @foreach($field['options'] as $optIndex => $opt)
                                         <div class="form-row row mb-2" wire:key="option{{ $opt['id'] }}">
                                             <div class="col-5">
-                                                <input type="text" class="form-control" placeholder="Метка"
+                                                <input type="text" class="form-control" placeholder="Название поля"
                                                        wire:model.defer="form.fields.{{ $index }}.options.{{ $optIndex }}.label">
                                             </div>
                                             <div class="col-5">

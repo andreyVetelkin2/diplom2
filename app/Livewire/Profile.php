@@ -46,7 +46,7 @@ class Profile extends Component
                 $all[] = [
                     'id' => $entry->id,
                     'title' => $forms[$form_id]->title,
-                    'date'  => $entry->created_at->format('Y-m-d'),
+                    'date'  => $entry->date_achievement,
                     'status' => $entry->status,
                 ];
                     //dump($entries->pluck('id')->unique() ?? '');

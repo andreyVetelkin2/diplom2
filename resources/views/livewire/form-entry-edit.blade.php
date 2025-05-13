@@ -27,11 +27,25 @@
 
             <form wire:submit.prevent="save">
                 <div class="mb-4">
+                    <label class="form-label">📊 Возможное количество баллов за достижение</label>
+                    <input type="text" readonly disabled
+                           class="form-control " value="{{ ($entry->form->points) }}" >
+                </div>
+
+                <div class="mb-4">
                     <label class="form-label">📅 Дата достижения</label>
                     <input type="date"
                            class="form-control @error('date_achievement') is-invalid @enderror"
                            wire:model.defer="date_achievement">
                     @error('date_achievement')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">✍ Процент участия</label>
+                    <input type="text"
+                           class="form-control @error('percent') is-invalid @enderror"
+                           wire:model.defer="percent">
+                    @error('percent')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 @foreach($templateFields as $field)

@@ -60,10 +60,10 @@ class Reports extends Component
 
     public function loadGroupedData($startDate, $endDate)
     {
+        // 1) Определяем пользователя или массив пользователей по вкладке
         if ($this->activeTab === 'individual') {
             $userId = auth()->id();
         } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
-            // выбираем всех пользователей из выбранной кафедры
             $userId = \App\Models\User::where('department_id', $this->selectedDepartment)
                 ->pluck('id')
                 ->toArray();
@@ -72,53 +72,91 @@ class Reports extends Component
             return;
         }
 
+        // 2) Запоминаем даты для вывода
         $this->dateFrom = $startDate;
         $this->dateTo   = $endDate;
 
+        // 3) Загружаем категории с формами и их записями + fieldEntryValues + templateField
         $this->groupedData = Category::with(['forms' => function ($query) use ($startDate, $endDate, $userId) {
-            $query->whereHas('entries', function ($q) use ($startDate, $endDate, $userId) {
-                $q->whereIn('user_id', (array) $userId)
-                    ->whereBetween('date_achievement', [$startDate, $endDate])
-                    ->where('status', 'approved');              // ← фильтрация
-            })
-                ->withCount(['entries as user_entries_count' => function ($q) use ($startDate, $endDate, $userId) {
+            $query
+                // Только те формы, где есть хотя бы одна запись
+                ->whereHas('entries', function ($q) use ($startDate, $endDate, $userId) {
                     $q->whereIn('user_id', (array) $userId)
                         ->whereBetween('date_achievement', [$startDate, $endDate])
-                        ->where('status', 'approved');              // ← фильтрация
-                }])
+                        ->where('status', 'approved');
+                })
+                // Подгружаем сами записи
                 ->with(['entries' => function ($q) use ($startDate, $endDate, $userId) {
                     $q->whereIn('user_id', (array) $userId)
                         ->whereBetween('date_achievement', [$startDate, $endDate])
-                        ->where('status', 'approved')               // ← фильтрация
+                        ->where('status', 'approved')
                         ->latest();
-                }]);
+                }])
+                // Подгружаем значения полей и связанные шаблонные поля
+                ->with('entries.fieldEntryValues.templateField');  // ← жадная загрузка templateField
         }])
+            // Фильтр категорий
             ->whereHas('forms.entries', function ($q) use ($startDate, $endDate, $userId) {
                 $q->whereIn('user_id', (array) $userId)
                     ->whereBetween('date_achievement', [$startDate, $endDate])
-                    ->where('status', 'approved');                      // ← фильтрация
+                    ->where('status', 'approved');
             })
             ->get()
+            // 4) Формируем структуру для вывода
             ->map(function ($category) {
                 return [
                     'category' => $category->name,
                     'forms'    => $category->forms
                         ->map(function ($form) {
+                            // Готовим записи с outputData
+                            $entries = $form->entries->map(function ($entry, $idx) {
+                                // Собираем пары "Название поля: значение"
+                                $pairs = $entry->fieldEntryValues
+                                    ->map(function ($fv) {
+                                        if (
+                                            $fv->templateField->type != 'file' &&
+                                            $fv->templateField->type != 'checkbox'&&
+                                            $fv->templateField->type != 'list'
+                                        ){
+                                            $label = $fv->templateField->label ?? '—';
+                                            return "{$label}: {$fv->value}";
+                                        }
+                                    })
+                                    ->toArray();
+                                $pairs=array_filter($pairs);
+                                // Нумерация записей (1., 2., …) и объединение через запятую
+                                $line = ($idx + 1) . '. ' . implode(', ', $pairs)."\n";
+
+                                return [
+                                    'date'      => $entry->created_at->format('d.m.Y'),
+                                    'outputLine'=> $line,  // ← здесь один строковый элемент
+                                ];
+                            })->toArray();
+
+
+                            // Считаем итоговые баллы
+                            $totalScore = $form->entries
+                                ->reduce(function ($carry, $entry) use ($form) {
+                                    $pct = $entry->percent ?? 0;
+                                    return $carry + ($form->points * $pct);
+                                }, 0);
+
                             return [
                                 'name'    => $form->title,
                                 'slug'    => $form->slug,
                                 'points'  => $form->points,
-                                'count'   => $form->user_entries_count,
-                                'total'   => $form->points * $form->user_entries_count,
-                                'entries' => $form->entries,
+                                'count'   => count($entries),
+                                'total'   => round($totalScore, 2),
+                                'entries' => $entries,
                             ];
                         })
-                        ->filter(fn($form) => $form['count'] > 0),
+                        ->filter(fn($form) => count($form['entries']) > 0)
+                        ->values(),
                 ];
             })
-            ->filter(fn($category) => !empty($category['forms']));
+            ->filter(fn($category) => !empty($category['forms']))
+            ->values();
     }
-
 
     public function getExportData(): array
     {
@@ -132,26 +170,26 @@ class Reports extends Component
             'date_to'     => $this->dateTo,
             'hirsh'       => $user->hirsh ?? '',
             'citations'   => $user->citations ?? '',
-            'sections'    => [],  // заполним далее
+            'sections'    => [],
         ];
 
         foreach ($this->groupedData as $category) {
             $forms = [];
 
             foreach ($category['forms'] as $form) {
-                // Собирать все обоснования в одну строку
-                $justifications = collect($form['entries'])
-                    ->pluck('justification')
+                // Собираем все outputLine (1. Поле:значение, …) в одну строку, разделённую переносом строки
+                $entriesData = collect($form['entries'])
+                    ->pluck('outputLine')               // ← берем именно outputLine
                     ->filter()
-                    ->implode('; ');
+                    ->implode("\n");                   // или ', ' если нужен одинарный ряд
 
                 $forms[] = [
-                    'name'          => $form['name'],
-                    'code'          => $form['slug'],    // либо 'code' если в groupedData так называется
-                    'points'        => $form['points'],
-                    'count'         => $form['count'],
-                    'total'         => $form['total'],
-                    'justification' => $justifications,
+                    'name'         => $form['name'],
+                    'code'         => $form['slug'],
+                    'points'       => $form['points'],
+                    'count'        => $form['count'],      // ← теперь существует
+                    'total'        => $form['total'],
+                    'entries_data'=> $entriesData,         // ← новые выходные данные
                 ];
             }
 
@@ -162,7 +200,6 @@ class Reports extends Component
 
         return $data;
     }
-
 
 
     public function exportIndividual()

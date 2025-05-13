@@ -23,6 +23,8 @@ class UserFillForm extends Component
 
     #[Validate('required|date')]
     public $dateAchievement;
+    #[Validate('required|numeric|between:0,1')]
+    public $percent;
 
     public array $rows = [];
     public array $files = [];
@@ -124,6 +126,7 @@ class UserFillForm extends Component
                 'form_id' => $this->selectedForm->id,
                 'status' => 'review',
                 'date_achievement' => $this->dateAchievement,
+                'percent' => $this->percent,
             ]);
 
             foreach ($this->templateFields as $field) {
