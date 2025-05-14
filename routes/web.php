@@ -29,6 +29,8 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 */
 
 
+
+
 Route::middleware('auth')->group(function () { //группируем чтобы указать что посредник применяется к обоим группам
 
     Route::prefix('')->group(function () {//префикса нет юзаем только для получения метода груп

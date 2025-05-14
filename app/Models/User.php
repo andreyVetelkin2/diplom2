@@ -53,7 +53,14 @@ class User extends Authenticatable
     }
 
      public function author()
-        {
-            return $this->hasOne(Author::class);
-        }
+    {
+        return $this->hasOne(Author::class);
+    }
+    public function penaltyPoints()
+    {
+        return $this->hasMany(PenaltyPoints::class);
+    }
+    public function position() {
+        return $this->belongsTo(Position::class);
+    }
 }

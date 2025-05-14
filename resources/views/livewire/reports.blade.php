@@ -19,6 +19,28 @@
                            href="#department-tab">🏛 По кафедрам</a>
                     </li>
                 @endcan
+
+                @can('report-on-the-departments')
+                    <li class="nav-item">
+                        <a class="nav-link {{ $activeTab === 'user' ? 'active' : '' }}"
+                           wire:click.prevent="switchTab('user')"
+                           href="#department-tab">🙍 По пользователю</a>
+                    </li>
+                @endcan
+                @can('report-on-the-departments')
+                    <li class="nav-item">
+                        <a class="nav-link {{ $activeTab === 'achievement' ? 'active' : '' }}"
+                           wire:click.prevent="switchTab('achievement')"
+                           href="#department-tab">📄 По типу достижений</a>
+                    </li>
+                @endcan
+                @can('report-on-the-departments')
+                    <li class="nav-item">
+                        <a class="nav-link {{ $activeTab === 'position' ? 'active' : '' }}"
+                           wire:click.prevent="switchTab('position')"
+                           href="#department-tab">💼 По должности</a>
+                    </li>
+                @endcan
             </ul>
 
             {{-- Фильтры --}}
@@ -27,9 +49,21 @@
             @if($activeTab === 'department')
                 <div class="mt-3">
                     <label for="department" class="form-label fw-medium">Выберите кафедру:</label>
-                    <select wire:model="selectedDepartment" id="department" class="form-select">
+                    <select wire:model="selectedDepartment" id="department" multiple class="form-select">
                         <option value="">-- выберите --</option>
                         @foreach($departments as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            @if($activeTab === 'user')
+                <div class="mt-3">
+                    <label for="user" class="form-label fw-medium">Выберите пользователя:</label>
+                    <select wire:model="selectedUser" id="user" class="form-select">
+                        <option value="">-- выберите --</option>
+                        @foreach($users as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
                     </select>

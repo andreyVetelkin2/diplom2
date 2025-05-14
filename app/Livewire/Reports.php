@@ -6,6 +6,7 @@ namespace App\Livewire;
 use App\Models\Permission;
 use App\Models\Category;
 use App\Models\Department;
+use App\Models\User;
 use App\Services\ScientificReportExporter;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -14,9 +15,16 @@ class Reports extends Component
 {
     public $groupedData = [];
     public $selectReportTypes = [];
-    public $activeTab = 'individual'; // вкладка по умолчанию
-    public $selectedDepartment = null;
+
+    public $activeTab = 'individual';// вкладка по умолчанию
+
+    public $selectedDepartment = [];
+    public $selectedUser = null;
+    public $selectedForms = null;
+
     public $departments = [];
+    public $users = [];
+
     public $dateFrom;
     public $dateTo;
     public $docxFilePath;
@@ -41,6 +49,7 @@ class Reports extends Component
 
         // загрузка кафедр (можно ограничить доступные кафедры по ролям)
         $this->departments = Department::pluck('name', 'id')->toArray();
+        $this->users = User::pluck('name', 'id')->toArray();
     }
 
     protected $listeners = ['filtersApplied' => 'loadGroupedData'];
@@ -64,10 +73,17 @@ class Reports extends Component
         if ($this->activeTab === 'individual') {
             $userId = auth()->id();
         } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
-            $userId = \App\Models\User::where('department_id', $this->selectedDepartment)
+            $userId = \App\Models\User::whereIn('department_id', $this->selectedDepartment)
                 ->pluck('id')
                 ->toArray();
-        } else {
+        }elseif ($this->activeTab === 'user' && $this->selectedUser) {
+            $userId = \App\Models\User::where('id', $this->selectedUser)
+                ->pluck('id')
+                ->toArray();
+        }
+
+
+        else {
             $this->groupedData = [];
             return;
         }
