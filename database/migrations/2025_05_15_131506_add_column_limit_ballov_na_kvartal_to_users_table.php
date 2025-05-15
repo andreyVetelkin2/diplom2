@@ -12,12 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('position');
-
-            $table->foreignId('position_id')
-                ->nullable()
-                ->constrained('positions');
-
+            $table->float('limit_ballov_na_kvartal')->nullable();
         });
     }
 
@@ -27,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('position_id');
-            $table->string('position');
+            $table->dropColumn('limit_ballov_na_kvartal');
         });
     }
 };

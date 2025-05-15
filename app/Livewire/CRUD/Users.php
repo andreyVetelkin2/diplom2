@@ -4,6 +4,7 @@ namespace App\Livewire\CRUD;
 
 use App\Interfaces\Crudable;
 use App\Livewire\Forms\UserForm;
+use App\Models\Position;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
@@ -73,6 +74,7 @@ class Users extends Component implements Crudable
         return view('livewire.c-r-u-d.users', [
             'users' => User::with('department')->paginate($this->perPage),
             'departments' => Department::pluck('name', 'id'),
+            'positions' => Position::pluck('name', 'id'),
         ]);
     }
 }

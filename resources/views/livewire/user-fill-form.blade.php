@@ -129,6 +129,12 @@
 
                         @if(!empty($rows))
                             <div class="mt-3">
+                                @if (session()->has('error'))
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
                                 <h5>Добавленные результаты ({{ count($rows) }})</h5>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped">

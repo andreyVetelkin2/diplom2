@@ -86,9 +86,12 @@
     </div>
 
     <livewire:penalty-points-manager />
-    <livewire:multi-chart-manager />
+    <livewire:achievements-chart />
 
-{{--    <div class=" col-md-12 card mt-4">--}}
+    <!-- Modal: установить лимит баллов за квартал -->
+    <livewire:bulk-limit-setter />
+
+    {{--    <div class=" col-md-12 card mt-4">--}}
 {{--        <div class="card-header d-flex justify-content-between">--}}
 {{--            <h5>График достижений за последние 6 месяцев</h5>--}}
 

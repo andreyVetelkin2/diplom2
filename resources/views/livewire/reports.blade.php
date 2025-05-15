@@ -29,8 +29,8 @@
                 @endcan
                 @can('report-on-the-departments')
                     <li class="nav-item">
-                        <a class="nav-link {{ $activeTab === 'achievement' ? 'active' : '' }}"
-                           wire:click.prevent="switchTab('achievement')"
+                        <a class="nav-link {{ $activeTab === 'forms' ? 'active' : '' }}"
+                           wire:click.prevent="switchTab('forms')"
                            href="#department-tab">📄 По типу достижений</a>
                     </li>
                 @endcan
@@ -61,7 +61,7 @@
             @if($activeTab === 'user')
                 <div class="mt-3">
                     <label for="user" class="form-label fw-medium">Выберите пользователя:</label>
-                    <select wire:model="selectedUser" id="user" class="form-select">
+                    <select wire:model="selectedUser" id="user" class="form-select" multiple>
                         <option value="">-- выберите --</option>
                         @foreach($users as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
@@ -70,9 +70,31 @@
                 </div>
             @endif
 
-            {{-- Таблица --}}
+            @if($activeTab === 'position')
+                <div class="mt-3">
+                    <label for="user" class="form-label fw-medium">Выберите должность:</label>
+                    <select wire:model="selectedPositions" id="user" class="form-select" multiple>
+                        <option value="">-- выберите --</option>
+                        @foreach($positions as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+            @if($activeTab === 'forms')
+                <div class="mt-3">
+                    <label for="user" class="form-label fw-medium">Выберите тип достижения:</label>
+                    <select wire:model="selectedForms" id="user" class="form-select" multiple>
+                        <option value="">-- выберите --</option>
+                        @foreach($forms as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
             <div class="table-responsive mt-4">
-                <table class="table table-hover table-striped align-middle">
+                <table class="table table-hover table-bordered align-middle">
                     <thead class="table-light">
                     <tr>
                         <th>№</th>
@@ -83,48 +105,56 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @forelse($groupedData as $category)
-                        <tr class="table-secondary text-center fw-bold">
-                            <td colspan="5">{{ $category['category'] }}</td>
+                    @forelse($groupedData as $block)
+                        {{-- Блок пользователя --}}
+                        <tr class="table-primary text-center fw-bold">
+                            <td colspan="5">{{ $block['user'] }}</td>
                         </tr>
-                        @foreach($category['forms'] as $index => $form)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $form['name'] }}</td>
-                                <td><span class="text-muted">{{ $form['slug'] }}</span></td>
-                                <td><span class="badge bg-info text-dark">{{ $form['total'] ?? '—' }}</span></td>
-                                <td class="small text-muted">
-                                    @foreach($form['entries'] as $entry)
-                                        {{ $entry['outputLine'] }}<br>
-                                    @endforeach
 
-
-                                </td>
+                        @forelse($block['sections'] as $category)
+                            {{-- Категория --}}
+                            <tr class="table-secondary text-center fw-bold">
+                                <td colspan="5">{{ $category['category'] }}</td>
                             </tr>
-                        @endforeach
+                            @foreach($category['forms'] as $index => $form)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $form['name'] }}</td>
+                                    <td><span class="text-muted">{{ $form['slug'] }}</span></td>
+                                    <td><span class="badge bg-info text-dark">{{ $form['total'] ?? '—' }}</span></td>
+                                    <td class="small text-muted">
+                                        @foreach($form['entries'] as $entry)
+                                            {!! nl2br(e($entry['outputLine'])) !!}
+                                        @endforeach
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Категорий нет</td>
+                            </tr>
+                        @endforelse
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted">Данные не найдены</td>
+                            <td colspan="5" class="text-center text-muted">Нет ни одного отчёта для отображения.</td>
                         </tr>
                     @endforelse
                     </tbody>
                 </table>
             </div>
+
+
         </div>
 
         {{-- Футер --}}
         <div class="card-footer bg-light rounded-bottom-4">
             <div class="d-flex justify-content-end gap-2 mt-2">
-                @if($groupedData && $activeTab === 'individual')
-                    <button class="btn btn-outline-success" wire:click="exportIndividual">
-                        <i class="bi bi-download me-1"></i>Скачать индивидуальный DOCX
+                @if($groupedData )
+                    <button class="btn btn-outline-success" wire:click="export">
+                        <i class="bi bi-download me-1"></i>Скачать отчет в DOCX
                     </button>
                 @endif
-                @if($groupedData && $activeTab === 'department')
-                    <button class="btn btn-outline-success" wire:click="exportDepartment">
-                        <i class="bi bi-download me-1"></i>Скачать отчёт по кафедрам
-                    </button>
-                @endif
+
             </div>
         </div>
     </div>
