@@ -28,3 +28,20 @@
     display: none!important;
 
 }
+
+.comment-box {
+    transition: all 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-box:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.comment-box textarea {
+    resize: none;
+    flex-grow: 1;
+    min-height: 80px;
+}

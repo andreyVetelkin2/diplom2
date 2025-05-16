@@ -119,6 +119,13 @@ class UserFillForm extends Component
             return;
         }
 
+        if ((auth()->user()->limit_ballov_na_kvartal <= ((int)$this->selectedForm->points + auth()->user()->rating))){
+            session()->flash('error', 'Превышено максимальное количество баллов доступных к получению в этом квартале.');
+
+            return;
+        }
+
+
         foreach ($this->rows as $index => $row) {
             $entry = FormEntry::create([
                 'form_template_id' => $this->selectedForm->form_template_id,
