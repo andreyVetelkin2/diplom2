@@ -19,9 +19,7 @@ class ManagerCabinet extends Component
     public array  $achivments = [];
     public int    $totalAchivments = 0;
 
-    // Для графика
-    public array $chartCategories = [];
-    public array $chartSeries     = [];
+
 
     // Для лимита
     public ?int  $limitBallovNaKvartal = null;
@@ -38,7 +36,6 @@ class ManagerCabinet extends Component
         $this->limitBallovNaKvartal =  auth()->user()->limit_ballov_na_kvartal;
 
         $this->loadAchivments();
-        $this->loadChartData();
     }
 
     public function loadMore()
@@ -72,7 +69,8 @@ class ManagerCabinet extends Component
         $this->achivments      = array_slice($all, 0, $this->loaded);
     }
 
-    private function loadChartData(): void { /* ваш существующий код */ }
+
+
 
     // Новый метод: массовое обновление лимита
     public function applyLimit()

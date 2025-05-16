@@ -1,11 +1,14 @@
-<div>
+<div class="card">
+    <div class="card-header">
+        <h5>Установка лимита баллов</h5>
+    </div>
     @if (session()->has('message'))
         <div class="alert alert-success alert-dismissible">
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             {{ session('message') }}
         </div>
     @endif
-    <div class="mb-3">
+    <div class="card-body">
         <label for="limitInput" class="form-label">Максимум баллов за квартал</label>
         <input
             type="number"
@@ -19,9 +22,13 @@
         @enderror
     </div>
 
-    <div class="text-end">
-        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Отмена</button>
-        <button wire:click="updateAll" class="btn btn-primary">Применить ко всем</button>
+
+
+    <div class="card-footer">
+        <div class="text-end">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Отмена</button>
+            <button wire:click="updateAll" class="btn btn-primary">Применить ко всем</button>
+        </div>
     </div>
 </div>
 
