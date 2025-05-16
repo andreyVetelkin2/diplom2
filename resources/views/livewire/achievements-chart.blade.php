@@ -1,26 +1,56 @@
-<div id="achievements-chart"
-     data-chart='@json($chartData)'></div>
+<div class="col-md-12 card mt-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>График достижений </h5>
+        <a href="{{ route('reports') }}" class="btn btn-outline-primary btn-sm">Перейти к отчетам</a>
+    </div>
+    <div class="card-body">
+        <form wire:submit.prevent="applyFilter" class="row mb-3">
+            <div class="col-md-3">
+                <label for="startDate">Дата начала</label>
+                <input type="date" wire:model="startDate" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label for="endDate">Дата окончания</label>
+                <input type="date" wire:model="endDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="selectedDepartment">Кафедра</label>
+                <select wire:model="selectedDepartment" class="form-select" >
+                    <option value="">Все кафедры</option>
+                    @foreach($departments as $id => $name)
+                        <option value="{{ $id }}">{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Применить</button>
+            </div>
+        </form>
 
-@push('script')
+
+
+        <div id="achievements-chart"></div>
+    </div>
+</div>
+
+@push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const el = document.querySelector('#achievements-chart');
-            if (!el) return;
+        const options = {
+            series: @json($chartSeries),
+            chart: {height: 300, type: 'area', toolbar: {show: false}},
+            stroke: {curve: 'smooth'},
+            dataLabels: {enabled: false},
+            xaxis: {
+                type: 'datetime',
+                categories: @json($chartCategories)
+            },
+            tooltip: {x: {format: 'MMM yyyy'}},
+            colors: ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107']
+        };
 
-            const data = JSON.parse(el.dataset.chart);
-
-            const options = {
-                chart: { type: 'bar', height: 350 },
-                series: data.series,
-                xaxis: { categories: data.years },
-                plotOptions: { bar: { horizontal: false, columnWidth: '50%' } },
-                dataLabels: { enabled: false },
-                legend: { position: 'top' }
-            };
-
-            if (typeof ApexCharts !== 'undefined') {
-                new ApexCharts(el, options).render();
-            }
-        });
+        const el = document.querySelector('#achievements-chart');
+        if (el && typeof ApexCharts !== 'undefined') {
+            new ApexCharts(el, options).render();
+        }
     </script>
 @endpush

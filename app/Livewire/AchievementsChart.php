@@ -2,51 +2,93 @@
 
 namespace App\Livewire;
 
+use App\Models\FormEntry;
+use App\Models\User;
+use Illuminate\Support\Carbon;
 use Livewire\Component;
-use Illuminate\Support\Facades\DB;
+use App\Models\Department;
 
 class AchievementsChart extends Component
 {
-    public $departmentId;
     public $chartData = [];
+    public array $chartCategories = [];
+    public array $chartSeries     = [];
+
+    public $startDate;
+    public $endDate;
+
+    public $departments = [];
+    public $selectedDepartment = null;
 
     public function mount()
     {
+        $this->departments = Department::pluck('name', 'id')->toArray();
 
-        $this->departmentId = auth()->user()->department_id;
+        $this->selectedDepartment = session('achievements_department'); // может быть null
+
+        $this->startDate = session('achievements_start', now()->subYears(5)->startOfYear()->format('Y-m-d'));
+        $this->endDate = session('achievements_end', now()->format('Y-m-d'));
+
         $this->loadChartData();
     }
 
-
-    protected function loadChartData()
+    public function applyFilter()
     {
-        $rows = DB::table('form_entries as fe')
-            ->join('users as u', 'fe.user_id', '=', 'u.id')
-            ->join('departments as d', 'u.department_id', '=', 'd.id')
-            ->select(
-                'u.name as user_name',
-                DB::raw('YEAR(fe.created_at) as year'),
-                DB::raw('COUNT(*) as achievements_count')
-            )
-            ->where('d.id', $this->departmentId)
-            ->groupBy('u.name', DB::raw('YEAR(fe.created_at)'))
-            ->orderBy('u.name')
-            ->get();
+        session([
+            'achievements_start' => $this->startDate,
+            'achievements_end' => $this->endDate,
+            'achievements_department' => $this->selectedDepartment,
+        ]);
 
-        $years = $rows->pluck('year')->unique()->sort()->values()->toArray();
-        $users = $rows->pluck('user_name')->unique()->sort()->values()->toArray();
+        return redirect()->route('manager-cabinet'); // заменить на актуальный маршрут
+    }
 
-        $series = [];
-        foreach ($users as $user) {
-            $data = [];
-            foreach ($years as $year) {
-                $match = $rows->first(fn($r) => $r->user_name === $user && $r->year == $year);
-                $data[] = $match ? (int) $match->achievements_count : 0;
-            }
-            $series[] = ['name' => $user, 'data' => $data];
+    private function loadChartData(): void
+    {
+        $usersNames = User::pluck('name','id')->toArray();
+        $start = Carbon::parse($this->startDate)->startOfMonth();
+        $end = Carbon::parse($this->endDate)->endOfMonth();
+
+        $entries = FormEntry::where('status', 'approved')
+            ->when($this->selectedDepartment, function ($query) {
+                $query->whereHas('user', fn($q) => $q->where('department_id', $this->selectedDepartment));
+            })
+            ->whereBetween('created_at', [$start, $end])
+            ->get(['created_at', 'user_id']);
+
+        $grouped = $entries
+            ->groupBy(fn($e) => $e->created_at->format('Y-m'))
+            ->map(fn($group) => $group->groupBy('user_id')->map->count());
+
+        $months = collect();
+        $cursor = $start->copy();
+        while ($cursor <= $end) {
+            $months->push($cursor->copy());
+            $cursor->addMonth();
         }
 
-        $this->chartData = ['series' => $series, 'years' => $years];
+        $categories = [];
+        $users = $entries->pluck('user_id')->unique();
+        $series = [];
+
+        foreach ($users as $userId) {
+            $userData = [];
+            foreach ($months as $month) {
+                $key = $month->format('Y-m');
+                $userData[] = $grouped[$key][$userId] ?? 0;
+            }
+            $series[] = [
+                'name' => $usersNames[$userId] ?? 'Неизвестный',
+                'data' => $userData,
+            ];
+        }
+
+        foreach ($months as $month) {
+            $categories[] = $month->format('Y-m-01');
+        }
+
+        $this->chartCategories = $categories;
+        $this->chartSeries = $series;
     }
 
     public function render()
@@ -54,4 +96,3 @@ class AchievementsChart extends Component
         return view('livewire.achievements-chart');
     }
 }
-
