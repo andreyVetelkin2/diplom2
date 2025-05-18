@@ -2,6 +2,7 @@
 
 use App\Livewire\CRUD\Departments;
 use App\Livewire\CRUD\Permissions;
+use App\Livewire\CRUD\Positions;
 use App\Livewire\CRUD\RoleDetail;
 use App\Livewire\CRUD\Roles;
 use App\Livewire\CRUD\UserDetail;
@@ -27,6 +28,8 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 |
 | Посмотреть все доступные маршруты ->  php artisan route:list
 */
+
+
 
 
 Route::middleware('auth')->group(function () { //группируем чтобы указать что посредник применяется к обоим группам
@@ -85,6 +88,17 @@ Route::middleware('auth')->group(function () { //группируем чтобы
         Route::prefix('institutes')->group(function () {
             Route::get('/', Institutes::class)
                 ->name('institutes');
+
+        });
+
+        Route::prefix('positions')->group(function () {
+            Route::get('/', Positions::class)
+                ->name('positions');
+
+        });
+        Route::prefix('limit')->group(function () {
+            Route::get('/', Positions::class)
+                ->name('limit');
 
         });
 

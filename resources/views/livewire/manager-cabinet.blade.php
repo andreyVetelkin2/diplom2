@@ -85,38 +85,13 @@
         </div>
     </div>
 
+    <livewire:penalty-points-manager/>
+    <livewire:achievements-chart/>
 
-    <div class=" col-md-12 card mt-4">
-        <div class="card-header d-flex justify-content-between">
-            <h5>График достижений за последние 6 месяцев</h5>
+    <!-- Modal: установить лимит баллов за квартал -->
+    <livewire:bulk-limit-setter/>
 
-            <a href="{{route('reports')}}" class="btn btn-outline-primary btn-sm mt-2"> Перейти к отчетам</a>
-        </div>
-        <div class="card-body">
-            <div id="achievements-chart"></div>
-        </div>
-    </div>
+
 </div>
 
-@push('scripts')
-    <script>
-        console.log(123)
-        const options = {
-            series: @json($chartSeries),
-            chart: {height: 300, type: 'area', toolbar: {show: false}},
-            stroke: {curve: 'smooth'},
-            dataLabels: {enabled: false},
-            xaxis: {
-                type: 'datetime',
-                categories: @json($chartCategories)
-            },
-            tooltip: {x: {format: 'MMM yyyy'}},
-            colors: ['#0d6efd']
-        };
 
-        const el = document.querySelector('#achievements-chart');
-        if (el && typeof ApexCharts !== 'undefined') {
-            new ApexCharts(el, options).render();
-        }
-    </script>
-@endpush

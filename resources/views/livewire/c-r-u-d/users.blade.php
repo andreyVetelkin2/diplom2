@@ -18,8 +18,14 @@
                     @error('form.email') <span class="error">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Должность" wire:model.defer="form.position">
-                    @error('form.position') <span class="error">{{ $message }}</span> @enderror
+                    <select class="form-select" wire:model.defer="form.position_id">
+                        <option value="">Выберите должность</option>
+                        @foreach ($positions as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+
+                    @error('form.position_id') <span class="error">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-6">
                     <select class="form-select" wire:model.defer="form.department_id">
@@ -60,7 +66,7 @@
                     <tr class="align-middle">
                         <td>{{ $user->id }}</td>
                         <td><a href="{{ route('user-detail', $user->id) }}">{{ $user->name }}</a></td>
-                        <td>{{ $user->position }}</td>
+                        <td>{{ $user->position?->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->department?->name }}</td>
                         <td>

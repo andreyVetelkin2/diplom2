@@ -27,13 +27,13 @@
 
             <form wire:submit.prevent="save">
                 <div class="mb-4">
-                    <label class="form-label">📊 Возможное количество баллов за достижение</label>
+                    <label class="form-label fw-semibold">Возможное количество баллов за достижение</label>
                     <input type="text" readonly disabled
                            class="form-control " value="{{ ($entry->form->points) }}" >
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">📅 Дата достижения</label>
+                    <label class="form-label fw-semibold">Дата достижения</label>
                     <input type="date"
                            class="form-control @error('date_achievement') is-invalid @enderror"
                            wire:model.defer="date_achievement">
@@ -41,80 +41,123 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">✍ Процент участия</label>
+                    <label class="form-label fw-semibold">Процент участия</label>
                     <input type="text"
                            class="form-control @error('percent') is-invalid @enderror"
                            wire:model.defer="percent">
                     @error('percent')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
-
                 @foreach($templateFields as $field)
-                    <div class="mb-4">
-                        <label class="form-label">
-                            {{ $field->label }}
-                            @if($field->required)
-                                <span class="text-danger">*</span>
-                            @endif
-                        </label>
+                    <div class="mb-4 border-bottom pb-3">
+                        <div class="row">
+                            <!-- Основное поле -->
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">
+                                    {{ $field->label }}
+                                    @if($field->required)
+                                        <span class="text-danger">*</span>
+                                    @endif
+                                </label>
 
-                        @switch($field->type)
-                            @case('string')
-                            <input type="text"
-                                   class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
-                                   wire:model.defer="fieldValues.{{ $field->id }}">
-                            @break
+                                @switch($field->type)
+                                    @case('string')
+                                    <input type="text"
+                                           class="form-control @error('fieldValues.' . $field->id . '.value') is-invalid @enderror"
+                                           wire:model.defer="fieldValues.{{ $field->id }}.value">
+                                    @break
 
-                            @case('textarea')
-                            <textarea class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
-                                      wire:model.defer="fieldValues.{{ $field->id }}"></textarea>
-                            @break
+                                    @case('textarea')
+                                    <textarea class="form-control @error('fieldValues.' . $field->id . '.value') is-invalid @enderror"
+                                              wire:model.defer="fieldValues.{{ $field->id }}.value"
+                                              rows="3"></textarea>
+                                    @break
 
-                            @case('datetime')
-                            <input type="date"
-                                   class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
-                                   wire:model.defer="fieldValues.{{ $field->id }}">
-                            @break
+                                    @case('datetime')
+                                    <input type="date"
+                                           class="form-control @error('fieldValues.' . $field->id . '.value') is-invalid @enderror"
+                                           wire:model.defer="fieldValues.{{ $field->id }}.value">
+                                    @break
 
-                            @case('checkbox')
-                            <div class="form-check form-switch ">
-                                <input type="checkbox" class="form-check-input"
-                                       wire:model.defer="fieldValues.{{ $field->id }}"
-                                       id="field{{ $field->id }}">
-                                <label class="form-check-label" for="field{{ $field->id }}">Да</label>
+                                    @case('checkbox')
+                                    <div class="form-check form-switch ">
+                                        <div class="d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input"
+                                                   wire:model.defer="fieldValues.{{ $field->id }}.value"
+                                                   id="field{{ $field->id }}">
+                                            <label class="form-check-label ms-2" for="field{{ $field->id }}">Да</label>
+                                        </div>
+                                    </div>
+                                    @break
+
+                                    @case('list')
+                                    <select class="form-select @error('fieldValues.' . $field->id . '.value') is-invalid @enderror"
+                                            wire:model.defer="fieldValues.{{ $field->id }}.value">
+                                        <option value="">-- выберите --</option>
+                                        @foreach($field->options as $opt)
+                                            <option value="{{ $opt->value }}">{{ $opt->label }}</option>
+                                        @endforeach
+                                    </select>
+                                    @break
+
+                                    @case('file')
+                                    @if($fieldValues[$field->id]['file'])
+                                        <div class="mb-2 d-flex align-items-center">
+                                            <i class="bi bi-file-earmark-text me-2"></i>
+                                            <a href="{{ asset($fieldValues[$field->id]['file']) }}"
+                                               target="_blank"
+                                               class="text-decoration-none">
+                                                {{ basename($fieldValues[$field->id]['file']) }}
+                                            </a>
+                                        </div>
+                                    @endif
+                                    <input type="file"
+                                           wire:model="fieldValues.{{ $field->id }}.file"
+                                           class="form-control @error('fieldValues.' . $field->id . '.file') is-invalid @enderror">
+                                    @break
+                                @endswitch
+
+                                @error('fieldValues.' . $field->id . '.*')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
-                            @break
 
-                            @case('list')
-                            <select class="form-select @error('fieldValues.' . $field->id) is-invalid @enderror"
-                                    wire:model.defer="fieldValues.{{ $field->id }}">
-                                <option value="">-- выберите --</option>
-                                @foreach($field->options as $opt)
-                                    <option value="{{ $opt->value }}">{{ $opt->label }}</option>
-                                @endforeach
-                            </select>
-                            @break
-
-                            @case('file')
-                            @if($fieldValues[$field->id])
-                                <div class="mb-2">
-                                    <strong>📎 Текущий файл:</strong>
-                                    <a href="{{ asset($fieldValues[$field->id]) }}" target="_blank" class="ms-2 text-decoration-underline">Открыть</a>
-                                </div>
-                            @endif
-                            <input type="file"
-                                   wire:model="fieldValues.{{ $field->id }}"
-                                   class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror">
-                            @break
-                        @endswitch
-
-                        @error('fieldValues.' . $field->id)
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                            <!-- Блок комментариев -->
+                            <div class="col-md-4">
+                            @if(auth()->user()->can('review-forms'))
+                                <!-- Для ревьюверов -->
+                                    <div class="comment-box bg-light p-3 rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">
+                                <i class="bi bi-chat-left-text me-1"></i> Комментарий
+                            </span>
+                                            <span class="badge bg-primary">Руководитель</span>
+                                        </div>
+                                        <textarea class="form-control border-0 bg-white shadow-sm"
+                                                  wire:model.defer="fieldValues.{{ $field->id }}.comment"
+                                                  rows="3"
+                                                  placeholder="Ваш комментарий..."></textarea>
+                                    </div>
+                            @elseif(!empty($fieldValues[$field->id]['comment']))
+                                <!-- Для обычных пользователей -->
+                                    <div class="comment-box bg-light p-3 rounded">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">
+                                <i class="bi bi-chat-left-text me-1"></i> Комментарий
+                            </span>
+                                            <span class="badge bg-secondary">Руководитель</span>
+                                        </div>
+                                        <div class="p-2 bg-white rounded border">
+                                            {{ $fieldValues[$field->id]['comment'] }}
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 @endforeach
 
                 <div class="mb-4">
-                    <label class="form-label">📝 Комментарий руководителя</label>
+                    <label class="form-label">Комментарий руководителя по всему достижению</label>
                     <div class="p-2 border rounded bg-light">{{ $entry->comment ?: '—' }}</div>
                 </div>
 

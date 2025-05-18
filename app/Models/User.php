@@ -25,7 +25,8 @@ class User extends Authenticatable
         'department_id',
         'citations',
         'hirsh',
-        'position',
+        'position_id',
+        'limit_ballov_na_kvartal',
     ];
 
     /**
@@ -53,7 +54,15 @@ class User extends Authenticatable
     }
 
      public function author()
-        {
-            return $this->hasOne(Author::class);
-        }
+    {
+        return $this->hasOne(Author::class);
+    }
+    public function penaltyPoints()
+    {
+        return $this->hasMany(PenaltyPoints::class);
+    }
+
+    public function position() {
+        return $this->belongsTo(Position::class);
+    }
 }
