@@ -58,7 +58,8 @@
                                 </div>
                             </td>
                             <td>
-                                    <span class="badge rounded-pill bg-{{ $user->penalty_points >= 50 ? 'danger' : ($user->penalty_points >= 20 ? 'warning' : 'secondary') }}">
+                                    <span
+                                        class="badge rounded-pill bg-{{ $user->penalty_points >= 50 ? 'danger' : ($user->penalty_points >= 20 ? 'warning' : 'secondary') }}">
                                         {{ $user->penalty_points ?? 0 }}
                                     </span>
                             </td>
@@ -91,7 +92,8 @@
         </div>
     </div>
 
-    <div class="modal fade @if($showEditModal) show d-block @endif" tabindex="-1" style="@if($showEditModal) display: block; @else display: none; @endif" role="dialog" aria-modal="true">
+    <div class="modal fade @if($showEditModal) show d-block @endif" tabindex="-1"
+         style="@if($showEditModal) display: block; @else display: none; @endif" role="dialog" aria-modal="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
 
@@ -105,6 +107,7 @@
                 </div>
 
                 <!-- Тело модального окна -->
+                <!-- Тело модального окна -->
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Пользователь</label>
@@ -112,11 +115,33 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label" for="points">Штрафные баллы</label>
-                        <input type="number" id="points" class="form-control" wire:model.defer="points" min="0" max="100">
+                        <label class="form-label" for="points">Добавить штрафные баллы</label>
+                        <input type="number" id="points" class="form-control" wire:model.defer="points" min="0"
+                               max="100">
                     </div>
 
-
+                    @if($selectedUser && $selectedUser->penaltyPoints->isNotEmpty())
+                        <hr>
+                        <h6 class="fw-bold mb-2">История штрафных баллов</h6>
+                        <div class="table-responsive" style="max-height: 200px;">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Баллы</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($selectedUser->penaltyPoints->sortByDesc('created_at') as $penalty)
+                                    <tr>
+                                        <td>{{ $penalty->created_at->format('d.m.Y H:i') }}</td>
+                                        <td>{{ $penalty->penalty_points }}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Футер -->
@@ -137,7 +162,7 @@
     @endif
 
 
-@if($showEditModal)
+    @if($showEditModal)
         <script>
             document.addEventListener('livewire:load', function () {
                 const modal = new bootstrap.Modal(document.getElementById('editModal'));

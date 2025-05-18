@@ -30,13 +30,24 @@ class Dashboard extends Component
             // Кол-во "отклонённых"
             $this->rejectedCount = FormEntry::where('user_id', $this->user->id)->where('status', 'rejected')->count();
 
+            // Определяем текущий квартал
+            $now = now();
+            $currentMonth = $now->month;
+            $quarterStartMonth = ((int)(($currentMonth - 1) / 3)) * 3 + 1;
+
+            $quarterStart = now()->startOfYear()->addMonths($quarterStartMonth - 1)->startOfMonth();
+            $quarterEnd = (clone $quarterStart)->addMonths(3)->subSecond();
+
             // Сумма баллов по заявкам со статусом 'approved'
+            // Фильтрация по статусу и дате текущего квартала
+            $this->user = auth()->user();
             $this->ratingPoints = FormEntry::where('user_id', $this->user->id)
                 ->where('status', 'approved')
-                ->with('form') // предполагается, что у FormEntry есть связь ->form()
+                ->whereBetween('date_achievement', [$quarterStart, $quarterEnd])
+                ->with('form')
                 ->get()
                 ->sum(function ($entry) {
-                    return (int) optional($entry->form)->points ?? 0;
+                    return (int) (optional($entry->form)->points*$entry->percent) ?? 0;
                 });
         }
     }

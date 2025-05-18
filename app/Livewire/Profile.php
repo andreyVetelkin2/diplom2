@@ -72,7 +72,7 @@ class Profile extends Component
             ->with('form')
             ->get()
             ->sum(function ($entry) {
-                return (int) optional($entry->form)->points ?? 0;
+                return (int) (optional($entry->form)->points*$entry->percent) ?? 0;
             });
 
         $this->publicationCount = FormEntry::where('user_id', $this->user->id)->count();
