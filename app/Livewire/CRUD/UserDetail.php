@@ -1,16 +1,23 @@
 <?php
 namespace App\Livewire\CRUD;
 
+use App\Models\Department;
+use App\Models\Position;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
 use App\Services\UserService;
+<<<<<<< Updated upstream
+=======
+use Illuminate\Support\Facades\Auth;
+>>>>>>> Stashed changes
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
 class UserDetail extends Component
 {
     public User $user;
+    public array $user_field = [];
 
     public string $password = '';
     public string $password_confirmation = '';
@@ -25,6 +32,43 @@ class UserDetail extends Component
     public function boot(UserService $userService)
     {
         $this->userService = $userService;
+<<<<<<< Updated upstream
+=======
+
+        $this->user_field = $this->user->toArray();
+
+    }
+    public function updateUserInfo()
+    {
+        $this->validate([
+            'user_field.name' => 'required|string|max:255',
+            'user_field.email' => 'required|email|unique:users,email,' . $this->user->id,
+            'user_field.position_id' => 'nullable|string|max:255',
+            'user_field.department_id' => 'nullable|exists:departments,id',
+        ]);
+
+        // Преобразуем пустую строку в null
+        foreach (['department_id','position_id'] as $field) {
+            if (isset($this->user_field[$field]) && $this->user_field[$field] === '') {
+                $this->user_field[$field] = null;
+            }
+        }
+
+        $this->user->update($this->user_field);
+
+        session()->flash('success_info', 'Информация успешно обновлена!');
+    }
+
+    public function login(){
+            // Проверка прав текущего пользователя
+//            if (!auth()->user()->can('impersonate')) {
+//                abort(403);
+//            }
+
+            // Логинимся под выбранным пользователем
+            Auth::login($this->user);
+
+>>>>>>> Stashed changes
     }
 
     public function mount()
@@ -65,7 +109,10 @@ class UserDetail extends Component
 
     public function render()
     {
-        return view('livewire.c-r-u-d.user-detail');
+        return view('livewire.c-r-u-d.user-detail',[
+            'departments' => Department::pluck('name', 'id'),
+            'positions' => Position::pluck('name', 'id'),
+
+        ]);
     }
 }
-

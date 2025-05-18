@@ -15,17 +15,18 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-//        $manager = new Role();
-//        $manager->name = 'Project Manager';
-//        $manager->slug = 'project-manager';
-//        $manager->save();
-//        $developer = new Role();
-//        $developer->name = 'Web Developer';
-//        $developer->slug = 'web-developer';
-//        $developer->save();
+       $manager = new Role();
+       $manager->name = 'Project Manager';
+       $manager->slug = 'project-manager';
+       $manager->save();
+       $developer = new Role();
+       $developer->name = 'Web Developer';
+       $developer->slug = 'web-developer';
+       $developer->save();
 
 
 
+<<<<<<< Updated upstream
 //      Стандартные Роли, которые должны быть по умолчанию
 //        $admin = new Role();
 //        $admin->name = 'Admin';
@@ -41,6 +42,23 @@ class RoleSeeder extends Seeder
 //        $user->name = 'User';
 //        $user->slug = 'user';
 //        $user->save();
+=======
+  //   Стандартные Роли, которые должны быть по умолчанию
+       $admin = new Role();
+       $admin->name = 'Admin';
+       $admin->slug = 'admin';
+       $admin->save();
+
+       $guest = new Role();
+       $guest->name = 'Guest';
+       $guest->slug = 'guest';
+       $guest->save();
+
+       $user = new Role();
+       $user->name = 'User';
+       $user->slug = 'user';
+       $user->save();
+>>>>>>> Stashed changes
 
 
     }

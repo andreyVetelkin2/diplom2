@@ -25,9 +25,9 @@
                 </div>
 
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
+                    <button type="submit" class="btn btn-outline-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
                     @if ($editMode)
-                        <button type="button" class="btn btn-secondary" wire:click="resetFields">Отмена</button>
+                        <button type="button" class="btn btn-outline-secondary" wire:click="resetFields">Отмена</button>
                     @endif
                 </div>
             </form>
@@ -49,7 +49,7 @@
                         <td>{{ $department->institute->name ?? '-' }}</td>
                         <td>
                             <button wire:click="edit({{ $department->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $department->id }})" class="btn btn-sm btn-danger"
+                            <button wire:click="delete({{ $department->id }})" class="btn btn-sm btn-outline-danger"
                                     onclick="return confirm('Удалить кафедру?')">🗑</button>
                         </td>
                     </tr>

@@ -82,7 +82,7 @@
                     success: function(response) {
                         if(response.success) {
                             button.removeClass('btn-outline-primary')
-                                  .addClass('btn-success')
+                                  .addClass('btn-outline-success')
                                   .html('Выбрано');
                         }
                     },

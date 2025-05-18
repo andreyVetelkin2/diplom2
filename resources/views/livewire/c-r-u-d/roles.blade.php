@@ -18,9 +18,15 @@
                     @error('form.slug') <span class="error">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-12">
+<<<<<<< Updated upstream
                     <button type="submit" class="btn btn-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
                     @if ($editMode)
                         <button type="button" class="btn btn-secondary" wire:click="resetFields">Отмена</button>
+=======
+                    <button type="submit" class="btn btn-outline-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
+                    @if ($editMode)
+                        <button type="button" class="btn btn-outline-secondary" wire:click="resetFields">Отмена</button>
+>>>>>>> Stashed changes
                     @endif
                 </div>
             </form>
@@ -42,7 +48,7 @@
                         <td>{{ $role->slug }}</td>
                         <td>
                             <button wire:click="edit({{ $role->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $role->id }})" class="btn btn-sm btn-danger"
+                            <button wire:click="delete({{ $role->id }})" class="btn btn-sm btn-outline-danger"
                                     onclick="return confirm('Удалить право?')">🗑</button>
                         </td>
                     </tr>

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'Usersgoogle' => 'Загрузка',
     'Profile' => 'Профиль',
     'Upload' => 'Загрузка',
     'Home' => 'Главная',
@@ -13,8 +14,15 @@ return [
     'Institutes' => 'Институты',
     'Departments' => 'Кафедры',
     'Reports' => 'Отчеты',
+<<<<<<< Updated upstream
+=======
+    'Manager Cabinet' => 'Кабинет руководителя',
     'Author' => 'Автор',
     'Search' => 'Поиск аккаунта',
     'Choice' => 'Выбор аккаунта',
-    'Scholar' => 'Настройки Google Scholar'
+    'Scholar' => 'Настройки Google Scholar',
+    'Detail' => 'Редактирование',
+    'Form Entry' => 'Редактировать достижение',
+    'Reports Archive' => 'Архив отчетов'
+>>>>>>> Stashed changes
 ];

@@ -11,27 +11,24 @@ class FormData extends Form
     #[Validate('required|string|max:255')]
     public string $title = '';
 
+    #[Validate('nullable|string')]
     public ?string $description = '';
-    public ?int $category_id = null;
-    public ?string $points = '';
-    public ?int $form_template_id = null;
-    public bool $is_active = true;
-    public bool $single_entry = false;
-    public string $slug = '';
 
-    protected function rules(): array
-    {
-        return [
-            'title'             => 'required|string|max:255',
-            'slug'             => 'required|string|max:255',
-            'description'       => 'nullable|string',
-            'category_id'       => 'required|exists:categories,id',
-            'points'            => 'nullable|string|max:50',
-            'form_template_id'  => 'required|exists:form_templates,id',
-            'is_active'         => 'boolean',
-            'single_entry'      => 'boolean',
-        ];
-    }
+    #[Validate('required|exists:categories,id')]
+    public ?int $category_id = null;
+
+    #[Validate('nullable|string|max:50')]
+    public ?string $points = '';
+
+    #[Validate('required|exists:form_templates,id')]
+    public ?int $form_template_id = null;
+
+    #[Validate('boolean')]
+    public bool $is_active = true;
+
+
+    #[Validate('required|string|max:255')]
+    public string $slug = '';
 
     public function fillFromForm(FormModel $form): void
     {
@@ -41,9 +38,9 @@ class FormData extends Form
         $this->points = $form->points;
         $this->form_template_id = $form->form_template_id;
         $this->is_active = $form->is_active;
-        $this->single_entry = $form->single_entry;
         $this->slug = $form->slug;
     }
+
 
     public function resetFields()
     {

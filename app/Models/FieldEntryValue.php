@@ -14,6 +14,7 @@ class FieldEntryValue extends Model
         'template_field_id',
         'form_entry_id',
         'original_name',
+        'comment',
     ];
     // Отношение к полю шаблона
     public function templateField()

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\FormEntry;
 use App\Models\FieldEntryValue;
+use App\Models\User;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Http\UploadedFile;
@@ -17,6 +18,47 @@ class FormEntryEdit extends Component
     public $templateFields;
     public $fieldValues = [];
     public $files = [];
+    public $comment;
+
+    public $date_achievement;
+    public $percent;
+
+    public User $user;
+    public $showConfirmModal = false;
+    public $modalAction = null; // 'approve' | 'reject'
+    public $rejectionComment = '';
+
+    public function confirmAction(string $action)
+    {
+        $this->modalAction = $action;
+        $this->showConfirmModal = true;
+    }
+
+    public function executeAction()
+    {
+        if ($this->modalAction === 'approve') {
+            $this->entry->status = 'approved';
+            $this->entry->comment = $this->comment;
+        } elseif ($this->modalAction === 'reject') {
+            $this->entry->status = 'rejected';
+            $this->entry->comment = $this->rejectionComment;
+
+            foreach ($this->templateFields as $field) {
+                $existing = FieldEntryValue::firstOrNew([
+                    'form_entry_id' => $this->entry->id,
+                    'template_field_id' => $field->id,
+                ]);
+                $fieldData = $this->fieldValues[$field->id];
+                $existing->comment = $fieldData['comment'] ?? null;
+                $existing->save();
+            }
+        }
+
+        $this->entry->save();
+        $this->showConfirmModal = false;
+        session()->flash('success', 'Статус достижения обновлен.');
+    }
+
 
     public function updated($property)
     {
@@ -27,7 +69,7 @@ class FormEntryEdit extends Component
     {
         $rules = [];
         foreach ($this->templateFields as $field) {
-            $key = "fieldValues.{$field->id}";
+            $key = "fieldValues.{$field->id}.value";
             $rules[$key] = $field->required ? 'required' : 'nullable';
 
             switch ($field->type) {
@@ -41,7 +83,7 @@ class FormEntryEdit extends Component
                     $rules[$key] .= '|in:' . $field->options->pluck('value')->implode(',');
                     break;
                 case 'file':
-                    $rules[$key] .= '|file|mimes:jpg,jpeg,png,pdf|max:10240';
+                    $rules["fieldValues.{$field->id}.file"] = 'nullable|max:10240';
                     break;
                 default:
                     $rules[$key] .= '|string';
@@ -60,32 +102,45 @@ class FormEntryEdit extends Component
                 'template_field_id' => $field->id,
             ]);
 
-            $rawValue = $this->fieldValues[$field->id] ?? null;
+            $fieldData = $this->fieldValues[$field->id] ?? [];
 
-            if ($field->type === 'checkbox') {
-                $existing->value = $rawValue ? '1' : '0';
+            if ($field->type === 'file') {
+                // Обработка файла
+                $file = $fieldData['file'] ?? null;
 
-            } elseif ($field->type === 'file') {
-                if ($rawValue instanceof UploadedFile) {
+                if ($file instanceof UploadedFile) {
                     // Удалить старый файл
                     if ($existing->value && Storage::disk('public')->exists(str_replace('storage/', '', $existing->value))) {
                         Storage::disk('public')->delete(str_replace('storage/', '', $existing->value));
                     }
 
-                    $fileName = $rawValue->getClientOriginalName();
-                    $path = $rawValue->storeAs('uploads/' . auth()->id(), $fileName, 'public');
+                    $fileName = $file->getClientOriginalName();
+                    $path = $file->storeAs('uploads/' . auth()->id(), $fileName, 'public');
 
                     $existing->value = 'storage/' . $path;
                     $existing->original_name = $fileName;
-                    //$existing->file_type = $rawValue->getClientMimeType();
                 }
-
             } else {
-                $existing->value = (string)$rawValue;
+                // Обработка обычных полей
+                $rawValue = $fieldData['value'] ?? null;
+
+                if ($field->type === 'checkbox') {
+                    $existing->value = $rawValue ? '1' : '0';
+                } else {
+                    $existing->value = (string)$rawValue;
+                }
             }
 
+            // Сохраняем комментарий для всех типов полей
+            $existing->comment = $fieldData['comment'] ?? null;
             $existing->save();
         }
+
+        $this->entry->comment = $this->comment;
+        $this->entry->status = 'review';
+        $this->entry->date_achievement = $this->date_achievement;
+        $this->entry->percent = $this->percent;
+        $this->entry->save();
 
         session()->flash('success', 'Данные успешно обновлены.');
     }
@@ -93,29 +148,30 @@ class FormEntryEdit extends Component
 
     public function mount(FormEntry $entry)
     {
+        $this->user = User::find($entry->user_id);
         $this->entry = $entry->load([
             'form.template.fields.options',
             'fieldEntryValues'
         ]);
 
+        $this->date_achievement = $this->entry->date_achievement;
+        $this->percent = $this->entry->percent;
         $this->templateFields = $this->entry->form->template->fields->sortBy('sort_order');
+        $this->comment = $this->entry->comment;
 
-        // Заполнение текущих значений
         foreach ($this->templateFields as $field) {
             $value = $this->entry->fieldEntryValues
                 ->firstWhere('template_field_id', $field->id);
 
-            $raw = $value?->value ?? null;
-
-            if ($field->type === 'checkbox') {
-                $this->fieldValues[$field->id] = filter_var($raw, FILTER_VALIDATE_BOOLEAN);
-            } else {
-                $this->fieldValues[$field->id] = $raw;
-            }
+            // Для всех полей используем единую структуру
+            $this->fieldValues[$field->id] = [
+                'value' => $field->type === 'checkbox'
+                    ? filter_var($value?->value, FILTER_VALIDATE_BOOLEAN)
+                    : $value?->value,
+                'comment' => $value?->comment,
+                'file' => $field->type === 'file' ? $value?->value : null
+            ];
         }
-
-
-        //dd($this->templateFields);
     }
 
     public function render()

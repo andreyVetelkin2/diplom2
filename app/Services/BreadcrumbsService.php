@@ -36,6 +36,9 @@ class BreadcrumbsService implements BreadcrumbsFromUrlInterface
             if (strtolower($segment) === 'index' || $segment === '') {
                 continue;
             }
+            if (is_numeric($segment)) {
+                continue;
+            }
 
             $currentUrl .= '/' . $segment; // Накапливаем URL
             $isLast = $index === count($segments) - 1; // Проверяем, последний ли это сегмент

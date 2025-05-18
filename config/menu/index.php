@@ -13,39 +13,67 @@ return [
         'active' => 'profile',
     ],
     [
-        'label' => 'Отчеты',
-        'route' => 'reports',
-        'active' => 'reports',
-    ],
-//    [
-//        'label' => 'Отчеты',
-//        'route' => 'reports',
-//        'active' => 'reports',
-//    ],
-    [
-        'label' => 'Загрузить достижение',
-        'route' => 'upload',
-        'active' => 'upload',
-    ],
-    [
+<<<<<<< Updated upstream
+=======
         'label' => 'Шаблоны',
         'route' => 'templates',
         'active' => 'templates',
-            'label' => 'Публикации',
-            'route' => 'author.prep',
-            'active' => 'author.prep',
+        'permission' => 'template-edit'
     ],
     [
         'label' => 'Формы',
         'route' => 'forms',
         'active' => 'forms',
-        'label' => 'Scholar',
+        'permission' => 'form-edit',
+    ],
+    [
+>>>>>>> Stashed changes
+        'label' => 'Отчеты',
+        'route' => 'reports',
+        'active' => 'reports',
+    ],
+<<<<<<< Updated upstream
+=======
+    [
+        'label' => 'Архив отчетов',
+        'route' => 'reports-archive',
+        'active' => 'reports-archive',
+    ],
+
+>>>>>>> Stashed changes
+    [
+        'label' => 'Загрузить достижение',
+        'route' => 'upload',
+        'active' => 'upload',
+    ],
+
+    [
+<<<<<<< Updated upstream
+        'label' => 'Шаблоны',
+        'route' => 'templates',
+        'active' => 'templates',
+    ],
+    [
+        'label' => 'Формы',
+        'route' => 'forms',
+        'active' => 'forms',
+    ],
+=======
+        'label' => 'Публикации',
+        'route' => 'author.prep',
+        'active' => 'author',
+    ],
+    [
+        'label' => 'Настройки Google Scholar ',
         'route' => 'scholar',
         'active' => 'scholar',
     ],
-//    [
-//        'label' => 'Шаблоны',
-//        'route' => 'templates',
-//        'active' => 'templates',
-//    ],
+    [
+            'label' => 'Загрузка данных Google',
+            'route' => 'users.index',
+            'active' => 'usersgoogle',
+            'permission' => 'update-Google-Scholar-users'
+        ],
+
+>>>>>>> Stashed changes
 ];

@@ -13,9 +13,13 @@ class FormEntry extends Model
         'form_template_id',
         'user_id',
         'form_id',
+        'comment',
         'status',
+        'percent',
         'date_achievement'
     ];
+
+
 
     public function form()
     {
@@ -25,7 +29,20 @@ class FormEntry extends Model
     {
         return $this->hasMany(FieldEntryValue::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
+    public function getStatusLabelAttribute(): string
+    {
+        return match($this->status) {
+            'review' => 'На рассмотрении',
+            'approved' => 'Принято',
+            'rejected' => 'Отклонено',
+            default => 'Неизвестно',
+        };
+    }
 
 
 }

@@ -1,4 +1,4 @@
-<div class="container my-4">
+<div class="container my-4 p-0">
     <div class="card shadow-sm">
         <div class="card-header">
             <h5 class="card-title ">Фильтр по дате</h5>
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary w-100">
+                        <button type="submit" class="btn btn-outline-primary w-100">
                             <i class="bi bi-funnel me-2"></i>Применить
                         </button>
                     </div>
@@ -43,34 +43,45 @@
                 <div class="row mt-3">
                     <div class="col-12">
                         <div class="btn-group btn-group-sm" role="group">
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                wire:click="setQuickDate(7)"
-                            >
+                            <button type="button" class="btn btn-outline-secondary" wire:click="setQuickDate('week')">
                                 Неделя
                             </button>
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                wire:click="setQuickDate(30)"
-                            >
+                            <button type="button" class="btn btn-outline-secondary" wire:click="setQuickDate('month')">
                                 Месяц
                             </button>
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                wire:click="setQuickDate(90)"
-                            >
-                                Квартал
-                            </button>
-                            <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                wire:click="setQuickDate(365)"
-                            >
+                            <button type="button" class="btn btn-outline-secondary" wire:click="setQuickDate('year')">
                                 Год
                             </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                wire:click="setQuarter(1)"
+                            >
+                                I квартал
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                wire:click="setQuarter(2)"
+                            >
+                                II квартал
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                wire:click="setQuarter(3)"
+                            >
+                                III квартал
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                wire:click="setQuarter(4)"
+                            >
+                                IV квартал
+                            </button>
+
                         </div>
                     </div>
                 </div>
