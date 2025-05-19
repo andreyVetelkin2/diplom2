@@ -13,7 +13,6 @@ return [
         'active' => 'profile',
     ],
     [
-
         'label' => 'Шаблоны',
         'route' => 'templates',
         'active' => 'templates',
@@ -43,7 +42,6 @@ return [
     ],
 
     [
-
         'label' => 'Публикации',
         'route' => 'author.prep',
         'active' => 'author',
@@ -59,6 +57,5 @@ return [
             'active' => 'usersgoogle',
             'permission' => 'update-Google-Scholar-users'
         ],
-
 
 ];

@@ -12,6 +12,7 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
+
         $permissions = [
             ['name' => 'Просмотр пользователей', 'slug' => 'view-users'],
             ['name' => 'Создание пользователей', 'slug' => 'create-users'],
@@ -47,5 +48,6 @@ class PermissionSeeder extends Seeder
                 ['name' => $permission['name']]
             );
         }
+
     }
 }

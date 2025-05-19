@@ -37,6 +37,7 @@
 
 
                 <a href="{{ route('profile.changer', ['user' => $user->id]) }}"
+
                    class="btn btn-outline-primary w-100 rounded-pill mb-3">
                     ✏️ Изменить профиль
                 </a>
