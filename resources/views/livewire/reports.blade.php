@@ -50,7 +50,6 @@
                 <div class="mt-3">
                     <label for="department" class="form-label fw-medium">Выберите кафедру:</label>
                     <select wire:model="selectedDepartment" id="department" multiple class="form-select">
-                        <option value="">-- выберите --</option>
                         @foreach($departments as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
@@ -62,7 +61,6 @@
                 <div class="mt-3">
                     <label for="user" class="form-label fw-medium">Выберите пользователя:</label>
                     <select wire:model="selectedUser" id="user" class="form-select" multiple>
-                        <option value="">-- выберите --</option>
                         @foreach($users as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
@@ -73,8 +71,7 @@
             @if($activeTab === 'position')
                 <div class="mt-3">
                     <label for="user" class="form-label fw-medium">Выберите должность:</label>
-                    <select wire:model="selectedPositions" id="user" class="form-select" multiple>
-                        <option value="">-- выберите --</option>
+                    <select wire:model="selectedPositions" id="position" class="form-select" multiple>
                         @foreach($positions as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
@@ -84,8 +81,7 @@
             @if($activeTab === 'forms')
                 <div class="mt-3">
                     <label for="user" class="form-label fw-medium">Выберите тип достижения:</label>
-                    <select wire:model="selectedForms" id="user" class="form-select" multiple>
-                        <option value="">-- выберите --</option>
+                    <select wire:model="selectedForms" id="form" class="form-select" multiple>
                         @foreach($forms as $id => $name)
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
