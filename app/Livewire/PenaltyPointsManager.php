@@ -21,9 +21,6 @@ class PenaltyPointsManager extends Component
     public ?int $userId = null;
     public int $points = 0;
 
-
-    public $ratingService;
-
     protected $rules = [
         'points' => 'required|integer|min:0|max:100',
     ];
@@ -47,14 +44,24 @@ class PenaltyPointsManager extends Component
     public function edit(int $userId): void
     {
         $this->userId = $userId;
-        $this->points = PenaltyPoints::where('user_id', $userId)->value('penalty_points') ?? 0;
+//        $this->points = PenaltyPoints::where('user_id', $userId)->value('penalty_points') ?? 0;
         $this->showEditModal = true;
+    }
+
+    public function deletePenaltyPoint(int $penaltyId): void
+    {
+        PenaltyPoints::findOrFail($penaltyId)->delete();
+
     }
 
     public function save(): void
     {
         $this->validate();
 
+        if($this->points <= 0){
+            session()->flash('message', 'Штрафные должны быть строго больше 0');
+            return;
+        }
 
         PenaltyPoints::create([
             'user_id' => $this->userId,
@@ -62,8 +69,8 @@ class PenaltyPointsManager extends Component
         ]);
 
         $this->resetModal();
-        $this->ratingService = app(RatingUpdateService::class);
-        $this->ratingService->recalculateForUser($this->userId);
+        $this->ratingService = new RatingUpdateService();
+        $this->ratingService->recalculateForUser(auth()->id());
         session()->flash('message', 'Штрафные баллы успешно добавлены!');
     }
 
@@ -75,10 +82,17 @@ class PenaltyPointsManager extends Component
 
     public function getUsersProperty()
     {
+        $startOfQuarter = now()->firstOfQuarter()->startOfDay();
+        $endOfQuarter = now()->firstOfQuarter()->addMonths(3)->subSecond();
+
         return User::query()
-            ->with('penaltyPoints')
-            ->leftJoin('penalty_points', 'users.id', '=', 'penalty_points.user_id')
-            ->select('users.*', 'penalty_points.penalty_points')
+            ->select('users.*')
+            ->selectSub(function ($query) use ($startOfQuarter, $endOfQuarter) {
+                $query->from('penalty_points')
+                    ->selectRaw('COALESCE(SUM(penalty_points), 0)')
+                    ->whereColumn('penalty_points.user_id', 'users.id')
+                    ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter]);
+            }, 'penalty_points')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('users.name', 'like', "%{$this->search}%")
@@ -88,6 +102,7 @@ class PenaltyPointsManager extends Component
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }
+
 
     public function render()
     {

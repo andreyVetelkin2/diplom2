@@ -50,7 +50,6 @@
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center">
-
                                     <div>
                                         <div class="fw-semibold">{{ $user->name }}</div>
                                         <small class="text-muted">{{ $user->email }}</small>
@@ -131,6 +130,7 @@
                                 <tr>
                                     <th>Дата</th>
                                     <th>Баллы</th>
+                                    <th>Удалить</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -138,6 +138,12 @@
                                     <tr>
                                         <td>{{ $penalty->created_at->format('d.m.Y H:i') }}</td>
                                         <td>{{ $penalty->penalty_points }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                    wire:click="deletePenaltyPoint({{$penalty->id}})">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -150,7 +156,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" wire:click="resetModal">Отмена</button>
                     <button type="button" class="btn btn-primary" wire:click="save">
-                        <i class="bi bi-check-circle me-1"></i> Сохранить
+                        <i class="bi bi-check-circle me-1"></i> Добавить Штрафной Балл
                     </button>
                 </div>
 
