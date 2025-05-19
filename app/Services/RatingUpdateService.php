@@ -18,7 +18,7 @@ class RatingUpdateService
         // Получаем все достижения пользователя за текущий квартал и статусом "approved"
         $approvedEntries = FormEntry::where('user_id', $user_id)
             ->where('status', 'approved')
-            ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
+            ->whereBetween('date_achievement', [$startOfQuarter, $endOfQuarter])
             ->with('form') // Чтобы получить баллы из связанной формы
             ->get();
 
