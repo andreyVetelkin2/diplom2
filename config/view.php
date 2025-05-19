@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'page_elem' => 15,
+    'page_elem' => 10,
 
 
 ];

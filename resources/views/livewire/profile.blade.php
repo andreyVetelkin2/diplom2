@@ -5,6 +5,7 @@
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body text-center p-4">
                     <h4 class="fw-semibold mb-1">{{ $username }}</h4>
+                    <p class="text-muted mb-3">{{ $user->position?->name }}</p>
 
                     <ul class="list-group list-group-flush text-start mb-3">
                         @if($ratingPoints )

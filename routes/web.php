@@ -34,7 +34,10 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 Route::middleware('auth')->group(function () { //группируем чтобы указать что посредник применяется к обоим группам
 
-    Route::prefix('')->group(function () {//префикса нет юзаем только для получения метода груп
+
+    Route::prefix('')->group(function (){//префикса нет юзаем только для получения метода груп
+        Route::view('/', 'index')
+            ->name('index');
 
         Route::get('upload', UserFillForm::class)
             ->name('upload');
@@ -60,9 +63,20 @@ Route::middleware('auth')->group(function () { //группируем чтобы
     Route::middleware('role:,form-edit')->group(function () {
         Route::get('forms', ManageForms::class)
             ->name('forms');
+
+        Route::get('upload', UserFillForm::class)
+            ->name('upload');
+
+        Route::get('reports', Reports::class)
+            ->name('reports');
+
+        Route::get('reports-archive', \App\Livewire\ReportArchive::class)
+            ->name('reports-archive');
+
     });
 
     Route::middleware('role:admin')->prefix('admin')->group(function () {//префикс добавляется так как оба маршрута лежат по пути /admin/../
+
 
         Route::get('/', fn() => redirect()->route('index'))->name('admin');
 
@@ -79,17 +93,20 @@ Route::middleware('auth')->group(function () { //группируем чтобы
 
         });
 
+
         Route::prefix('departments')->group(function () {
             Route::get('/', Departments::class)
                 ->name('departments');
 
         });
 
+
         Route::prefix('institutes')->group(function () {
             Route::get('/', Institutes::class)
                 ->name('institutes');
 
         });
+
 
         Route::prefix('positions')->group(function () {
             Route::get('/', Positions::class)
@@ -103,6 +120,7 @@ Route::middleware('auth')->group(function () { //группируем чтобы
         });
 
         Route::prefix('roles')->group(function () {
+
             Route::get('/', Roles::class)
                 ->name('roles');
             Route::get('/{role}', RoleDetail::class)
@@ -110,6 +128,7 @@ Route::middleware('auth')->group(function () { //группируем чтобы
         });
 
     });
+
 
 
     Route::get('/download-report/{filename}', function ($filename) {

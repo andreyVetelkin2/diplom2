@@ -27,6 +27,7 @@
 
                     @error('form.position_id') <span class="error">{{ $message }}</span> @enderror
                 </div>
+
                 <div class="col-md-6">
                     <select class="form-select" wire:model.defer="form.department_id">
                         <option value="">Выберите кафедру</option>
