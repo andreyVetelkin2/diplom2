@@ -1,8 +1,7 @@
 /*@tailwind base;
 @tailwind components;
 @tailwind utilities;*/
-<<<<<<< Updated upstream
-=======
+
 .pagination {
     @apply flex items-center justify-center space-x-2;
 }
@@ -47,4 +46,4 @@
     flex-grow: 1;
     min-height: 80px;
 }
->>>>>>> Stashed changes
+

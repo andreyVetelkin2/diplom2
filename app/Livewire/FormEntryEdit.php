@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\FormEntry;
 use App\Models\FieldEntryValue;
 use App\Models\User;
+use App\Services\RatingUpdateService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Http\UploadedFile;
@@ -141,6 +142,9 @@ class FormEntryEdit extends Component
         $this->entry->date_achievement = $this->date_achievement;
         $this->entry->percent = $this->percent;
         $this->entry->save();
+
+        $this->ratingService = app(RatingUpdateService::class);
+        $this->ratingService->recalculateForUser($this->userId);
 
         session()->flash('success', 'Данные успешно обновлены.');
     }

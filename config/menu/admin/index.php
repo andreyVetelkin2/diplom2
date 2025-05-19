@@ -32,16 +32,12 @@ return [
                 'route' => 'departments',
                 'active' => 'admin/departments',
             ],
-<<<<<<< Updated upstream
-=======
+
             [
                 'label' => 'Должности',
                 'route' => 'positions',
                 'active' => 'admin/positions',
             ],
-
->>>>>>> Stashed changes
-
         ],
     ],
 

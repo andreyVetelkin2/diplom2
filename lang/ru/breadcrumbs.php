@@ -14,8 +14,6 @@ return [
     'Institutes' => 'Институты',
     'Departments' => 'Кафедры',
     'Reports' => 'Отчеты',
-<<<<<<< Updated upstream
-=======
     'Manager Cabinet' => 'Кабинет руководителя',
     'Author' => 'Автор',
     'Search' => 'Поиск аккаунта',
@@ -23,6 +21,6 @@ return [
     'Scholar' => 'Настройки Google Scholar',
     'Detail' => 'Редактирование',
     'Form Entry' => 'Редактировать достижение',
-    'Reports Archive' => 'Архив отчетов'
->>>>>>> Stashed changes
+    'Reports Archive' => 'Архив отчетов',
+    'Positions' => 'Должности'
 ];

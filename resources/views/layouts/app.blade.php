@@ -58,12 +58,9 @@
     <footer class="app-footer">
         <!--begin::Copyright-->
         <strong>
-<<<<<<< Updated upstream
-            Copyright &copy; 2014-2025&nbsp;
-=======
+
             Copyright &copy; 2025&nbsp;
             {{--            <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.--}}
->>>>>>> Stashed changes
         </strong>
         All rights reserved.
         <!--end::Copyright-->

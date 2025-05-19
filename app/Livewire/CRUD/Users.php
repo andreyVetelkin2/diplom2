@@ -4,10 +4,7 @@ namespace App\Livewire\CRUD;
 
 use App\Interfaces\Crudable;
 use App\Livewire\Forms\UserForm;
-<<<<<<< Updated upstream
-=======
 use App\Models\Position;
->>>>>>> Stashed changes
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
@@ -19,20 +16,13 @@ class Users extends Component implements Crudable
 {
     use WithPagination;
 
-<<<<<<< Updated upstream
-    public UserForm $form;
-    public bool $editMode = false;
-    public int $user_id;
-    public int $perPage = 10;
 
-=======
 
     public UserForm $form;
     public bool $editMode = false;
     public int $user_id;
     public int $perPage = 10;
 
->>>>>>> Stashed changes
     protected $paginationTheme = 'bootstrap';
 
     public function mount()
@@ -43,10 +33,7 @@ class Users extends Component implements Crudable
     public function store()
     {
         $validated = $this->form->validate();
-<<<<<<< Updated upstream
-=======
         $validated['password'] = Hash::make($validated['password']);
->>>>>>> Stashed changes
         User::create($validated);
         $this->resetFields();
         session()->flash('message', 'Пользователь создан');
@@ -88,10 +75,7 @@ class Users extends Component implements Crudable
         return view('livewire.c-r-u-d.users', [
             'users' => User::with('department')->paginate($this->perPage),
             'departments' => Department::pluck('name', 'id'),
-<<<<<<< Updated upstream
-=======
             'positions' => Position::pluck('name', 'id'),
->>>>>>> Stashed changes
         ]);
     }
 }

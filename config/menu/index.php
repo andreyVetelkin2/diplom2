@@ -13,8 +13,7 @@ return [
         'active' => 'profile',
     ],
     [
-<<<<<<< Updated upstream
-=======
+
         'label' => 'Шаблоны',
         'route' => 'templates',
         'active' => 'templates',
@@ -27,20 +26,16 @@ return [
         'permission' => 'form-edit',
     ],
     [
->>>>>>> Stashed changes
         'label' => 'Отчеты',
         'route' => 'reports',
         'active' => 'reports',
     ],
-<<<<<<< Updated upstream
-=======
     [
         'label' => 'Архив отчетов',
         'route' => 'reports-archive',
         'active' => 'reports-archive',
     ],
 
->>>>>>> Stashed changes
     [
         'label' => 'Загрузить достижение',
         'route' => 'upload',
@@ -48,17 +43,7 @@ return [
     ],
 
     [
-<<<<<<< Updated upstream
-        'label' => 'Шаблоны',
-        'route' => 'templates',
-        'active' => 'templates',
-    ],
-    [
-        'label' => 'Формы',
-        'route' => 'forms',
-        'active' => 'forms',
-    ],
-=======
+
         'label' => 'Публикации',
         'route' => 'author.prep',
         'active' => 'author',
@@ -75,5 +60,5 @@ return [
             'permission' => 'update-Google-Scholar-users'
         ],
 
->>>>>>> Stashed changes
+
 ];

@@ -7,10 +7,7 @@ use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
 use App\Services\UserService;
-<<<<<<< Updated upstream
-=======
 use Illuminate\Support\Facades\Auth;
->>>>>>> Stashed changes
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
@@ -32,8 +29,6 @@ class UserDetail extends Component
     public function boot(UserService $userService)
     {
         $this->userService = $userService;
-<<<<<<< Updated upstream
-=======
 
         $this->user_field = $this->user->toArray();
 
@@ -68,7 +63,6 @@ class UserDetail extends Component
             // Логинимся под выбранным пользователем
             Auth::login($this->user);
 
->>>>>>> Stashed changes
     }
 
     public function mount()

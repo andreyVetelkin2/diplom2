@@ -1,6 +1,8 @@
 <?php
 namespace App\Livewire;
 
+
+use App\Services\RatingUpdateService;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\User;
@@ -18,6 +20,9 @@ class PenaltyPointsManager extends Component
     public bool $showEditModal = false;
     public ?int $userId = null;
     public int $points = 0;
+
+
+    public $ratingService;
 
     protected $rules = [
         'points' => 'required|integer|min:0|max:100',
@@ -50,15 +55,17 @@ class PenaltyPointsManager extends Component
     {
         $this->validate();
 
-        PenaltyPoints::updateOrCreate(
-            ['user_id' => $this->userId],
-            ['penalty_points' => $this->points]
-        );
+
+        PenaltyPoints::create([
+            'user_id' => $this->userId,
+            'penalty_points' => $this->points,
+        ]);
 
         $this->resetModal();
-        session()->flash('message', 'Штрафные баллы успешно обновлены!');
+        $this->ratingService = app(RatingUpdateService::class);
+        $this->ratingService->recalculateForUser($this->userId);
+        session()->flash('message', 'Штрафные баллы успешно добавлены!');
     }
-
 
     public function resetModal(): void
     {
