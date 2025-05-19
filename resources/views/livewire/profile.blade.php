@@ -37,14 +37,15 @@
 
 
                 <a href="{{ route('profile.changer', ['user' => $user->id]) }}"
-                   class="btn btn-outline-primary w-100 rounded-pill">
+
+                   class="btn btn-outline-primary w-100 rounded-pill mb-3">
                     ✏️ Изменить профиль
                 </a>
-                <button wire:click="recalculateRating" class="btn btn-outline-primary w-100 rounded-pill">
+                <button wire:click="recalculateRating" class="btn btn-outline-primary w-100 rounded-pill mb-3">
                     🔄️ Обновить рейтинг
                 </button>
                 @can('manage')
-                    <button wire:click="recalculateForAll" class="btn btn-outline-primary w-100 rounded-pill">
+                    <button wire:click="recalculateForAll" class="btn btn-outline-primary w-100 rounded-pill mb-3">
                         🔄️ Обновить рейтинг всем пользователям
                     </button>
                 @endcan

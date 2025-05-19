@@ -79,7 +79,8 @@ class Profile extends Component
 
     public function recalculateRating()
     {
-        $this->ratingService = app(RatingUpdateService::class);
+
+        $this->ratingService = new RatingUpdateService();
         $this->ratingService->recalculateForUser($this->user->id);
         session()->flash('success_info', 'Рейтинг обновлён!');
         return redirect(request()->header('Referer'));
