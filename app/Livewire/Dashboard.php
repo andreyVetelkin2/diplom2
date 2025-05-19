@@ -30,6 +30,7 @@ class Dashboard extends Component
             // Кол-во "отклонённых"
             $this->rejectedCount = FormEntry::where('user_id', $this->user->id)->where('status', 'rejected')->count();
 
+
             // Определяем текущий квартал
             $now = now();
             $currentMonth = $now->month;

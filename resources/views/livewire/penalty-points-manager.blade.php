@@ -58,6 +58,7 @@
                                 </div>
                             </td>
                             <td>
+
                                     <span
                                         class="badge rounded-pill bg-{{ $user->penalty_points >= 50 ? 'danger' : ($user->penalty_points >= 20 ? 'warning' : 'secondary') }}">
                                         {{ $user->penalty_points ?? 0 }}
@@ -92,6 +93,7 @@
         </div>
     </div>
 
+
     <div class="modal fade @if($showEditModal) show d-block @endif" tabindex="-1"
          style="@if($showEditModal) display: block; @else display: none; @endif" role="dialog" aria-modal="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -107,7 +109,6 @@
                 </div>
 
                 <!-- Тело модального окна -->
-                <!-- Тело модального окна -->
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Пользователь</label>
@@ -115,6 +116,7 @@
                     </div>
 
                     <div class="mb-3">
+
                         <label class="form-label" for="points">Добавить штрафные баллы</label>
                         <input type="number" id="points" class="form-control" wire:model.defer="points" min="0"
                                max="100">
@@ -160,6 +162,7 @@
     @if($showEditModal)
         <div class="modal-backdrop fade show"></div>
     @endif
+
 
 
     @if($showEditModal)

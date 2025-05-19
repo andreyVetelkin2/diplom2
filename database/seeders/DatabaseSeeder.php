@@ -12,9 +12,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+<<<<<<< Updated upstream
 //        $this->call(RoleSeeder::class);
 //        $this->call(PermissionSeeder::class);
 //        $this->call(UserSeeder::class);
 //        $this->call(ScientificAchievementFormSeeder::class);
+=======
+       $this->call(RoleSeeder::class);
+       $this->call(PermissionSeeder::class);
+       $this->call(UserSeeder::class);
+       $this->call(ScientificAchievementFormSeeder::class);
+       $this->call(FormTemplateSeeder::class);
+//        $this->call(TemplateFieldsSeeder::class);
+//        $this->call(FormsSeeder::class);
+>>>>>>> Stashed changes
     }
 }

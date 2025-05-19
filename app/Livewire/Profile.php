@@ -58,6 +58,7 @@ class Profile extends Component
             }
         }
 
+
         // Определяем текущий квартал
         $now = now();
         $currentMonth = $now->month;

@@ -89,6 +89,7 @@ new #[Layout('layouts.guest')] class extends Component
                     <!--begin::Row-->
                     <div class="row">
                         <div class="col-8">
+
                             <div class="form-check form-switch ">
                                 <input wire:model="form.remember" id="remember" class="form-check-input" type="checkbox" value="">
                                 <label class="form-check-label" for="flexCheckDefault"> Запомнить меня </label>
