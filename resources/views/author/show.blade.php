@@ -34,9 +34,7 @@
                                <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold mr-2">
                                    <i class="fas fa-chart-bar mr-1"></i> Индекс хирша: {{ $h_index }}
                                </span>
-                               <span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold mr-2">
-                                   <i class="fas fa-list-ol mr-1"></i> i10-индекс: {{ $i10_index }}
-                               </span>
+
                            </div>
                        </div>
                    </div>

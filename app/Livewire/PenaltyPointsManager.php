@@ -1,6 +1,7 @@
 <?php
 namespace App\Livewire;
 
+
 use App\Services\RatingUpdateService;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -19,6 +20,7 @@ class PenaltyPointsManager extends Component
     public bool $showEditModal = false;
     public ?int $userId = null;
     public int $points = 0;
+
 
     public $ratingService;
 
@@ -52,6 +54,7 @@ class PenaltyPointsManager extends Component
     public function save(): void
     {
         $this->validate();
+
 
         PenaltyPoints::create([
             'user_id' => $this->userId,

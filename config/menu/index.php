@@ -13,6 +13,7 @@ return [
         'active' => 'profile',
     ],
     [
+
         'label' => 'Шаблоны',
         'route' => 'templates',
         'active' => 'templates',
@@ -42,14 +43,22 @@ return [
     ],
 
     [
+
         'label' => 'Публикации',
         'route' => 'author.prep',
-        'active' => 'author.prep',
+        'active' => 'author',
     ],
     [
-        'label' => 'Scholar',
+        'label' => 'Настройки Google Scholar ',
         'route' => 'scholar',
         'active' => 'scholar',
     ],
+    [
+            'label' => 'Загрузка данных Google',
+            'route' => 'users.index',
+            'active' => 'usersgoogle',
+            'permission' => 'update-Google-Scholar-users'
+        ],
+
 
 ];

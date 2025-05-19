@@ -27,6 +27,7 @@ class User extends Authenticatable
         'hirsh',
         'position_id',
         'limit_ballov_na_kvartal',
+
     ];
 
     /**
@@ -65,4 +66,5 @@ class User extends Authenticatable
     public function position() {
         return $this->belongsTo(Position::class);
     }
+
 }

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'Usersgoogle' => 'Загрузка',
     'Profile' => 'Профиль',
     'Upload' => 'Загрузка',
     'Home' => 'Главная',

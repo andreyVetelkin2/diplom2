@@ -32,13 +32,12 @@ return [
                 'route' => 'departments',
                 'active' => 'admin/departments',
             ],
+
             [
                 'label' => 'Должности',
                 'route' => 'positions',
                 'active' => 'admin/positions',
             ],
-
-
         ],
     ],
 
