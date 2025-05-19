@@ -17,7 +17,6 @@ class Users extends Component implements Crudable
     use WithPagination;
 
 
-
     public UserForm $form;
     public bool $editMode = false;
     public int $user_id;

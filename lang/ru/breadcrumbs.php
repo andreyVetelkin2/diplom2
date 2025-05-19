@@ -21,6 +21,5 @@ return [
     'Scholar' => 'Настройки Google Scholar',
     'Detail' => 'Редактирование',
     'Form Entry' => 'Редактировать достижение',
-    'Reports Archive' => 'Архив отчетов',
-    'Positions' => 'Должности'
+    'Reports Archive' => 'Архив отчетов'
 ];
