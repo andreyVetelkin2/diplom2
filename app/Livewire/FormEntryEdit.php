@@ -144,7 +144,7 @@ class FormEntryEdit extends Component
         $this->entry->save();
 
         $this->ratingService = app(RatingUpdateService::class);
-        $this->ratingService->recalculateForUser($this->userId);
+        $this->ratingService->recalculateForUser($this->user->id);
 
         session()->flash('success', 'Данные успешно обновлены.');
     }
