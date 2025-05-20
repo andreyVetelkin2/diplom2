@@ -7,6 +7,7 @@ use App\Livewire\Forms\UserForm;
 use App\Models\Position;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -55,6 +56,7 @@ class Users extends Component implements Crudable
         session()->flash('message', 'Пользователь обновлён');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         User::findOrFail($id)->delete();

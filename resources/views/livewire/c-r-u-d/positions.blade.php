@@ -36,8 +36,8 @@
                         <td>{{ $position->name }}</td>
                         <td>
                             <button wire:click="edit({{ $position->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $position->id }})" class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('Удалить институт?')">🗑</button>
+                            <button  class="btn btn-sm btn-outline-danger"
+                                    onclick="confirmDelete({{ $position->id }})">🗑</button>
                         </td>
                     </tr>
                 @endforeach
@@ -52,3 +52,12 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        function confirmDelete(id) {
+            if (confirm(`Удалить должность?`)) {
+                Livewire.dispatch('deleteConfirmed', { id });
+            }
+        }
+    </script>
+@endpush

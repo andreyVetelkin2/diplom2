@@ -20,6 +20,8 @@ class PenaltyPointsManager extends Component
     public bool $showEditModal = false;
     public ?int $userId = null;
     public int $points = 0;
+    public string $comment = '';
+    public $date = null;
 
     protected $rules = [
         'points' => 'required|integer|min:0|max:100',
@@ -66,6 +68,8 @@ class PenaltyPointsManager extends Component
         PenaltyPoints::create([
             'user_id' => $this->userId,
             'penalty_points' => $this->points,
+            'comment' => $this->comment,
+            'date' => $this->date,
         ]);
 
         $this->resetModal();

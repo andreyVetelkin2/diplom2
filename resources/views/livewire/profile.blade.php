@@ -115,20 +115,21 @@
         </div>
     </div>
 
+    @can('loading-achievements')
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>
+                        Загрузить достижение
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <livewire:user-fill-form/>
+                </div>
+                <div class="card-footer">
 
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>
-                    Загрузить достижение
-                </h5>
-            </div>
-            <div class="card-body">
-                <livewire:user-fill-form/>
-            </div>
-            <div class="card-footer">
-
+                </div>
             </div>
         </div>
-    </div>
+    @endcan
 </div>

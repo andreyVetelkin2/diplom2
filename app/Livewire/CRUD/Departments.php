@@ -50,6 +50,7 @@ class Departments extends Component implements Crudable
         session()->flash('message', 'Кафедра обновлена');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         Department::findOrFail($id)->delete();

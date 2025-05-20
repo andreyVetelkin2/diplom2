@@ -72,8 +72,8 @@
                         <td>{{ $user->department?->name }}</td>
                         <td>
                             <button wire:click="edit({{ $user->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('Удалить пользователя?')">🗑</button>
+                            <button  class="btn btn-sm btn-outline-danger"
+                                    onclick="confirmDelete('{{ $user->id }}')">🗑</button>
                         </td>
                     </tr>
                 @endforeach
@@ -89,3 +89,12 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        function confirmDelete(id) {
+            if (confirm(`Удалить пользователя ?`)) {
+                Livewire.dispatch('deleteConfirmed', { id });
+            }
+        }
+    </script>
+@endpush

@@ -121,6 +121,18 @@
                                max="100">
                     </div>
 
+                    <div class="mb-3">
+
+                        <label class="form-label" for="comment">Обоснование</label>
+                        <textarea name="comment" class="form-control" id="" cols="30" rows="10" wire:model.defer="comment"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label" for="date">Дата вступления в силу</label>
+                        <input type="date" id="date" class="form-control" wire:model.defer="date">
+                    </div>
+
                     @if($selectedUser && $selectedUser->penaltyPoints->isNotEmpty())
                         <hr>
                         <h6 class="fw-bold mb-2">История штрафных баллов</h6>
@@ -130,14 +142,16 @@
                                 <tr>
                                     <th>Дата</th>
                                     <th>Баллы</th>
+                                    <th>Обоснование</th>
                                     <th>Удалить</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($selectedUser->penaltyPoints->sortByDesc('created_at') as $penalty)
                                     <tr>
-                                        <td>{{ $penalty->created_at->format('d.m.Y H:i') }}</td>
+                                        <td>{{ $penalty->date }}</td>
                                         <td>{{ $penalty->penalty_points }}</td>
+                                        <td>{{ $penalty->comment }}</td>
                                         <td>
                                             <button class="btn btn-sm btn-outline-danger"
                                                     wire:click="deletePenaltyPoint({{$penalty->id}})">

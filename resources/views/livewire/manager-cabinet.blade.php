@@ -85,12 +85,16 @@
         </div>
     </div>
 
-    <livewire:penalty-points-manager/>
+    @can('penalty-points-management')
+        <livewire:penalty-points-manager/>
+    @endcan
+
     <livewire:achievements-chart/>
 
     <!-- Modal: установить лимит баллов за квартал -->
-    <livewire:bulk-limit-setter/>
-
+    @can('installation-of-the-point-limit')
+        <livewire:bulk-limit-setter/>
+    @endcan
 
 </div>
 

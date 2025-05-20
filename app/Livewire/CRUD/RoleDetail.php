@@ -27,7 +27,7 @@ class RoleDetail extends Component
     public function submit()
     {
         $permission = Permission::where('slug', 'assign-permissions-to-roles')->first();
-        if (auth()->user()->hasPermissionTo($permission)) {
+        if (auth()->user()->hasPermissionTo($permission) || auth()->user()->hasRole('admin')) {
             $this->role->syncPermissions($this->selectedPermissions);
             session()->flash('success', 'Права обновлены.');
         }else{
