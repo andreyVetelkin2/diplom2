@@ -39,8 +39,12 @@ Route::middleware('auth')->group(function () { //группируем чтобы
         Route::view('/', 'index')
             ->name('index');
 
-        Route::get('upload', UserFillForm::class)
-            ->name('upload');
+        Route::middleware('role:,loading-achievements')->group(function () {
+            Route::get('upload', UserFillForm::class)
+                ->name('upload');
+        });
+
+
 
         Route::get('reports', Reports::class)
             ->name('reports');

@@ -50,6 +50,7 @@ class Positions extends Component
         session()->flash('message', 'Должность обновлена');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         Position::findOrFail($id)->delete();

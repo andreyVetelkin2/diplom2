@@ -49,6 +49,7 @@ class Institutes extends Component implements Crudable
         session()->flash('message', 'Институт обновлён');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         Institute::findOrFail($id)->delete();

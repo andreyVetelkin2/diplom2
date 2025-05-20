@@ -75,6 +75,7 @@ class Permissions extends Component implements Crudable
         session()->flash('message', 'Право обновлено');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         $this->authorize('delete', Permission::class);

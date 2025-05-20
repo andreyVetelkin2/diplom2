@@ -29,7 +29,7 @@ class RatingUpdateService
 
         // Суммируем штрафные баллы за текущий квартал
         $penaltyPoints = PenaltyPoints::where('user_id', $user_id)
-            ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
+            ->whereBetween('date', [$startOfQuarter, $endOfQuarter])
             ->sum('penalty_points');
 
         // Вычисляем итоговый рейтинг

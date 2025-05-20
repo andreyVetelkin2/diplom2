@@ -17,7 +17,7 @@ use Livewire\Component;
 class Reports extends Component
 {
     public $groupedData = [];
-    public $selectReportTypes = [];
+
 
     public $activeTab = 'individual';// вкладка по умолчанию
 
@@ -40,18 +40,6 @@ class Reports extends Component
     public function mount()
     {
         $this->user = auth()->user();
-
-        $permissions = Permission::whereIn('slug', [
-            'report-on-the-departments',
-            'report-on-the-institutes',
-            'report-on-the-universities'
-        ])->get();
-
-        foreach ($permissions as $permission) {
-            if ($this->user->hasPermissionTo($permission)) {
-                $this->selectReportTypes[] = $permission->slug;
-            }
-        }
 
         // загрузка кафедр (можно ограничить доступные кафедры по ролям)
         $this->departments = Department::pluck('name', 'id')->toArray();
@@ -79,10 +67,9 @@ class Reports extends Component
     {
         $isFormsTab = $this->activeTab === 'forms' && !empty($this->selectedForms);
 
-        // 1) Определяем фильтр: либо по user_id, либо по form_id
         if (!$isFormsTab) {
             if ($this->activeTab === 'individual') {
-                $userIds = [ auth()->id() ];
+                $userIds = [auth()->id()];
             } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
                 $userIds = User::whereIn('department_id', $this->selectedDepartment)
                     ->pluck('id')->toArray();
@@ -96,14 +83,13 @@ class Reports extends Component
                 return;
             }
         } else {
-            // получаем просто список выбранных form_id
             $formIds = $this->selectedForms;
         }
 
         $this->dateFrom = $startDate;
-        $this->dateTo   = $endDate;
+        $this->dateTo = $endDate;
 
-        // 2) Один запрос: берём все записи за период, только approved
+        // Получаем достижения
         $query = FormEntry::with([
             'fieldEntryValues.templateField',
             'form:id,title,slug,points,category_id',
@@ -124,31 +110,42 @@ class Reports extends Component
             ->orderBy('created_at')
             ->get();
 
-        // 3) Группировка по пользователям
+        // Получаем штрафные баллы
+        $penaltyPoints = \DB::table('penalty_points')
+            ->select('id', 'user_id', 'penalty_points', 'date', 'comment')
+            ->whereBetween('date', [$startDate, $endDate]);
+
+        if (!$isFormsTab) {
+            $penaltyPoints->whereIn('user_id', $userIds);
+        } else {
+            $penaltyPoints = collect(); // пустая коллекция, если активна вкладка "Формы"
+        }
+
+        $penaltyPoints = $penaltyPoints->get();
+
+        // Группировка по пользователям
         $this->groupedData = $entries
             ->groupBy('user_id')
-            ->map(function($userEntries, $uid) {
+            ->map(function ($userEntries, $uid) use ($penaltyPoints) {
                 $user = User::find($uid);
 
                 $sections = $userEntries
                     ->groupBy(fn($e) => $e->form->category->name)
-                    ->map(function($entriesByCat, $categoryName) {
+                    ->map(function ($entriesByCat, $categoryName) {
                         $forms = $entriesByCat
                             ->groupBy('form_id')
-                            ->map(function($entriesByForm) {
+                            ->map(function ($entriesByForm) {
                                 $formModel = $entriesByForm->first()->form;
-                                $entries   = $entriesByForm->map(function($entry, $idx) {
+                                $entries = $entriesByForm->map(function ($entry, $idx) {
                                     $pairs = $entry->fieldEntryValues
                                         ->filter(fn($fv) =>
-                                        !in_array($fv->templateField->type, ['file', 'checkbox', 'list'])
-                                        )
+                                        !in_array($fv->templateField->type, ['file', 'checkbox', 'list']))
                                         ->map(fn($fv) =>
-                                        "{$fv->templateField->label}: {$fv->value}"
-                                        )
+                                        "{$fv->templateField->label}: {$fv->value}")
                                         ->toArray();
 
                                     return [
-                                        'date'       => $entry->created_at->format('d.m.Y'),
+                                        'date' => $entry->created_at->format('d.m.Y'),
                                         'outputLine' => ($idx + 1) . '. ' . implode(', ', $pairs),
                                     ];
                                 })->toArray();
@@ -159,11 +156,11 @@ class Reports extends Component
                                     );
 
                                 return [
-                                    'name'    => $formModel->title,
-                                    'slug'    => $formModel->slug,
-                                    'points'  => $formModel->points,
-                                    'count'   => count($entries),
-                                    'total'   => round($totalScore, 2),
+                                    'name' => $formModel->title,
+                                    'slug' => $formModel->slug,
+                                    'points' => $formModel->points,
+                                    'count' => count($entries),
+                                    'total' => round($totalScore, 2),
                                     'entries' => $entries,
                                 ];
                             })
@@ -172,13 +169,42 @@ class Reports extends Component
 
                         return [
                             'category' => $categoryName,
-                            'forms'    => $forms,
+                            'forms' => $forms,
                         ];
                     })
-                    ->values();
+                    ->values()
+                    ->toArray();
+
+                // Добавляем штрафные баллы как отдельную категорию
+                $penaltiesForUser = $penaltyPoints->where('user_id', $uid);
+
+                if ($penaltiesForUser->isNotEmpty()) {
+                    $penaltyEntries = $penaltiesForUser->map(function ($p, $idx) {
+                        return [
+                            'date' => \Carbon\Carbon::parse($p->date)->format('d.m.Y'),
+                            'outputLine' => ($idx + 1) . '. Комментарий: ' . ($p->comment ?: '—'),
+                        ];
+                    })->toArray();
+
+                    $penaltyTotal = $penaltiesForUser->sum('penalty_points');
+
+                    $sections[] = [
+                        'category' => 'Штрафы',
+                        'forms' => [
+                            [
+                                'name' => 'Штрафные баллы',
+                                'slug' => 'ШБ',
+                                'points' => -1,
+                                'count' => count($penaltyEntries),
+                                'total' => -round($penaltyTotal, 2),
+                                'entries' => $penaltyEntries,
+                            ]
+                        ]
+                    ];
+                }
 
                 return [
-                    'user'     => $user->name,
+                    'user' => $user->name,
                     'sections' => $sections,
                 ];
             })
@@ -186,6 +212,7 @@ class Reports extends Component
             ->values()
             ->toArray();
     }
+
 
 
 

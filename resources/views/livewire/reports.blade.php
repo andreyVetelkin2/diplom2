@@ -20,21 +20,21 @@
                     </li>
                 @endcan
 
-                @can('report-on-the-departments')
+                @can('report-on-the-user')
                     <li class="nav-item">
                         <a class="nav-link {{ $activeTab === 'user' ? 'active' : '' }}"
                            wire:click.prevent="switchTab('user')"
                            href="#department-tab">🙍 По пользователю</a>
                     </li>
                 @endcan
-                @can('report-on-the-departments')
+                @can('report-on-the-forms')
                     <li class="nav-item">
                         <a class="nav-link {{ $activeTab === 'forms' ? 'active' : '' }}"
                            wire:click.prevent="switchTab('forms')"
                            href="#department-tab">📄 По типу достижений</a>
                     </li>
                 @endcan
-                @can('report-on-the-departments')
+                @can('report-on-the-position')
                     <li class="nav-item">
                         <a class="nav-link {{ $activeTab === 'position' ? 'active' : '' }}"
                            wire:click.prevent="switchTab('position')"

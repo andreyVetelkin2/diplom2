@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -66,6 +67,21 @@ class ReportArchive extends Component
     public function refreshReports()
     {
         $this->loadReports();
+    }
+
+    #[On('deleteConfirmed')]
+    public function deleteReport(string $filename): void
+    {
+        $userId = auth()->id();
+        $path = "exports/reports/{$userId}/{$filename}";
+        $disk = Storage::disk('local');
+
+        if ($disk->exists($path)) {
+            $disk->delete($path);
+        }
+
+        $this->loadReports();
+        session()->flash('success', "Отчёт «{$filename}» успешно удалён.");
     }
 
     public function render()

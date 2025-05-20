@@ -51,12 +51,20 @@
                                 <tr>
                                     <td class="text-truncate" style="max-width: 200px;">{{ $r['name'] }}</td>
                                     <td>{{ $r['date'] }}</td>
-                                    <td class="text-end">
+                                    <td class="text-end d-flex justify-content-end gap-2">
                                         <a href="{{ route('download.report', ['filename' => $r['name']]) }}"
                                            class="btn btn-sm btn-outline-success d-flex align-items-center gap-1">
                                             <i class="bi bi-download"></i> Скачать
                                         </a>
+
+                                        <button
+                                            onclick="confirmDelete('{{ $r['name'] }}')"
+                                            class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1">
+                                            <i class="bi bi-trash"></i> Удалить
+                                        </button>
+
                                     </td>
+
                                 </tr>
                             @endforeach
                             </tbody>
@@ -67,3 +75,13 @@
         @endforeach
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        function confirmDelete(filename) {
+            if (confirm(`Удалить файл ${filename}?`)) {
+                Livewire.dispatch('deleteConfirmed', { filename });
+            }
+        }
+    </script>
+@endpush

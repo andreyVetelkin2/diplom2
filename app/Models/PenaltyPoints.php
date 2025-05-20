@@ -12,6 +12,8 @@ class PenaltyPoints extends Model
     protected $fillable =[
       'user_id',
       'penalty_points',
+      'date',
+      'comment',
     ];
 
     public function user(){

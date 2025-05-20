@@ -82,7 +82,7 @@ class FormTemplateSeeder extends Seeder
                 'form_template_id' => $templateId,
                 'is_active' => 0,
                 'single_entry' => 0,
-                'slug' => 'publication-google-scholar', // Исправленный slug
+                'slug' => 'ГС', // Исправленный slug
             ]);
         }
     }
