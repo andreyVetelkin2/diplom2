@@ -1,4 +1,3 @@
-
 <div class="row">
     <div class="col-lg-4">
         <div class="card">
@@ -15,7 +14,7 @@
                         <button class="btn btn-outline-danger btn-sm"
                                 wire:click.stop="confirmDelete({{ $tpl->id }})"
                                 title="Удалить шаблон">
-                        <i class="fas bi-trash"></i>
+                            <i class="fas bi-trash"></i>
                         </button>
                     </li>
                 @endforeach
@@ -35,7 +34,8 @@
                     <button type="button" class="btn-close" wire:click="cancelDelete"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Вы уверены, что хотите удалить этот шаблон? Удаление приведет к удалению всех заполненых достижений, использующих этот шаблон.</p>
+                    <p>Вы уверены, что хотите удалить этот шаблон? Удаление приведет к удалению всех заполненых
+                        достижений, использующих этот шаблон.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" wire:click="cancelDelete">Отмена</button>
@@ -56,10 +56,13 @@
                 @if(session()->has('message'))
                     <div class="alert alert-success">{{ session('message') }}</div>
                 @endif
-                    @if(session()->has('error'))
-                        <div class="alert alert-danger">{{ session('error') }}</div>
-                    @endif
-
+                @if(session()->has('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+                <div class="alert alert-warning">
+                    Внимание! Шаблон должен одно поле с кодом title, name, label или nazvanie для правильного
+                    формирования отчетности
+                </div>
                 <div class="form-group mb-3">
                     <label>Название шаблона</label>
                     <input type="text" class="form-control @error('templateName') is-invalid @enderror"

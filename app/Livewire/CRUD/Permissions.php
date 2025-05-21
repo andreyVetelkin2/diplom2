@@ -5,6 +5,8 @@ namespace App\Livewire\CRUD;
 use App\Interfaces\Crudable;
 use App\Livewire\Forms\PermissionForm;
 use App\Models\Permission;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 

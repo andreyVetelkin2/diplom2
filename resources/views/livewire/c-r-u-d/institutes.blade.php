@@ -36,7 +36,7 @@
                         <td>{{ $institute->name }}</td>
                         <td>
                             <button wire:click="edit({{ $institute->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $institute->id }})" class="btn btn-sm btn-outline-danger"
+                            <button class="btn btn-sm btn-outline-danger"
                                     onclick="confirmDelete({{ $institute->id }})">🗑</button>
                         </td>
                     </tr>

@@ -4,6 +4,7 @@ namespace App\Livewire\CRUD;
 
 use App\Models\Permission;
 use App\Models\Role;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class RoleDetail extends Component

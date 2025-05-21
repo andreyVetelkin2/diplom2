@@ -27,6 +27,7 @@ class User extends Authenticatable
         'hirsh',
         'position_id',
         'limit_ballov_na_kvartal',
+        'rating'
 
     ];
 
@@ -54,16 +55,17 @@ class User extends Authenticatable
         return $this->belongsTo(Department::class);
     }
 
-     public function author()
+    public function author()
     {
         return $this->hasOne(Author::class);
     }
+
     public function penaltyPoints()
     {
         return $this->hasMany(PenaltyPoints::class);
     }
 
-    public function position() {
+    public function position(){
         return $this->belongsTo(Position::class);
     }
 

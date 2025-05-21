@@ -49,7 +49,7 @@
                         <td>{{ $department->institute->name ?? '-' }}</td>
                         <td>
                             <button wire:click="edit({{ $department->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $department->id }})" class="btn btn-sm btn-outline-danger"
+                            <button class="btn btn-sm btn-outline-danger"
                                     onclick="confirmDelete({{ $department->id }})">🗑</button>
                         </td>
                     </tr>

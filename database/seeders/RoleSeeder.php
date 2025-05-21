@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -15,32 +16,22 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-       $manager = new Role();
-       $manager->name = 'Project Manager';
-       $manager->slug = 'project-manager';
-       $manager->save();
-       $developer = new Role();
-       $developer->name = 'Web Developer';
-       $developer->slug = 'web-developer';
-       $developer->save();
 
 
+        $roles = [
+            ['name' => 'Admin', 'slug' => 'admin'],
+            ['name' => 'Преподаватель', 'slug' => 'teacher'],
+            ['name' => 'Начальник кафедры', 'slug' => 'head_department'],
+            ['name' => 'Начальник университета', 'slug' => 'head_institutes'],
 
-  //   Стандартные Роли, которые должны быть по умолчанию
-       $admin = new Role();
-       $admin->name = 'Admin';
-       $admin->slug = 'admin';
-       $admin->save();
+        ];
 
-       $guest = new Role();
-       $guest->name = 'Guest';
-       $guest->slug = 'guest';
-       $guest->save();
-
-       $user = new Role();
-       $user->name = 'User';
-       $user->slug = 'user';
-       $user->save();
+        foreach ($roles as $role) {
+            Role::updateOrCreate(
+                ['slug' => $role['slug']],
+                ['name' => $role['name']]
+            );
+        }
 
 
     }

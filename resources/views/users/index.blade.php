@@ -20,7 +20,7 @@
                             <div class="alert alert-info mb-4">
                                 <a href="{{ route('download.file', ['filename' => session('download_file')]) }}"
                                    class="btn btn-primary">
-                                    <i class="bi bi-download me-2"></i>Скачать данные Google Scholar
+                                    <i class="bi bi-download me-2"></i>Скачать данные пользователей
                                 </a>
                             </div>
                         @endif
@@ -29,7 +29,7 @@
                             @csrf
                             <div class="d-flex gap-3 mb-4">
                                <button type="submit" id="submit-btn" class="btn btn-outline-primary" disabled>
-                                   <i class="bi bi-cloud-download me-2"></i>Получить данные Google Scholar
+                                   <i class="bi bi-cloud-download me-2"></i>Получить данные пользователей
                                </button>
                                 <button type="button" class="btn btn-outline-secondary"
                                         data-bs-toggle="modal" data-bs-target="#uploadModal">

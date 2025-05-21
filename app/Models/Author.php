@@ -16,7 +16,8 @@ class Author extends Model
             'email',
             'interests',
             'cited_by',
-            'google_key'
+            'google_key',
+            'id_user'
         ];
 
             public function user()
