@@ -60,7 +60,7 @@
                     <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
                 <div class="alert alert-warning">
-                    Внимание! Шаблон должен одно поле с кодом title, name, label или nazvanie для правильного
+                    Внимание! Шаблон должен содержать одно поле с кодом title, name, label или nazvanie для правильного
                     формирования отчетности
                 </div>
                 <div class="form-group mb-3">

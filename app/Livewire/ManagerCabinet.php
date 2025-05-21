@@ -76,11 +76,11 @@ class ManagerCabinet extends Component
     public function applyLimit()
     {
         $this->validate([
-            'limitBallovNaKvartal' => 'required|integer|min:0',
+            'limitBallovNaKvartal' => 'integer|min:0',
         ]);
 
         User::query()->update([
-            'limit_ballov_na_kvartal' => $this->limitBallovNaKvartal,
+            'limit_ballov_na_kvartal' => $this->limitBallovNaKvartal ?? null,
         ]);
 
         $this->statusMessage = "Лимит {$this->limitBallovNaKvartal} успешно установлен для всех пользователей.";

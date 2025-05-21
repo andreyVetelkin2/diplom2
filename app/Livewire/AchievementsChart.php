@@ -58,11 +58,11 @@ class AchievementsChart extends Component
             ->when($this->selectedDepartment, function ($query) {
                 $query->whereHas('user', fn($q) => $q->where('department_id', $this->selectedDepartment));
             })
-            ->whereBetween('created_at', [$start, $end])
-            ->get(['created_at', 'user_id']);
+            ->whereBetween('date_achievement', [$start, $end])
+            ->get(['date_achievement', 'user_id']);
 
         $grouped = $entries
-            ->groupBy(fn($e) => $e->created_at->format('Y-m'))
+            ->groupBy(fn($e) => Carbon::parse($e->date_achievement)->format('Y-m'))
             ->map(fn($group) => $group->groupBy('user_id')->map->count());
 
         $months = collect();
