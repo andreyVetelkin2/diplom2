@@ -6,6 +6,7 @@ use App\Models\FormEntry;
 use App\Models\FieldEntryValue;
 use App\Models\User;
 use App\Services\RatingUpdateService;
+use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Http\UploadedFile;
@@ -38,6 +39,22 @@ class FormEntryEdit extends Component
     public function executeAction()
     {
         if ($this->modalAction === 'approve') {
+            if (auth()->user()->limit_ballov_na_kvartal) {
+                // Проверяем, что дата достижения относится к текущему кварталу
+                $achievementDate = Carbon::parse($this->entry->date_achievement);
+                $isCurrentQuarter = $achievementDate->between(
+                    now()->startOfQuarter(),
+                    now()->endOfQuarter()
+                );
+
+                // Если дата в текущем квартале, проверяем лимит баллов
+                if ($isCurrentQuarter &&
+                    auth()->user()->limit_ballov_na_kvartal <= ((int)$this->entry->form->points + auth()->user()->rating)
+                ) {
+                    session()->flash('error', 'Превышено максимальное количество баллов, доступных к получению в этом квартале. Для изменения статуса показателя необходимо изменить дату достижения.');
+                    return;
+                }
+            }
             $this->entry->status = 'approved';
             $this->entry->comment = $this->comment;
         } elseif ($this->modalAction === 'reject') {
