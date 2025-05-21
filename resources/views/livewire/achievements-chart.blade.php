@@ -37,14 +37,31 @@
     <script>
         const options = {
             series: @json($chartSeries),
-            chart: {height: 300, type: 'area', toolbar: {show: false}},
-            stroke: {curve: 'smooth'},
+            chart: {
+                height: 300,
+                type: 'bar', // Изменено с 'area' на 'bar'
+                toolbar: {show: false}
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false, // Вертикальные столбцы (для горизонтальных - true)
+                    columnWidth: '100%', // Ширина столбцов
+                    endingShape: 'rounded' // Закругленные края
+                }
+            },
             dataLabels: {enabled: false},
             xaxis: {
                 type: 'datetime',
                 categories: @json($chartCategories)
             },
-            tooltip: {x: {format: 'MMM yyyy'}},
+            tooltip: {
+                x: {format: 'MMM yyyy'},
+                y: {
+                    formatter: function(val) {
+                        return val // Можно добавить форматирование значений
+                    }
+                }
+            },
             colors: ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545', '#fd7e14', '#ffc107']
         };
 

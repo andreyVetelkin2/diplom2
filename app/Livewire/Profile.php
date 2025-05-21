@@ -69,7 +69,7 @@ class Profile extends Component
 
         // Фильтрация по статусу и дате текущего квартала
         $this->user = auth()->user();
-        $this->ratingPoints = $this->user->rating;
+        $this->ratingPoints = $this->user->rating ?? 0;
 
         $this->publicationCount = FormEntry::where('user_id', $this->user->id)->count();
 
@@ -88,7 +88,7 @@ class Profile extends Component
 
     public function recalculateForAll()
     {
-        $this->ratingService = app(RatingUpdateService::class);
+        $this->ratingService = new RatingUpdateService();
 
         $users = User::all();
 

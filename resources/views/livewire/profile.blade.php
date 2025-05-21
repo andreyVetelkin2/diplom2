@@ -4,35 +4,44 @@
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body text-center p-4">
                 <h4 class="fw-semibold mb-1">{{ $username }}</h4>
+                <p class="text-muted mb-3">{{ $user->position?->name }}</p>
 
                 <ul class="list-group list-group-flush text-start mb-3">
                     @if($ratingPoints )
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span>Рейтинг за текущий квартал</span>
-                            <span class="fw-bold">{{ $ratingPoints }}</span>
-                        </li>
-                    @endif
+                            <span class="fw-bold">
+                                {{ $ratingPoints }}
+                                @if($user->limit_ballov_na_kvartal)
+                                        из
+                                        <span class="fw-bold">{{ $user->limit_ballov_na_kvartal }} </span>
+                                @endif
+                            </span>
+                            </li>
+                        @endif
 
-                    @if($publicationCount )
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Публикации</span>
-                            <span class="fw-bold">{{ $publicationCount }}</span>
-                        </li>
-                    @endif
+                        @if($publicationCount )
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Публикации</span>
+                                <span class="fw-bold">{{ $publicationCount }}</span>
+                            </li>
+                        @endif
 
-                    @if($user->citations )
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Количество цитирований</span>
-                            <span class="fw-bold">{{ $user->citations }}</span>
-                        </li>
-                    @endif
+                        @if($user->citations )
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Количество цитирований</span>
+                                <span class="fw-bold">{{ $user->citations }}</span>
+                            </li>
+                        @endif
 
-                    @if($user->hirsh)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Индекс Хирша</span>
-                            <span class="fw-bold">{{ $user->hirsh }}</span>
-                        </li>
-                    @endif
+                        @if($user->hirsh)
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Индекс Хирша</span>
+                                <span class="fw-bold">{{ $user->hirsh }}</span>
+                            </li>
+                        @endif
+
+
                 </ul>
 
 
