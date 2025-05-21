@@ -2,6 +2,8 @@
 
 namespace App\Livewire\CRUD;
 
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Interfaces\Crudable;

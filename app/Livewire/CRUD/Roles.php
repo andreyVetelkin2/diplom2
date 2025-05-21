@@ -5,6 +5,8 @@ namespace App\Livewire\CRUD;
 use App\Interfaces\Crudable;
 use App\Livewire\Forms\RoleForm;
 use App\Models\Role;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportEvents\BaseOn;
 use Livewire\WithPagination;

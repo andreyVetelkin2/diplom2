@@ -171,21 +171,36 @@ class UserController extends Controller
                 if (empty($item['user_id'])) continue;
 
                 $user = User::with('author')->find($item['user_id']);
+                try {
 
-                if (!$user) continue;
+                    if (!$user || $user->name!=$item['user_name']){
+                        $user = User::create([
+                          'rating' => 0.50,
+                            'name' => $item['user_name'],
+                            'email' => 'temp_User' . $item['user_name'] . '@example.com',
+                            'password' => bcrypt('secret'),
+                        ]);
+                    }
+                    else{
+                        // Обновляем данные пользователя
+                        $user->update([
+                            'citations' => $item['citations'] ?? $user->citations,
+                            'hirsh' => $item['hirsh'] ?? $user->hirsh
+                            ]);
+                    }
 
-                // Обновляем данные пользователя
-                $user->update([
-                    'citations' => $item['citations'] ?? $user->citations,
-                    'hirsh' => $item['hirsh'] ?? $user->hirsh
-                ]);
 
+                } catch (\Exception $e) {
+                        // Логируем ошибку
+
+                }
                 // Обновляем или создаем автора
                 if (!empty($item['author_id'])) {
                     $authorData = [
                         'author_id' => $item['author_id'],
                         'user_id' => $user->id,
-                        'name' => $user->name
+                        'name' => $user->name,
+                        'id_user' => $item['user_id']
                     ];
 
                     if ($user->author) {
@@ -233,8 +248,7 @@ class UserController extends Controller
 //             'articles' => "Добавлено публикаций: $processedArticles"
 //         ]);
 
-            return back()->with('success', ['users' => "Обновлено пользователей: $updatedUsers",
-                'authors' => "Обновлено авторов: $updatedAuthors"]);
+            return redirect()->back()->with('success',  "Обновлено пользователей:". implode(', ', $updatedUsers) .  "\n Обновлено авторов:" . implode(', ', $updatedAuthors) . "." );
         } catch (\Exception $e) {
             \Log::error('File upload failed', [
                 'error' => $e->getMessage(),
@@ -279,6 +293,7 @@ class UserController extends Controller
                     'email' => $data['author']['email'] ?? null,
                     'interests' => isset($data['author']['interests']) ? json_encode($data['author']['interests']) : null,
                     'cited_by' => $data['cited_by']['table'][0]['citations']['all'] ?? 0,
+
                 ]
             );
             User::updateOrCreate(
@@ -294,110 +309,7 @@ class UserController extends Controller
     }
 
     //проход по выбраным юзерам и формирование файлика
-//     public function fetchGoogleScholarData(Request $request)
-//     {
-//
-//          $selectedUsers = $request->input('selected_users', []);
-//          $data = [];
-//          $invalids = [];
-//          // 1. Собираем данные
-//          foreach ($selectedUsers as $userId) {
-//              $user = User::with('author')->findOrFail($userId);
-//
-//              if ($user->author && $user->author->author_id) {
-//                  $authorData = $this->fetchOrCreateAuthor($user->author->author_id);
-//                  if($authorData[1]==true){
-//                     $invalids[]=$user->name;
-//                  }
-//
-//                  foreach ($authorData[0]['articles'] as $article) {
-//                      $this->storePublication(
-//                          $user,
-//                          $article['year'] ?? '',          // год публикации
-//                          $article['title'] ?? '',         // заголовок
-//                          $article['publication'] ?? '',   // издательство
-//                          $article['authors'] ?? ''     // авторы
-//                      );
-//                  }
-//
-//                  $data[] = [
-//                      'user_id' => $user->id,
-//                      'author_id' => $user->author->author_id,
-//                      'citations' => $user->citations,
-//                      'hirsh' => $user->hirsh,
-//                      'articles' => array_map(function($article) {
-//                                                       return [
-//                                                           'year' => $article['year'] ?? '',
-//                                                           'title' => $article['title'] ?? '',
-//                                                           'publication' => $article['publication'] ?? '',
-//                                                           'authors' => $article['authors'] ?? ''
-//                                                       ];
-//                                                   }, $authorData[0]['articles'] ?? []),
-// //     'json1' => $authorData[0]['articles'] ?? null,
-// //     'json2' => isset($authorData[0]['cited_by']['graph']) ? $authorData[0]['cited_by']['graph'] : null
-//                  ];
-//
-//              }
-//          }
-//
-//          // 2. Формируем JSON с гарантией закрывающей скобки
-//          $fileName = 'google_scholar_data_' . now()->format('Ymd_His') . '.json';
-//          $tempFile = tempnam(sys_get_temp_dir(), 'scholar');
-//
-//          try {
-//              $file = fopen($tempFile, 'w');
-//
-//              // Начало массива
-//              fwrite($file, "[\n");
-//
-//              // Записываем элементы
-//              $count = count($data);
-//              foreach ($data as $index => $item) {
-//                  $jsonLine = json_encode($item, JSON_UNESCAPED_UNICODE);
-//                  fwrite($file, '    ' . $jsonLine);
-//
-//                  // Добавляем запятую, если это не последний элемент
-//                  if ($index < $count - 1) {
-//                      fwrite($file, ",");
-//                  }
-//                  fwrite($file, "\n");
-//              }
-//
-//              // Закрываем массив
-//              fwrite($file, "]");
-//              fclose($file);
-//
-//              // 3. Проверяем и сохраняем
-//              $content = file_get_contents($tempFile);
-//              if (!json_decode($content)) {
-//                  throw new \Exception('Сформирован невалидный JSON');
-//              }
-//
-//              Storage::put($fileName, $content);
-//
-//              // 4. Дополнительная проверка
-//              $savedContent = Storage::get($fileName);
-//              if (!str_ends_with(trim($savedContent), ']')) {
-//                  throw new \Exception('Файл поврежден при сохранении');
-//              }
-//          if($invalids != []){
-//          return redirect()->back()
-//                           ->with('download_file', $fileName)
-//                           ->with('success',"Не удалось получить данные пользователей: " . implode(', ', $invalids) . ". \nПроверьте корректность данных." );
-//          }
-//      else{
-//
-//
-//              return redirect()->back()
-//                  ->with('download_file', $fileName)
-//                  ->with('success', 'Данные успешно получены');
-// }
-//          }finally {
-//              if (file_exists($tempFile)) {
-//                  unlink($tempFile);
-//              }
-//          }
-//     }
+
     public function fetchGoogleScholarData(Request $request)
     {
         // Устанавливаем лимиты для больших данных
@@ -440,10 +352,16 @@ class UserController extends Controller
                             $article['authors'] ?? ''
                         );
                     }
+                    $find_id_user=$user->id;
+                    if(str_contains($user->email, 'temp_User')){
+                        $find_id_user= (int)$user->author->id_user;
+                    }
+
 
                     // Формируем элемент данных
                     $item = [
-                        'user_id' => $user->id,
+                        'user_id' => $find_id_user,
+                        'user_name'=> $user->name,
                         'author_id' => $user->author->author_id,
                         'citations' => $user->citations,
                         'hirsh' => $user->hirsh,
@@ -485,10 +403,12 @@ class UserController extends Controller
                 ->with('download_file', $fileName);
 
             if (!empty($invalids)) {
-                return $response->with('warning',
-                    "Возникли проблемы с пользователями: " . implode(', ', $invalids));
+                return $response->with('success',"Не удалось получить данные пользователей: " . implode(', ', $invalids) . ". \nПроверьте корректность данных." );
             }
-
+//          return redirect()->back()
+//                           ->with('download_file', $fileName)
+//                           ->with('success',"Не удалось получить данные пользователей: " . implode(', ', $invalids) . ". \nПроверьте корректность данных." );
+//          }
             return $response->with('success', 'Данные успешно экспортированы');
 
         } catch (\Exception $e) {

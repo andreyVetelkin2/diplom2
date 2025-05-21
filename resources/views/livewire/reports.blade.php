@@ -47,14 +47,25 @@
             <livewire:date-filter/>
 
             @if($activeTab === 'department')
-                <div class="mt-3">
-                    <label for="department" class="form-label fw-medium">Выберите кафедру:</label>
-                    <select wire:model="selectedDepartment" id="department" multiple class="form-select">
-                        @foreach($departments as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                @can('report-on-the-departments')
+                    <div class="mt-3">
+                        <label for="department" class="form-label fw-medium">Выберите кафедру:</label>
+                        <select wire:model="selectedDepartment" id="department" multiple class="form-select">
+                            @foreach($departments as $id => $name)
+                                <option value="{{ $id }}">{{ $name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endcan
+                @can('report-on-the-department')
+                    <div class="mt-3">
+                        <label for="department" class="form-label fw-medium">Выберите кафедру:</label>
+                        <select wire:model="selectedDepartment" id="department" multiple class="form-select">
+                                <option value="{{ auth()->user()->department->id }}">{{ auth()->user()->department->name }}</option>
+                        </select>
+                    </div>
+                @endcan
+
             @endif
 
             @if($activeTab === 'user')

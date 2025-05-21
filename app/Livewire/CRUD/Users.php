@@ -7,6 +7,7 @@ use App\Livewire\Forms\UserForm;
 use App\Models\Position;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;

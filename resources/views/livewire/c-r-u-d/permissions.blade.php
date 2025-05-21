@@ -44,7 +44,7 @@
                         <td>{{ $permission->slug }}</td>
                         <td>
                             <button wire:click="edit({{ $permission->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $permission->id }})" class="btn btn-sm btn-outline-danger"
+                            <button class="btn btn-sm btn-outline-danger"
                                     onclick=" confirmDelete({{ $permission->id }})">🗑</button>
                         </td>
                     </tr>

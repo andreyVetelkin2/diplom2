@@ -74,7 +74,7 @@ class Reports extends Component
                 $userIds = User::whereIn('department_id', $this->selectedDepartment)
                     ->pluck('id')->toArray();
             } elseif ($this->activeTab === 'user' && $this->selectedUser) {
-                $userIds = (array) $this->selectedUser;
+                $userIds = (array)$this->selectedUser;
             } elseif ($this->activeTab === 'position' && $this->selectedPositions) {
                 $userIds = User::whereIn('position_id', $this->selectedPositions)
                     ->pluck('id')->toArray();
@@ -138,10 +138,8 @@ class Reports extends Component
                                 $formModel = $entriesByForm->first()->form;
                                 $entries = $entriesByForm->map(function ($entry, $idx) {
                                     $pairs = $entry->fieldEntryValues
-                                        ->filter(fn($fv) =>
-                                        !in_array($fv->templateField->type, ['file', 'checkbox', 'list']))
-                                        ->map(fn($fv) =>
-                                        "{$fv->templateField->label}: {$fv->value}")
+                                        ->filter(fn($fv) => in_array($fv->templateField->name, ['title', 'name', 'label', 'nazvanie']))
+                                        ->map(fn($fv) => "{$fv->value}")
                                         ->toArray();
 
                                     return [
@@ -151,8 +149,7 @@ class Reports extends Component
                                 })->toArray();
 
                                 $totalScore = $entriesByForm
-                                    ->reduce(fn($carry, $entry) =>
-                                        $carry + ($formModel->points * ($entry->percent ?? 0)), 0
+                                    ->reduce(fn($carry, $entry) => $carry + ($formModel->points * ($entry->percent ?? 0)), 0
                                     );
 
                                 return [
@@ -214,33 +211,30 @@ class Reports extends Component
     }
 
 
-
-
-
     public function getExportData(): array
     {
         return [
             'report_type' => $this->activeTab,      // 'individual', 'department', 'user' или 'position'
-            'date_from'   => $this->dateFrom,
-            'date_to'     => $this->dateTo,
-            'blocks'      => array_map(function($block) {
+            'date_from' => $this->dateFrom,
+            'date_to' => $this->dateTo,
+            'blocks' => array_map(function ($block) {
                 // в groupedData у нас уже лежит нужная информация:
                 //   'user'    => имя
                 //   'sections'=> [ ['category'=>..., 'forms'=>[...]], ... ]
                 return [
-                    'full_name'  => $block['user'],
-                    'position'   => User::where('name', $block['user'])->first()?->position->name    ?? '',
-                    'department' => User::where('name', $block['user'])->first()?->department->name  ?? '',
-                    'hirsh'      => User::where('name', $block['user'])->first()?->hirsh             ?? '',
-                    'citations'  => User::where('name', $block['user'])->first()?->citations         ?? '',
-                    'sections'   => array_map(fn($s) => [
+                    'full_name' => $block['user'],
+                    'position' => User::where('name', $block['user'])->first()?->position->name ?? '',
+                    'department' => User::where('name', $block['user'])->first()?->department->name ?? '',
+                    'hirsh' => User::where('name', $block['user'])->first()?->hirsh ?? '',
+                    'citations' => User::where('name', $block['user'])->first()?->citations ?? '',
+                    'sections' => array_map(fn($s) => [
                         'category' => $s['category'],
-                        'forms'    => array_map(fn($f) => [
-                            'name'         => $f['name'],
-                            'code'         => $f['slug'],
-                            'points'       => $f['points'],
-                            'count'        => $f['count'],
-                            'total'        => $f['total'],
+                        'forms' => array_map(fn($f) => [
+                            'name' => $f['name'],
+                            'code' => $f['slug'],
+                            'points' => $f['points'],
+                            'count' => $f['count'],
+                            'total' => $f['total'],
                             'entries_data' => collect($f['entries'])->pluck('outputLine')->implode("\n"),
                         ], $s['forms']->toArray())
                     ], $block['sections']->toArray()),
@@ -252,10 +246,10 @@ class Reports extends Component
     public function export()
     {
         $exporter = new ScientificReportExporter();
-        $data     = $this->getExportData();
+        $data = $this->getExportData();
         // универсальный метод
         $filename = $exporter->exportReport($data['report_type'], $data);
-        $path     = storage_path("app/exports/reports/".auth()->id()."/{$filename}");
+        $path = storage_path("app/exports/reports/" . auth()->id() . "/{$filename}");
 
         return response()->download($path, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

@@ -46,6 +46,11 @@ class AchievementsChart extends Component
     private function loadChartData(): void
     {
         $usersNames = User::pluck('name','id')->toArray();
+        $usersDepartments = User::with('department')->get()
+            ->pluck('department.name', 'id')
+            ->toArray();
+
+
         $start = Carbon::parse($this->startDate)->startOfMonth();
         $end = Carbon::parse($this->endDate)->endOfMonth();
 
@@ -78,7 +83,7 @@ class AchievementsChart extends Component
                 $userData[] = $grouped[$key][$userId] ?? 0;
             }
             $series[] = [
-                'name' => $usersNames[$userId] ?? 'Неизвестный',
+                'name' => $usersNames[$userId].' '.$usersDepartments[$userId] ?? 'Неизвестный',
                 'data' => $userData,
             ];
         }

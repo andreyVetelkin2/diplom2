@@ -52,6 +52,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'Пересчет рейтинга всем пользователям', 'slug' => 'loading-achievements'],
 
             ['name' => 'Отчетность по кафедрам', 'slug' => 'report-on-the-departments'],
+            ['name' => 'Отчетность по кафедре', 'slug' => 'report-on-the-department'],
             ['name' => 'Отчет по пользователям', 'slug' => 'report-on-the-user'],
             ['name' => 'Отчет по показателям', 'slug' => 'report-on-the-forms'],
             ['name' => 'Отчет по должностям', 'slug' => 'report-on-the-position'],

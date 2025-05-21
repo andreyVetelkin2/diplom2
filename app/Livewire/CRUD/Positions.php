@@ -4,6 +4,8 @@ namespace App\Livewire\CRUD;
 
 use App\Livewire\Forms\PositionForm;
 use App\Models\Position;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
