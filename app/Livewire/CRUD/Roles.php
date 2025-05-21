@@ -5,7 +5,10 @@ namespace App\Livewire\CRUD;
 use App\Interfaces\Crudable;
 use App\Livewire\Forms\RoleForm;
 use App\Models\Role;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Features\SupportEvents\BaseOn;
 use Livewire\WithPagination;
 
 //TODO Добавить проверку прав на просмотр всех ролей
@@ -79,6 +82,7 @@ class Roles extends Component implements Crudable
         session()->flash('message', 'Роль обновлена');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         $this->authorize('delete', Role::class);

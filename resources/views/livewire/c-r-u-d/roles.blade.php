@@ -18,6 +18,7 @@
                     @error('form.slug') <span class="error">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-12">
+
                     <button type="submit" class="btn btn-outline-primary">{{ $editMode ? 'Обновить' : 'Создать' }}</button>
                     @if ($editMode)
                         <button type="button" class="btn btn-outline-secondary" wire:click="resetFields">Отмена</button>
@@ -42,8 +43,8 @@
                         <td>{{ $role->slug }}</td>
                         <td>
                             <button wire:click="edit({{ $role->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $role->id }})" class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('Удалить право?')">🗑</button>
+                            <button  class="btn btn-sm btn-outline-danger"
+                                     onclick="confirmDelete('{{ $role->id }}')">🗑</button>
                         </td>
                     </tr>
                 @endforeach
@@ -59,3 +60,12 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        function confirmDelete(id) {
+            if (confirm(`Удалить роль?`)) {
+                Livewire.dispatch('deleteConfirmed', { id });
+            }
+        }
+    </script>
+@endpush

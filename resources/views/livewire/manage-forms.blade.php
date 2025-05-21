@@ -80,6 +80,15 @@
                             @error('formData.title')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
+                        {{-- Описание --}}
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control @error('formData.description') is-invalid @enderror"
+                                   id="formDescription" placeholder="Описание"
+                                   wire:model.defer="formData.description">
+                            <label for="formDescription">Описание</label>
+                            @error('formData.description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+
                         {{-- Обозначение --}}
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control @error('formData.slug') is-invalid @enderror"

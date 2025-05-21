@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Form;
 use App\Models\FormEntry;
+use App\Models\User;
+use App\Services\RatingUpdateService;
 use Livewire\Component;
 
 class Profile extends Component
@@ -23,6 +25,7 @@ class Profile extends Component
         $this->loaded = $this->perPage;
         $this->username = optional(auth()->user())->name ?? 'Guest';
         $this->loadAchivments();
+
     }
 
     public function loadMore()
@@ -33,7 +36,9 @@ class Profile extends Component
 
     private function loadAchivments()
     {
-        $entries = FormEntry::where('user_id', auth()->id())->orderByDesc('created_at')->get();
+        $entries = FormEntry::where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->get();
 
         $form_ids = $entries->pluck('form_id')->unique();
         $forms = Form::with('template')->whereIn('id', $form_ids)->get()->keyBy('id');
@@ -46,28 +51,53 @@ class Profile extends Component
                 $all[] = [
                     'id' => $entry->id,
                     'title' => $forms[$form_id]->title,
-                    'date'  => $entry->created_at->format('Y-m-d'),
+                    'date'  => $entry->date_achievement,
                     'status' => $entry->status,
                 ];
-                    //dump($entries->pluck('id')->unique() ?? '');
 
             }
         }
 
-        // Сумма баллов по заявкам со статусом 'approved'
+
+        // Определяем текущий квартал
+        $now = now();
+        $currentMonth = $now->month;
+        $quarterStartMonth = ((int)(($currentMonth - 1) / 3)) * 3 + 1;
+
+        $quarterStart = now()->startOfYear()->addMonths($quarterStartMonth - 1)->startOfMonth();
+        $quarterEnd = (clone $quarterStart)->addMonths(3)->subSecond();
+
+        // Фильтрация по статусу и дате текущего квартала
         $this->user = auth()->user();
-        $this->ratingPoints = FormEntry::where('user_id', $this->user->id)
-            ->where('status', 'approved')
-            ->with('form') // предполагается, что у FormEntry есть связь ->form()
-            ->get()
-            ->sum(function ($entry) {
-                return (int) optional($entry->form)->points ?? 0;
-            });
+        $this->ratingPoints = $this->user->rating ?? 0;
 
         $this->publicationCount = FormEntry::where('user_id', $this->user->id)->count();
 
         $this->totalAchivments = count($all);
         $this->achivments = array_slice($all, 0, $this->loaded);
+    }
+
+    public function recalculateRating()
+    {
+
+        $this->ratingService = new RatingUpdateService();
+        $this->ratingService->recalculateForUser($this->user->id);
+        session()->flash('success_info', 'Рейтинг обновлён!');
+        return redirect(request()->header('Referer'));
+    }
+
+    public function recalculateForAll()
+    {
+        $this->ratingService = new RatingUpdateService();
+
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $this->ratingService->recalculateForUser($user->id);
+        }
+
+        session()->flash('success_info', 'Рейтинг обновлён для всех пользователей!');
+        return redirect(request()->header('Referer'));
     }
 
     #[\Livewire\Attributes\Layout('layouts.app')]

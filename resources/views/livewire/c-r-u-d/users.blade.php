@@ -18,9 +18,16 @@
                     @error('form.email') <span class="error">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Должность" wire:model.defer="form.position">
-                    @error('form.position') <span class="error">{{ $message }}</span> @enderror
+                    <select class="form-select" wire:model.defer="form.position_id">
+                        <option value="">Выберите должность</option>
+                        @foreach ($positions as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+
+                    @error('form.position_id') <span class="error">{{ $message }}</span> @enderror
                 </div>
+
                 <div class="col-md-6">
                     <select class="form-select" wire:model.defer="form.department_id">
                         <option value="">Выберите кафедру</option>
@@ -60,13 +67,13 @@
                     <tr class="align-middle">
                         <td>{{ $user->id }}</td>
                         <td><a href="{{ route('user-detail', $user->id) }}">{{ $user->name }}</a></td>
-                        <td>{{ $user->position }}</td>
+                        <td>{{ $user->position?->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->department?->name }}</td>
                         <td>
                             <button wire:click="edit({{ $user->id }})" class="btn btn-sm btn-warning">✏️</button>
-                            <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-outline-danger"
-                                    onclick="return confirm('Удалить пользователя?')">🗑</button>
+                            <button  class="btn btn-sm btn-outline-danger"
+                                    onclick="confirmDelete('{{ $user->id }}')">🗑</button>
                         </td>
                     </tr>
                 @endforeach
@@ -82,3 +89,12 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        function confirmDelete(id) {
+            if (confirm(`Удалить пользователя ?`)) {
+                Livewire.dispatch('deleteConfirmed', { id });
+            }
+        }
+    </script>
+@endpush

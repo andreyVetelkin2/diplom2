@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -13,90 +12,60 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-//        // Права для управления пользователями
-//        $viewUser = new Permission();
-//        $viewUser->name = 'Просмотр пользователей';
-//        $viewUser->slug = 'view-users';
-//        $viewUser->save();
-//
-//        $createUser = new Permission();
-//        $createUser->name = 'Создание пользователей';
-//        $createUser->slug = 'create-users';
-//        $createUser->save();
-//
-//        $editUser = new Permission();
-//        $editUser->name = 'Редактирование пользователей';
-//        $editUser->slug = 'edit-users';
-//        $editUser->save();
-//
-//        $deleteUser = new Permission();
-//        $deleteUser->name = 'Удаление пользователей';
-//        $deleteUser->slug = 'delete-users';
-//        $deleteUser->save();
-//
-//        // Права для управления ролями
-//        $viewRole = new Permission();
-//        $viewRole->name = 'Просмотр ролей';
-//        $viewRole->slug = 'view-roles';
-//        $viewRole->save();
-//
-//        $createRole = new Permission();
-//        $createRole->name = 'Создание ролей';
-//        $createRole->slug = 'create-roles';
-//        $createRole->save();
-//
-//        $editRole = new Permission();
-//        $editRole->name = 'Редактирование ролей';
-//        $editRole->slug = 'edit-roles';
-//        $editRole->save();
-//
-//        $deleteRole = new Permission();
-//        $deleteRole->name = 'Удаление ролей';
-//        $deleteRole->slug = 'delete-roles';
-//        $deleteRole->save();
-//
-//        // Права для управления правами
-//        $viewPermission = new Permission();
-//        $viewPermission->name = 'Просмотр прав';
-//        $viewPermission->slug = 'view-permissions';
-//        $viewPermission->save();
-//
-//        $createPermission = new Permission();
-//        $createPermission->name = 'Создание прав';
-//        $createPermission->slug = 'create-permissions';
-//        $createPermission->save();
-//
-//        $editPermission = new Permission();
-//        $editPermission->name = 'Редактирование прав';
-//        $editPermission->slug = 'edit-permissions';
-//        $editPermission->save();
-//
-//        $deletePermission = new Permission();
-//        $deletePermission->name = 'Удаление прав';
-//        $deletePermission->slug = 'delete-permissions';
-//        $deletePermission->save();
-//
-//        // Права для назначения и отзыва прав у ролей
-//        $assignPermissions = new Permission();
-//        $assignPermissions->name = 'Назначение прав ролям';
-//        $assignPermissions->slug = 'assign-permissions-to-roles';
-//        $assignPermissions->save();
-//
-//        $revokePermissions = new Permission();
-//        $revokePermissions->name = 'Отзыв прав у ролей';
-//        $revokePermissions->slug = 'revoke-permissions-from-roles';
-//        $revokePermissions->save();
-//
-//        // Права для назначения и отзыва ролей у пользователей
-//        $assignRoles = new Permission();
-//        $assignRoles->name = 'Назначение ролей пользователям';
-//        $assignRoles->slug = 'assign-roles-to-users';
-//        $assignRoles->save();
-//
-//        $revokeRoles = new Permission();
-//        $revokeRoles->name = 'Отзыв ролей у пользователей';
-//        $revokeRoles->slug = 'revoke-roles-from-users';
-//        $revokeRoles->save();
+
+        $permissions = [
+            ['name' => 'Просмотр пользователей', 'slug' => 'view-users'],
+            ['name' => 'Создание пользователей', 'slug' => 'create-users'],
+            ['name' => 'Редактирование пользователей', 'slug' => 'edit-users'],
+            ['name' => 'Удаление пользователей', 'slug' => 'delete-users'],
+
+            ['name' => 'Просмотр ролей', 'slug' => 'view-roles'],
+            ['name' => 'Создание ролей', 'slug' => 'create-roles'],
+            ['name' => 'Редактирование ролей', 'slug' => 'edit-roles'],
+            ['name' => 'Удаление ролей', 'slug' => 'delete-roles'],
+
+            ['name' => 'Просмотр прав', 'slug' => 'view-permissions'],
+            ['name' => 'Создание прав', 'slug' => 'create-permissions'],
+            ['name' => 'Редактирование прав', 'slug' => 'edit-permissions'],
+            ['name' => 'Удаление прав', 'slug' => 'delete-permissions'],
+
+            ['name' => 'Назначение прав ролям', 'slug' => 'assign-permissions-to-roles'],
+            ['name' => 'Отзыв прав у ролей', 'slug' => 'revoke-permissions-from-roles'],
+            ['name' => 'Назначение ролей пользователям', 'slug' => 'assign-roles-to-users'],
+            ['name' => 'Отзыв ролей у пользователей', 'slug' => 'revoke-roles-from-users'],
+
+            ['name' => 'Ревью достижений', 'slug' => 'review-forms'],
+            ['name' => 'Управлять (кем-то\\чем-то)', 'slug' => 'manage'],
+            ['name' => 'Редактирование шаблонов', 'slug' => 'template-edit'],
+            ['name' => 'Редактирование форм', 'slug' => 'form-edit'],
+
+            ['name' => 'Архив отчетов по кафедам', 'slug' => 'archive-report-on-the-departments'],
+            ['name' => 'Архив отчетов по должностям', 'slug' => 'archive-report-on-positions'],
+            ['name' => 'Архив отчетов по показателям', 'slug' => 'archive-report-on-forms'],
+            ['name' => 'Архив отчетов по преподавателям', 'slug' => 'archive-report-on-users'],
+
+            ['name' => 'Загрузка данных Google Scholar', 'slug' => 'update-Google-Scholar-users'],
+
+            ['name' => 'Установка лимита баллов', 'slug' => 'installation-of-the-point-limit'],
+            ['name' => 'Управление штрафными баллами', 'slug' => 'penalty-points-management'],
+            ['name' => 'Загрузка достижений', 'slug' => 'loading-achievements'],
+            ['name' => 'Пересчет рейтинга всем пользователям', 'slug' => 'loading-achievements'],
+
+            ['name' => 'Отчетность по кафедрам', 'slug' => 'report-on-the-departments'],
+            ['name' => 'Отчетность по кафедре', 'slug' => 'report-on-the-department'],
+            ['name' => 'Отчет по пользователям', 'slug' => 'report-on-the-user'],
+            ['name' => 'Отчет по показателям', 'slug' => 'report-on-the-forms'],
+            ['name' => 'Отчет по должностям', 'slug' => 'report-on-the-position'],
+
+
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::updateOrCreate(
+                ['slug' => $permission['slug']],
+                ['name' => $permission['name']]
+            );
+        }
+
     }
 }
-

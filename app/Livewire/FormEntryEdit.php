@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\FormEntry;
 use App\Models\FieldEntryValue;
 use App\Models\User;
+use App\Services\RatingUpdateService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Http\UploadedFile;
@@ -21,6 +22,7 @@ class FormEntryEdit extends Component
     public $comment;
 
     public $date_achievement;
+    public $percent;
 
     public User $user;
     public $showConfirmModal = false;
@@ -41,6 +43,16 @@ class FormEntryEdit extends Component
         } elseif ($this->modalAction === 'reject') {
             $this->entry->status = 'rejected';
             $this->entry->comment = $this->rejectionComment;
+
+            foreach ($this->templateFields as $field) {
+                $existing = FieldEntryValue::firstOrNew([
+                    'form_entry_id' => $this->entry->id,
+                    'template_field_id' => $field->id,
+                ]);
+                $fieldData = $this->fieldValues[$field->id];
+                $existing->comment = $fieldData['comment'] ?? null;
+                $existing->save();
+            }
         }
 
         $this->entry->save();
@@ -58,7 +70,7 @@ class FormEntryEdit extends Component
     {
         $rules = [];
         foreach ($this->templateFields as $field) {
-            $key = "fieldValues.{$field->id}";
+            $key = "fieldValues.{$field->id}.value";
             $rules[$key] = $field->required ? 'required' : 'nullable';
 
             switch ($field->type) {
@@ -72,7 +84,7 @@ class FormEntryEdit extends Component
                     $rules[$key] .= '|in:' . $field->options->pluck('value')->implode(',');
                     break;
                 case 'file':
-                    //$rules[$key] .= '|nullable|file|mimes:jpg,jpeg,png,pdf|max:10240';
+                    $rules["fieldValues.{$field->id}.file"] = 'nullable|max:10240';
                     break;
                 default:
                     $rules[$key] .= '|string';
@@ -91,37 +103,49 @@ class FormEntryEdit extends Component
                 'template_field_id' => $field->id,
             ]);
 
-            $rawValue = $this->fieldValues[$field->id] ?? null;
+            $fieldData = $this->fieldValues[$field->id] ?? [];
 
-            if ($field->type === 'checkbox') {
-                $existing->value = $rawValue ? '1' : '0';
+            if ($field->type === 'file') {
+                // Обработка файла
+                $file = $fieldData['file'] ?? null;
 
-            } elseif ($field->type === 'file') {
-                if ($rawValue instanceof UploadedFile) {
+                if ($file instanceof UploadedFile) {
                     // Удалить старый файл
                     if ($existing->value && Storage::disk('public')->exists(str_replace('storage/', '', $existing->value))) {
                         Storage::disk('public')->delete(str_replace('storage/', '', $existing->value));
                     }
 
-                    $fileName = $rawValue->getClientOriginalName();
-                    $path = $rawValue->storeAs('uploads/' . auth()->id(), $fileName, 'public');
+                    $fileName = $file->getClientOriginalName();
+                    $path = $file->storeAs('uploads/' . auth()->id(), $fileName, 'public');
 
                     $existing->value = 'storage/' . $path;
                     $existing->original_name = $fileName;
-                    //$existing->file_type = $rawValue->getClientMimeType();
                 }
-
             } else {
-                $existing->value = (string)$rawValue;
+                // Обработка обычных полей
+                $rawValue = $fieldData['value'] ?? null;
+
+                if ($field->type === 'checkbox') {
+                    $existing->value = $rawValue ? '1' : '0';
+                } else {
+                    $existing->value = (string)$rawValue;
+                }
             }
 
+            // Сохраняем комментарий для всех типов полей
+            $existing->comment = $fieldData['comment'] ?? null;
             $existing->save();
         }
 
         $this->entry->comment = $this->comment;
         $this->entry->status = 'review';
         $this->entry->date_achievement = $this->date_achievement;
+        $this->entry->percent = $this->percent;
         $this->entry->save();
+
+        $this->ratingService = app(RatingUpdateService::class);
+        $this->ratingService->recalculateForUser($this->user->id);
+
         session()->flash('success', 'Данные успешно обновлены.');
     }
 
@@ -129,32 +153,29 @@ class FormEntryEdit extends Component
     public function mount(FormEntry $entry)
     {
         $this->user = User::find($entry->user_id);
-
         $this->entry = $entry->load([
             'form.template.fields.options',
             'fieldEntryValues'
         ]);
-         $this->date_achievement = $this->entry->date_achievement;
-        $this->templateFields = $this->entry->form->template->fields->sortBy('sort_order');
 
-        // Заполнение текущих значений
+        $this->date_achievement = $this->entry->date_achievement;
+        $this->percent = $this->entry->percent;
+        $this->templateFields = $this->entry->form->template->fields->sortBy('sort_order');
+        $this->comment = $this->entry->comment;
+
         foreach ($this->templateFields as $field) {
             $value = $this->entry->fieldEntryValues
                 ->firstWhere('template_field_id', $field->id);
 
-            $raw = $value?->value ?? null;
-
-            if ($field->type === 'checkbox') {
-                $this->fieldValues[$field->id] = filter_var($raw, FILTER_VALIDATE_BOOLEAN);
-            } else {
-                $this->fieldValues[$field->id] = $raw;
-            }
+            // Для всех полей используем единую структуру
+            $this->fieldValues[$field->id] = [
+                'value' => $field->type === 'checkbox'
+                    ? filter_var($value?->value, FILTER_VALIDATE_BOOLEAN)
+                    : $value?->value,
+                'comment' => $value?->comment,
+                'file' => $field->type === 'file' ? $value?->value : null
+            ];
         }
-        $this->comment =  $this->entry->comment;
-
-
-
-        //dd($this->templateFields);
     }
 
     public function render()

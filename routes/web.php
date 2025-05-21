@@ -2,6 +2,7 @@
 
 use App\Livewire\CRUD\Departments;
 use App\Livewire\CRUD\Permissions;
+use App\Livewire\CRUD\Positions;
 use App\Livewire\CRUD\RoleDetail;
 use App\Livewire\CRUD\Roles;
 use App\Livewire\CRUD\UserDetail;
@@ -15,6 +16,7 @@ use App\Livewire\CRUD\Institutes;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,18 +32,19 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
 
+Route::middleware('auth')->group(function () { //группируем чтобы указать что посредник применяется к обоим группам
 
-Route::middleware('auth')->group(function() { //группируем чтобы указать что посредник применяется к обоим группам
 
     Route::prefix('')->group(function (){//префикса нет юзаем только для получения метода груп
         Route::view('/', 'index')
             ->name('index');
 
-        Route::get('upload', UserFillForm::class)
-            ->name('upload');
+        Route::middleware('role:,loading-achievements')->group(function () {
+            Route::get('upload', UserFillForm::class)
+                ->name('upload');
+        });
 
-//        Route::view('profile', 'profile')
-//            ->name('profile');
+
 
         Route::get('reports', Reports::class)
             ->name('reports');
@@ -51,52 +54,81 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
     });
 
 
-    Route::middleware('role:,manage')->group(function (){
+    Route::middleware('role:,manage')->group(function () {
         Route::get('/manager-cabinet', ManagerCabinet::class)
             ->name('manager-cabinet');
     });
 
-
-    Route::middleware('role:admin')->prefix('admin')->group(function() {//префикс добавляется так как оба маршрута лежат по пути /admin/../
-
-        Route::get('/', fn () => redirect()->route('index'))->name('admin');
-
+    Route::middleware('role:,template-edit')->group(function () {
         Route::get('templates', ManageTemplates::class)
             ->name('templates');
+    });
 
+    Route::middleware('role:,form-edit')->group(function () {
         Route::get('forms', ManageForms::class)
             ->name('forms');
 
-        Route::prefix('users')->group(function() {
+        Route::get('upload', UserFillForm::class)
+            ->name('upload');
+
+        Route::get('reports', Reports::class)
+            ->name('reports');
+
+        Route::get('reports-archive', \App\Livewire\ReportArchive::class)
+            ->name('reports-archive');
+
+    });
+
+    Route::middleware('role:admin')->prefix('admin')->group(function () {//префикс добавляется так как оба маршрута лежат по пути /admin/../
+
+
+        Route::get('/', fn() => redirect()->route('index'))->name('admin');
+
+        Route::prefix('users')->group(function () {
             Route::get('/', Users::class)
                 ->name('users');
             Route::get('/{user}', UserDetail::class)//передаем сразу livewire компонент как вьюшку чтоб не искать пользователя по id руками
             ->name('user-detail');
         });
 
-        Route::prefix('permissions')->group(function() {
+        Route::prefix('permissions')->group(function () {
             Route::get('/', Permissions::class)
                 ->name('permissions');
 
         });
 
-        Route::prefix('departments')->group(function() {
+
+        Route::prefix('departments')->group(function () {
             Route::get('/', Departments::class)
                 ->name('departments');
 
         });
 
-        Route::prefix('institutes')->group(function() {
+
+        Route::prefix('institutes')->group(function () {
             Route::get('/', Institutes::class)
                 ->name('institutes');
 
         });
 
-        Route::prefix('roles')->group(function() {
+
+        Route::prefix('positions')->group(function () {
+            Route::get('/', Positions::class)
+                ->name('positions');
+
+        });
+        Route::prefix('limit')->group(function () {
+            Route::get('/', Positions::class)
+                ->name('limit');
+
+        });
+
+        Route::prefix('roles')->group(function () {
+
             Route::get('/', Roles::class)
                 ->name('roles');
             Route::get('/{role}', RoleDetail::class)
-            ->name('role-detail');
+                ->name('role-detail');
         });
 
     });
@@ -130,8 +162,6 @@ Route::middleware('auth')->group(function() { //группируем чтобы 
 });
 
 
-
-
-require __DIR__.'/web2.php';
-require __DIR__.'/auth.php';
-require __DIR__.'/scholar.php';
+require __DIR__ . '/web2.php';
+require __DIR__ . '/auth.php';
+require __DIR__ . '/scholar.php';

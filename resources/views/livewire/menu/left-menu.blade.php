@@ -1,5 +1,5 @@
 <!--begin::Sidebar-->
-<aside  class="app-sidebar bg-white" data-bs-theme="light">
+<aside class="app-sidebar bg-white" data-bs-theme="light">
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand ">
         <!--begin::Brand Link-->
@@ -23,32 +23,66 @@
             >
 
                 @foreach($arMenu as $item)
-                    @if(isset($item['links']))
-                        <li class="nav-item menu-open">
-                            <a href="#" class="nav-link active">
-                                <p>
-                                    {{_($item['label'])}}
-                                    <i class="nav-arrow bi bi-chevron-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                @foreach($item['links'] as $link)
-                                    <li class="nav-item ">
-                                        <a href="{{route($link['route'])}}" class="nav-link {{ request()->is($link['active']) ? 'active' : '' }}">
-                                            <i class="nav-icon bi bi-circle"></i>
-                                            <p>{{ $link['label'] }}</p>
-                                        </a>
-                                    </li>
-
-                                @endforeach
-                            </ul>
-                        </li>
+                    @if(isset($item['permission']))
+                        @can($item['permission'])
+                            @if(isset($item['links']))
+                                <li class="nav-item menu-open">
+                                    <a href="#" class="nav-link active">
+                                        <p>
+                                            {{_($item['label'])}}
+                                            <i class="nav-arrow bi bi-chevron-right"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @foreach($item['links'] as $link)
+                                            <li class="nav-item ">
+                                                <a href="{{route($link['route'])}}"
+                                                   class="nav-link {{ request()->is($link['active']) ? 'active' : '' }}">
+                                                    <i class="nav-icon bi bi-circle"></i>
+                                                    <p>{{ $link['label'] }}</p>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @else
+                                <li class="nav-item ">
+                                    <a href="{{ route($item['route'])}}"
+                                       class="nav-link {{ request()->is($item['active']) ? 'active' : '' }}">
+                                        <p>{{ $item['label'] }}</p>
+                                    </a>
+                                </li>
+                            @endif
+                        @endcan
                     @else
-                        <li class="nav-item ">
-                            <a href="{{ route($item['route'])}}" class="nav-link {{ request()->is($item['active']) ? 'active' : '' }}">
-                                <p>{{ $item['label'] }}</p>
-                            </a>
-                        </li>
+                        @if(isset($item['links']))
+                            <li class="nav-item menu-open">
+                                <a href="#" class="nav-link active">
+                                    <p>
+                                        {{_($item['label'])}}
+                                        <i class="nav-arrow bi bi-chevron-right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @foreach($item['links'] as $link)
+                                        <li class="nav-item ">
+                                            <a href="{{route($link['route'])}}"
+                                               class="nav-link {{ request()->is($link['active']) ? 'active' : '' }}">
+                                                <i class="nav-icon bi bi-circle"></i>
+                                                <p>{{ $link['label'] }}</p>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </li>
+                        @else
+                            <li class="nav-item ">
+                                <a href="{{ route($item['route'])}}"
+                                   class="nav-link {{ request()->is($item['active']) ? 'active' : '' }}">
+                                    <p>{{ $item['label'] }}</p>
+                                </a>
+                            </li>
+                        @endif
                     @endif
                 @endforeach
             </ul>

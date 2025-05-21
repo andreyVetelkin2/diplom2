@@ -3,6 +3,7 @@
     <div class="card card-primary card-outline mb-4">
         <div class="card-header">
             <div class="card-title">Информация о пользователе</div>
+
         </div>
 
         <form wire:submit.prevent="updateUserInfo">
@@ -21,8 +22,13 @@
 
                 <div class="mb-3">
                     <label class="form-label">Должность</label>
-                    <input type="text" class="form-control" wire:model.defer="user_field.position">
-                    @error('user.position') <small class="text-danger">{{ $message }}</small> @enderror
+                    <select class="form-select" wire:model.defer="user_field.position_id">
+                        <option value="">Выберите должность</option>
+                        @foreach ($positions as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                    @error('user.position_id') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
                 <div class="mb-3">
@@ -45,6 +51,7 @@
 
             <div class="card-footer">
                 <button type="submit" class="btn btn-outline-primary">Сохранить информацию</button>
+                <button wire:click="login" class="btn btn-outline-warning">Авторизоваться</button>
             </div>
         </form>
     </div>

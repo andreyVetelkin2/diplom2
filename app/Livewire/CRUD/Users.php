@@ -4,7 +4,11 @@ namespace App\Livewire\CRUD;
 
 use App\Interfaces\Crudable;
 use App\Livewire\Forms\UserForm;
+use App\Models\Position;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -30,6 +34,7 @@ class Users extends Component implements Crudable
     public function store()
     {
         $validated = $this->form->validate();
+        $validated['password'] = Hash::make($validated['password']);
         User::create($validated);
         $this->resetFields();
         session()->flash('message', 'Пользователь создан');
@@ -52,6 +57,7 @@ class Users extends Component implements Crudable
         session()->flash('message', 'Пользователь обновлён');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         User::findOrFail($id)->delete();
@@ -71,6 +77,7 @@ class Users extends Component implements Crudable
         return view('livewire.c-r-u-d.users', [
             'users' => User::with('department')->paginate($this->perPage),
             'departments' => Department::pluck('name', 'id'),
+            'positions' => Position::pluck('name', 'id'),
         ]);
     }
 }

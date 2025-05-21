@@ -2,6 +2,8 @@
 
 namespace App\Livewire\CRUD;
 
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Interfaces\Crudable;
@@ -50,6 +52,7 @@ class Departments extends Component implements Crudable
         session()->flash('message', 'Кафедра обновлена');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         Department::findOrFail($id)->delete();

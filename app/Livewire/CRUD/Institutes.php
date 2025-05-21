@@ -2,6 +2,8 @@
 namespace App\Livewire\CRUD;
 
 use App\Models\Institute;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Interfaces\Crudable;
@@ -49,6 +51,7 @@ class Institutes extends Component implements Crudable
         session()->flash('message', 'Институт обновлён');
     }
 
+    #[On('deleteConfirmed')]
     public function delete($id)
     {
         Institute::findOrFail($id)->delete();

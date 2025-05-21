@@ -57,39 +57,40 @@ class AuthorController extends Controller
 
     public function show()
         {
-        $authorId = auth()->user()->author->author_id;
-        $author2 = Cache::remember("articles_{$authorId}", now()->addDays(1), function() use ($authorId) {
-                              return $this->fetchOrCreateAuthor($authorId);
+        $user=auth()->user();
+        $author = $user->author;
+
+
+        $authorId = $author->author_id;
+        $articlesData = Cache::remember("articles_{$authorId}", now()->addDays(1), function() use ($authorId) {
+                              return $this->fetchOrCreateAuthor($authorId)['articles'];
                           });
+        $graphData = Cache::remember("graph_{$authorId}", now()->addDays(1), function() use ($authorId) {
+                                      return $this->fetchOrCreateAuthor($authorId)['cited_by']['graph'];
+                                  });
 
-//          $author2 = $this->fetchOrCreateAuthor($authorId);
-
-
-        if (!isset($author2['data']['author'])) {
-            return back()->withErrors('Author data not found');
-        }
-
-        $articlesData = $author2['data'];
-        $author = $author2['author'];
+        $articles = $articlesData ?? [];
 
         // Пагинация статей
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 10;
-        $currentItems = array_slice($articlesData['articles'] ?? [], ($currentPage - 1) * $perPage, $perPage);
+        $currentItems = array_slice($articles, ($currentPage - 1) * $perPage, $perPage);
 
         $articles = new LengthAwarePaginator(
             $currentItems,
-            count($articlesData['articles'] ?? []),
+            count($articles),
             $perPage,
             $currentPage,
             ['path' => LengthAwarePaginator::resolveCurrentPath()]
         );
 
-        $chartData = $this->prepareChartData($articlesData['cited_by']['graph'] ?? []);
-        $h_index = $articlesData['cited_by']['table'][1]['h_index']['all'] ?? 0;
-        $i10_index = $articlesData['cited_by']['table'][2]['i10_index']['all'] ?? 0;
+        $chartData = $this->prepareChartData($graphData ?? []);
+        $h_index = $user->hirsh;
 
-        return view('author.show', compact('author', 'articles', 'chartData', 'h_index', 'i10_index'));
+//        $i10_index = $articlesData['cited_by']['table'][2]['i10_index']['all'] ?? 0;
+//        return view('author.show', compact('author', 'articles', 'chartData', 'h_index', 'i10_index'));
+
+        return view('author.show', compact('author', 'articles', 'chartData', 'h_index'));
     }
 
     protected function fetchOrCreateAuthor($authorId)
@@ -135,10 +136,7 @@ class AuthorController extends Controller
             ]
             );
 
-        return [
-            'author' => $author,
-            'data' => $data ?? []
-        ];
+        return  $data;
     }
 
 

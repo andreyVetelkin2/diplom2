@@ -29,7 +29,7 @@
                                     <button wire:click="selectForm({{ $form->id }})"
                                             class="btn w-100 text-start mb-1
                                         {{ $selectedForm && $selectedForm->id === $form->id
-                                            ? 'btn-outline-primary text-white'
+                                            ? 'btn-outline-primary active'
                                             : 'btn-outline-primary' }}">
                                         <i class="bi bi-file-earmark-text me-1"></i> {{ $form->title }}
                                     </button>
@@ -60,6 +60,14 @@
                                 </label>
                                 <input type="date" class="form-control @error('dateAchievement') is-invalid @enderror"
                                        wire:model.defer="dateAchievement">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Процент участия
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" placeholder="От 0 до 1 (например 0.5)" class="form-control @error('percent') is-invalid @enderror"
+                                       wire:model.defer="percent">
                             </div>
 
                             @foreach($templateFields as $field)
@@ -121,6 +129,12 @@
 
                         @if(!empty($rows))
                             <div class="mt-3">
+                                @if (session()->has('error'))
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
                                 <h5>Добавленные результаты ({{ count($rows) }})</h5>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped">

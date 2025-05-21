@@ -3,9 +3,13 @@
 namespace App\Livewire;
 
 
+use App\Models\Form;
+use App\Models\FormEntry;
 use App\Models\Permission;
 use App\Models\Category;
 use App\Models\Department;
+use App\Models\Position;
+use App\Models\User;
 use App\Services\ScientificReportExporter;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -13,10 +17,20 @@ use Livewire\Component;
 class Reports extends Component
 {
     public $groupedData = [];
-    public $selectReportTypes = [];
-    public $activeTab = 'individual'; // вкладка по умолчанию
-    public $selectedDepartment = null;
+
+
+    public $activeTab = 'individual';// вкладка по умолчанию
+
+    public $selectedDepartment = [];
+    public $selectedUser = null;
+    public $selectedForms = null;
+    public $selectedPositions = null;
+
     public $departments = [];
+    public $users = [];
+    public $positions = [];
+    public $forms = [];
+
     public $dateFrom;
     public $dateTo;
     public $docxFilePath;
@@ -27,20 +41,11 @@ class Reports extends Component
     {
         $this->user = auth()->user();
 
-        $permissions = Permission::whereIn('slug', [
-            'report-on-the-departments',
-            'report-on-the-institutes',
-            'report-on-the-universities'
-        ])->get();
-
-        foreach ($permissions as $permission) {
-            if ($this->user->hasPermissionTo($permission)) {
-                $this->selectReportTypes[] = $permission->slug;
-            }
-        }
-
         // загрузка кафедр (можно ограничить доступные кафедры по ролям)
         $this->departments = Department::pluck('name', 'id')->toArray();
+        $this->users = User::pluck('name', 'id')->toArray();
+        $this->positions = Position::pluck('name', 'id')->toArray();
+        $this->forms = Form::pluck('title', 'id')->toArray();
     }
 
     protected $listeners = ['filtersApplied' => 'loadGroupedData'];
@@ -60,135 +65,196 @@ class Reports extends Component
 
     public function loadGroupedData($startDate, $endDate)
     {
-        if ($this->activeTab === 'individual') {
-            $userId = auth()->id();
-        } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
-            // выбираем всех пользователей из выбранной кафедры
-            $userId = \App\Models\User::where('department_id', $this->selectedDepartment)
-                ->pluck('id')
-                ->toArray();
+        $isFormsTab = $this->activeTab === 'forms' && !empty($this->selectedForms);
+
+        if (!$isFormsTab) {
+            if ($this->activeTab === 'individual') {
+                $userIds = [auth()->id()];
+            } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
+                $userIds = User::whereIn('department_id', $this->selectedDepartment)
+                    ->pluck('id')->toArray();
+            } elseif ($this->activeTab === 'user' && $this->selectedUser) {
+                $userIds = (array)$this->selectedUser;
+            } elseif ($this->activeTab === 'position' && $this->selectedPositions) {
+                $userIds = User::whereIn('position_id', $this->selectedPositions)
+                    ->pluck('id')->toArray();
+            } else {
+                $this->groupedData = [];
+                return;
+            }
         } else {
-            $this->groupedData = [];
-            return;
+            $formIds = $this->selectedForms;
         }
 
         $this->dateFrom = $startDate;
-        $this->dateTo   = $endDate;
+        $this->dateTo = $endDate;
 
-        $this->groupedData = Category::with(['forms' => function ($query) use ($startDate, $endDate, $userId) {
-            $query->whereHas('entries', function ($q) use ($startDate, $endDate, $userId) {
-                $q->whereIn('user_id', (array) $userId)
-                    ->whereBetween('date_achievement', [$startDate, $endDate])
-                    ->where('status', 'approved');              // ← фильтрация
-            })
-                ->withCount(['entries as user_entries_count' => function ($q) use ($startDate, $endDate, $userId) {
-                    $q->whereIn('user_id', (array) $userId)
-                        ->whereBetween('date_achievement', [$startDate, $endDate])
-                        ->where('status', 'approved');              // ← фильтрация
-                }])
-                ->with(['entries' => function ($q) use ($startDate, $endDate, $userId) {
-                    $q->whereIn('user_id', (array) $userId)
-                        ->whereBetween('date_achievement', [$startDate, $endDate])
-                        ->where('status', 'approved')               // ← фильтрация
-                        ->latest();
-                }]);
-        }])
-            ->whereHas('forms.entries', function ($q) use ($startDate, $endDate, $userId) {
-                $q->whereIn('user_id', (array) $userId)
-                    ->whereBetween('date_achievement', [$startDate, $endDate])
-                    ->where('status', 'approved');                      // ← фильтрация
-            })
-            ->get()
-            ->map(function ($category) {
+        // Получаем достижения
+        $query = FormEntry::with([
+            'fieldEntryValues.templateField',
+            'form:id,title,slug,points,category_id',
+            'form.category:id,name',
+        ])
+            ->whereBetween('date_achievement', [$startDate, $endDate])
+            ->where('status', 'approved');
+
+        if ($isFormsTab) {
+            $query->whereIn('form_id', $formIds);
+        } else {
+            $query->whereIn('user_id', $userIds);
+        }
+
+        $entries = $query
+            ->orderBy('user_id')
+            ->orderBy('form_id')
+            ->orderBy('created_at')
+            ->get();
+
+        // Получаем штрафные баллы
+        $penaltyPoints = \DB::table('penalty_points')
+            ->select('id', 'user_id', 'penalty_points', 'date', 'comment')
+            ->whereBetween('date', [$startDate, $endDate]);
+
+        if (!$isFormsTab) {
+            $penaltyPoints->whereIn('user_id', $userIds);
+        } else {
+            $penaltyPoints = collect(); // пустая коллекция, если активна вкладка "Формы"
+        }
+
+        $penaltyPoints = $penaltyPoints->get();
+
+        // Группировка по пользователям
+        $this->groupedData = $entries
+            ->groupBy('user_id')
+            ->map(function ($userEntries, $uid) use ($penaltyPoints) {
+                $user = User::find($uid);
+
+                $sections = $userEntries
+                    ->groupBy(fn($e) => $e->form->category->name)
+                    ->map(function ($entriesByCat, $categoryName) {
+                        $forms = $entriesByCat
+                            ->groupBy('form_id')
+                            ->map(function ($entriesByForm) {
+                                $formModel = $entriesByForm->first()->form;
+                                $entries = $entriesByForm->map(function ($entry, $idx) {
+                                    $pairs = $entry->fieldEntryValues
+                                        ->filter(fn($fv) => in_array($fv->templateField->name, ['title', 'name', 'label', 'nazvanie']))
+                                        ->map(fn($fv) => "{$fv->value}")
+                                        ->toArray();
+
+                                    return [
+                                        'date' => $entry->created_at->format('d.m.Y'),
+                                        'outputLine' => ($idx + 1) . '. ' . implode(', ', $pairs),
+                                    ];
+                                })->toArray();
+
+                                $totalScore = $entriesByForm
+                                    ->reduce(fn($carry, $entry) => $carry + ($formModel->points * ($entry->percent ?? 0)), 0
+                                    );
+
+                                return [
+                                    'name' => $formModel->title,
+                                    'slug' => $formModel->slug,
+                                    'points' => $formModel->points,
+                                    'count' => count($entries),
+                                    'total' => round($totalScore, 2),
+                                    'entries' => $entries,
+                                ];
+                            })
+                            ->sortBy('name')
+                            ->values();
+
+                        return [
+                            'category' => $categoryName,
+                            'forms' => $forms,
+                        ];
+                    })
+                    ->values()
+                    ->toArray();
+
+                // Добавляем штрафные баллы как отдельную категорию
+                $penaltiesForUser = $penaltyPoints->where('user_id', $uid);
+
+                if ($penaltiesForUser->isNotEmpty()) {
+                    $penaltyEntries = $penaltiesForUser->map(function ($p, $idx) {
+                        return [
+                            'date' => \Carbon\Carbon::parse($p->date)->format('d.m.Y'),
+                            'outputLine' => ($idx + 1) . '. Комментарий: ' . ($p->comment ?: '—'),
+                        ];
+                    })->toArray();
+
+                    $penaltyTotal = $penaltiesForUser->sum('penalty_points');
+
+                    $sections[] = [
+                        'category' => 'Штрафы',
+                        'forms' => [
+                            [
+                                'name' => 'Штрафные баллы',
+                                'slug' => 'ШБ',
+                                'points' => -1,
+                                'count' => count($penaltyEntries),
+                                'total' => -round($penaltyTotal, 2),
+                                'entries' => $penaltyEntries,
+                            ]
+                        ]
+                    ];
+                }
+
                 return [
-                    'category' => $category->name,
-                    'forms'    => $category->forms
-                        ->map(function ($form) {
-                            return [
-                                'name'    => $form->title,
-                                'slug'    => $form->slug,
-                                'points'  => $form->points,
-                                'count'   => $form->user_entries_count,
-                                'total'   => $form->points * $form->user_entries_count,
-                                'entries' => $form->entries,
-                            ];
-                        })
-                        ->filter(fn($form) => $form['count'] > 0),
+                    'user' => $user->name,
+                    'sections' => $sections,
                 ];
             })
-            ->filter(fn($category) => !empty($category['forms']));
+            ->sortBy('user')
+            ->values()
+            ->toArray();
     }
 
 
     public function getExportData(): array
     {
-        $user = auth()->user();
-
-        $data = [
-            'position'    => $user->position ?? '',
-            'full_name'   => $user->name,
-            'department'  => $user->department->name ?? '',
-            'date_from'   => $this->dateFrom,
-            'date_to'     => $this->dateTo,
-            'hirsh'       => $user->hirsh ?? '',
-            'citations'   => $user->citations ?? '',
-            'sections'    => [],  // заполним далее
-        ];
-
-        foreach ($this->groupedData as $category) {
-            $forms = [];
-
-            foreach ($category['forms'] as $form) {
-                // Собирать все обоснования в одну строку
-                $justifications = collect($form['entries'])
-                    ->pluck('justification')
-                    ->filter()
-                    ->implode('; ');
-
-                $forms[] = [
-                    'name'          => $form['name'],
-                    'code'          => $form['slug'],    // либо 'code' если в groupedData так называется
-                    'points'        => $form['points'],
-                    'count'         => $form['count'],
-                    'total'         => $form['total'],
-                    'justification' => $justifications,
+        return [
+            'report_type' => $this->activeTab,      // 'individual', 'department', 'user' или 'position'
+            'date_from' => $this->dateFrom,
+            'date_to' => $this->dateTo,
+            'blocks' => array_map(function ($block) {
+                // в groupedData у нас уже лежит нужная информация:
+                //   'user'    => имя
+                //   'sections'=> [ ['category'=>..., 'forms'=>[...]], ... ]
+                return [
+                    'full_name' => $block['user'],
+                    'position' => User::where('name', $block['user'])->first()?->position->name ?? '',
+                    'department' => User::where('name', $block['user'])->first()?->department->name ?? '',
+                    'hirsh' => User::where('name', $block['user'])->first()?->hirsh ?? '',
+                    'citations' => User::where('name', $block['user'])->first()?->citations ?? '',
+                    'sections' => array_map(fn($s) => [
+                        'category' => $s['category'],
+                        'forms' => array_map(fn($f) => [
+                            'name' => $f['name'],
+                            'code' => $f['slug'],
+                            'points' => $f['points'],
+                            'count' => $f['count'],
+                            'total' => $f['total'],
+                            'entries_data' => collect($f['entries'])->pluck('outputLine')->implode("\n"),
+                        ], $s['forms']->toArray())
+                    ], $block['sections']->toArray()),
                 ];
-            }
-
-            if (!empty($forms)) {
-                $data['sections'][$category['category']] = $forms;
-            }
-        }
-
-        return $data;
+            }, $this->groupedData),
+        ];
     }
 
-
-
-    public function exportIndividual()
+    public function export()
     {
-        $userid = auth()->id();
         $exporter = new ScientificReportExporter();
-        $filename = $exporter->exportIndividual($this->getExportData());
-        $path = storage_path("app/exports/reports/{$userid}/{$filename}");
+        $data = $this->getExportData();
+        // универсальный метод
+        $filename = $exporter->exportReport($data['report_type'], $data);
+        $path = storage_path("app/exports/reports/" . auth()->id() . "/{$filename}");
 
         return response()->download($path, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         ]);
     }
-
-    public function exportDepartment()
-    {
-        $userid = auth()->id();
-        $exporter = new ScientificReportExporter();
-        $filename = $exporter->exportDepartment($this->getExportData());
-        $path = storage_path("app/exports/reports/{$userid}/{$filename}");
-
-        return response()->download($path, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        ]);
-    }
-
 
     public function render()
     {

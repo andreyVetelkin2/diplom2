@@ -4,6 +4,7 @@ namespace App\Livewire\CRUD;
 
 use App\Models\Permission;
 use App\Models\Role;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class RoleDetail extends Component
@@ -27,7 +28,7 @@ class RoleDetail extends Component
     public function submit()
     {
         $permission = Permission::where('slug', 'assign-permissions-to-roles')->first();
-        if (auth()->user()->hasPermissionTo($permission)) {
+        if (auth()->user()->hasPermissionTo($permission) || auth()->user()->hasRole('admin')) {
             $this->role->syncPermissions($this->selectedPermissions);
             session()->flash('success', 'Права обновлены.');
         }else{

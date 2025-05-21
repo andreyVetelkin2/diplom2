@@ -2,10 +2,12 @@
 namespace App\Livewire\CRUD;
 
 use App\Models\Department;
+use App\Models\Position;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
@@ -36,12 +38,12 @@ class UserDetail extends Component
         $this->validate([
             'user_field.name' => 'required|string|max:255',
             'user_field.email' => 'required|email|unique:users,email,' . $this->user->id,
-            'user_field.position' => 'nullable|string|max:255',
+            'user_field.position_id' => 'nullable|string|max:255',
             'user_field.department_id' => 'nullable|exists:departments,id',
         ]);
 
         // Преобразуем пустую строку в null
-        foreach (['position', 'department_id'] as $field) {
+        foreach (['department_id','position_id'] as $field) {
             if (isset($this->user_field[$field]) && $this->user_field[$field] === '') {
                 $this->user_field[$field] = null;
             }
@@ -52,6 +54,16 @@ class UserDetail extends Component
         session()->flash('success_info', 'Информация успешно обновлена!');
     }
 
+    public function login(){
+            // Проверка прав текущего пользователя
+//            if (!auth()->user()->can('impersonate')) {
+//                abort(403);
+//            }
+
+            // Логинимся под выбранным пользователем
+            Auth::login($this->user);
+
+    }
 
     public function mount()
     {
@@ -93,6 +105,8 @@ class UserDetail extends Component
     {
         return view('livewire.c-r-u-d.user-detail',[
             'departments' => Department::pluck('name', 'id'),
+            'positions' => Position::pluck('name', 'id'),
+
         ]);
     }
 }

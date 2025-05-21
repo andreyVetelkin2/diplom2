@@ -15,8 +15,13 @@ class FormEntry extends Model
         'form_id',
         'comment',
         'status',
+        'percent',
         'date_achievement'
     ];
+
+//    protected $casts =[
+//        'date_achievement' => 'date'
+//    ];
 
     public function form()
     {

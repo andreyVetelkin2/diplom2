@@ -7,76 +7,81 @@
     </div>
 
     <div class="card-body">
-        {{-- Индивидуальные отчёты --}}
-        <h6 class="fw-bold text-secondary mb-3">👤 Индивидуальные отчёты</h6>
+        @php
+            $titles = [
+                'individual' => '👤 Индивидуальные отчёты',
+                'department' => '🏫 Отчёты по кафедре',
+                'position'   => '💼 Отчёты по должностям',
+                'forms'      => '📊 Отчёты по показателям',
+                'user'      => '👨‍👨‍ Отчёты по пользователям',
+            ];
 
-        @if(count($individualReports) === 0)
-            <div class="alert alert-info py-2 px-3 small">Нет сгенерированных индивидуальных отчётов.</div>
-        @else
-            <div class="table-responsive mb-4">
-                <table class="table table-hover align-middle table-bordered small">
-                    <thead class="table-light">
-                    <tr>
-                        <th>📄 Файл</th>
-                        <th>📅 Дата создания</th>
-                        <th class="text-end">🔽 Скачать</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($individualReports as $r)
-                        <tr>
-                            <td class="text-truncate" style="max-width: 200px;">{{ $r['name'] }}</td>
-                            <td>{{ $r['date'] }}</td>
-                            <td class="text-end">
-                                <a href="{{ route('download.report', ['filename' => $r['name']]) }}"
-                                   class="btn btn-sm btn-outline-success d-flex align-items-center gap-1">
-                                    <i class="bi bi-download"></i> Скачать
-                                </a>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
+            $permissions = [
+                'individual' => null,
+                'department' => 'archive-report-on-the-departments',
+                'position'   => 'archive-report-on-positions',
+                'forms'      => 'archive-report-on-forms',
+                'user'      => 'archive-report-on-users',
+            ];
+        @endphp
 
-        {{-- Отчёты по кафедре --}}
-        <h6 class="fw-bold text-secondary mb-3">🏫 Отчёты по кафедре</h6>
+        @foreach($reportTypes as $type => $reports)
+            @php
+                $title = $titles[$type] ?? ucfirst($type);
+                $permission = $permissions[$type] ?? null;
+            @endphp
 
-        @if(count($departmentReports) === 0)
-            <div class="alert alert-info py-2 px-3 small">Нет сгенерированных отчётов по кафедре.</div>
-        @else
-            <div class="table-responsive">
-                <table class="table table-hover align-middle table-bordered small">
-                    <thead class="table-light">
-                    <tr>
-                        <th>📄 Файл</th>
-                        <th>📅 Дата создания</th>
-                        <th class="text-end"><i class="bi bi-download"></i> Скачать</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($departmentReports as $r)
-                        <tr>
-                            <td class="text-truncate" style="max-width: 200px;">{{ $r['name'] }}</td>
-                            <td>{{ $r['date'] }}</td>
-                            <td class="text-end">
-                                @can('report-on-the-departments')
-                                    <a href="{{ route('download.report', ['filename' => $r['name']]) }}"
-                                       class="btn btn-sm btn-outline-success d-flex justify-content-center align-items-center gap-1">
-                                        <div class="">
-                                             Скачать
-                                        </div>
-                                    </a>
-                                @else
-                                    <span class="text-muted">Недоступно</span>
-                                @endcan
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
+            @if(is_null($permission) || auth()->user()->can($permission))
+                <h6 class="fw-bold text-secondary mb-3">{{ $title }}</h6>
+
+                @if(count($reports) === 0)
+                    <div class="alert alert-info py-2 px-3 small">Нет сгенерированных отчётов по данному типу.</div>
+                @else
+                    <div class="table-responsive mb-4">
+                        <table class="table table-hover align-middle table-bordered small">
+                            <thead class="table-light">
+                            <tr>
+                                <th>📄 Файл</th>
+                                <th>📅 Дата создания</th>
+                                <th class="text-end">🔽 Скачать</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($reports as $r)
+                                <tr>
+                                    <td class="text-truncate" style="max-width: 200px;">{{ $r['name'] }}</td>
+                                    <td>{{ $r['date'] }}</td>
+                                    <td class="text-end d-flex justify-content-end gap-2">
+                                        <a href="{{ route('download.report', ['filename' => $r['name']]) }}"
+                                           class="btn btn-sm btn-outline-success d-flex align-items-center gap-1">
+                                            <i class="bi bi-download"></i> Скачать
+                                        </a>
+
+                                        <button
+                                            onclick="confirmDelete('{{ $r['name'] }}')"
+                                            class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1">
+                                            <i class="bi bi-trash"></i> Удалить
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            @endif
+        @endforeach
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        function confirmDelete(filename) {
+            if (confirm(`Удалить файл ${filename}?`)) {
+                Livewire.dispatch('deleteConfirmed', { filename });
+            }
+        }
+    </script>
+@endpush

@@ -6,17 +6,6 @@ return [
     [
         'label' => 'Администрирование',
         'links' => [
-            [
-                'label' => 'Шаблоны',
-                'route' => 'templates',
-                'active' => 'templates',
-            ],
-
-            [
-                'label' => 'Формы',
-                'route' => 'forms',
-                'active' => 'forms',
-            ],
 
             [
                 'label' => 'Пользователи',
@@ -43,7 +32,11 @@ return [
                 'route' => 'departments',
                 'active' => 'admin/departments',
             ],
-
+            [
+                'label' => 'Должности',
+                'route' => 'positions',
+                'active' => 'admin/positions',
+            ],
 
 
         ],
