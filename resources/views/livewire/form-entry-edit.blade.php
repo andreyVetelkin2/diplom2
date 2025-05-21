@@ -195,9 +195,17 @@
                             @endif
                         </h5>
                         <button type="button" class="btn-close" wire:click="$set('showConfirmModal', false)"></button>
+
                     </div>
 
                     <div class="modal-body">
+
+                        @if (session()->has('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
                         @if($modalAction === 'reject')
                             <label class="form-label">Причина отклонения</label>
                             <textarea wire:model.defer="rejectionComment" class="form-control"></textarea>
