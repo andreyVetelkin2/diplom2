@@ -126,7 +126,7 @@
 
                         {{-- Баллы --}}
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control @error('formData.points') is-invalid @enderror"
+                            <input type="number" step="any" class="form-control @error('formData.points') is-invalid @enderror"
                                    id="formPoints" placeholder="Баллы"
                                    wire:model.defer="formData.points">
                             <label for="formPoints">Баллы</label>

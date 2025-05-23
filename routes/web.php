@@ -67,16 +67,6 @@ Route::middleware('auth')->group(function () { //группируем чтобы
     Route::middleware('role:,form-edit')->group(function () {
         Route::get('forms', ManageForms::class)
             ->name('forms');
-
-        Route::get('upload', UserFillForm::class)
-            ->name('upload');
-
-        Route::get('reports', Reports::class)
-            ->name('reports');
-
-        Route::get('reports-archive', \App\Livewire\ReportArchive::class)
-            ->name('reports-archive');
-
     });
 
     Route::middleware('role:admin')->prefix('admin')->group(function () {//префикс добавляется так как оба маршрута лежат по пути /admin/../
