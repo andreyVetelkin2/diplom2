@@ -5,7 +5,7 @@
             <div class="card-body text-center p-4">
                 <h4 class="fw-semibold mb-1">{{ $username }}</h4>
                 <p class="text-muted mb-3">{{ $user->position?->name }}</p>
-
+                <p class="text-muted mb-3">{{ $user->department?->name }}</p>
                 <ul class="list-group list-group-flush text-start mb-3">
                     @if($ratingPoints )
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -33,6 +33,8 @@
                                 <span class="fw-bold">{{ $user->citations }}</span>
                             </li>
                         @endif
+
+
 
                         @if($user->hirsh)
                             <li class="list-group-item d-flex justify-content-between align-items-center">

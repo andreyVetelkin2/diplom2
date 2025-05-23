@@ -24,7 +24,7 @@ class AchievementsChart extends Component
     {
         $this->departments = Department::pluck('name', 'id')->toArray();
 
-        $this->selectedDepartment = session('achievements_department'); // может быть null
+        $this->selectedDepartment = session('achievements_department') ?? auth()->user()->department?->id; // может быть null
 
         $this->startDate = session('achievements_start', now()->subYears(5)->startOfYear()->format('Y-m-d'));
         $this->endDate = session('achievements_end', now()->format('Y-m-d'));
