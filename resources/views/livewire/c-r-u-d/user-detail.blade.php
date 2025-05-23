@@ -7,17 +7,18 @@
         </div>
 
         <form wire:submit.prevent="updateUserInfo">
+            @csrf
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">Имя</label>
                     <input type="text" class="form-control" wire:model.defer="user_field.name">
-                    @error('user.name') <small class="text-danger">{{ $message }}</small> @enderror
+                    @error('user_field.name') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Email адрес</label>
                     <input type="email" class="form-control" wire:model.defer="user_field.email">
-                    @error('user.email') <small class="text-danger">{{ $message }}</small> @enderror
+                    @error('user_field.email') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
                 <div class="mb-3">
@@ -28,7 +29,7 @@
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
                     </select>
-                    @error('user.position_id') <small class="text-danger">{{ $message }}</small> @enderror
+                    @error('user_field.position_id') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
                 <div class="mb-3">
@@ -39,7 +40,7 @@
                             <option value="{{ $id }}">{{ $name }}</option>
                         @endforeach
                     </select>
-                    @error('user.department') <small class="text-danger">{{ $message }}</small> @enderror
+                    @error('user_field.department_id') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
                 @if (session()->has('success_info'))

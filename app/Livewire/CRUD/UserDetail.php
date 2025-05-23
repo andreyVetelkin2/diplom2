@@ -35,21 +35,11 @@ class UserDetail extends Component
     }
     public function updateUserInfo()
     {
-        $this->validate([
-            'user_field.name' => 'required|string|max:255',
-            'user_field.email' => 'required|email|unique:users,email,' . $this->user->id,
-            'user_field.position_id' => 'nullable|string|max:255',
-            'user_field.department_id' => 'nullable|exists:departments,id',
-        ]);
-
-        // Преобразуем пустую строку в null
-        foreach (['department_id','position_id'] as $field) {
-            if (isset($this->user_field[$field]) && $this->user_field[$field] === '') {
-                $this->user_field[$field] = null;
-            }
-        }
-
-        $this->user->update($this->user_field);
+        $this->user->name = $this->user_field['name'];
+        $this->user->email = $this->user_field['email'];
+        $this->user->position_id = $this->user_field['position_id'] ?? null;
+        $this->user->department_id = $this->user_field['department_id'] ?? null;
+        $this->user->save();
 
         session()->flash('success_info', 'Информация успешно обновлена!');
     }

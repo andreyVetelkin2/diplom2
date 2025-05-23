@@ -49,7 +49,11 @@ class ManagerCabinet extends Component
         $user = auth()->user();
 
         $entries = FormEntry::where('status', 'review')
-            ->whereHas('user', fn($q) => $q->where('department_id', $user->department_id))
+            ->whereHas('user', function ($q) use ($user) {
+                $q->when($user->department_id, function ($q) use ($user) {
+                    $q->where('department_id', $user->department_id);
+                });
+            })
             ->orderByDesc('created_at')
             ->get();
 
