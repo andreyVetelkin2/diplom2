@@ -43,7 +43,15 @@ class Reports extends Component
 
         // загрузка кафедр (можно ограничить доступные кафедры по ролям)
         $this->departments = Department::pluck('name', 'id')->toArray();
-        $this->users = User::pluck('name', 'id')->toArray();
+        if (auth()->user()->can('report-on-the-departments')){
+            $this->users = User::pluck('name', 'id')->toArray();
+
+        }else{
+            $dep = auth()->user()->department->id;
+            $this->users = User::where('department_id', $dep)->pluck('name', 'id')->toArray();
+        }
+
+
         $this->positions = Position::pluck('name', 'id')->toArray();
         $this->forms = Form::pluck('title', 'id')->toArray();
     }
@@ -117,8 +125,6 @@ class Reports extends Component
 
         if (!$isFormsTab) {
             $penaltyPoints->whereIn('user_id', $userIds);
-        } else {
-            $penaltyPoints = collect(); // пустая коллекция, если активна вкладка "Формы"
         }
 
         $penaltyPoints = $penaltyPoints->get();
