@@ -39,6 +39,7 @@ class UserDetail extends Component
         $this->user->email = $this->user_field['email'];
         $this->user->position_id = $this->user_field['position_id'] ?? null;
         $this->user->department_id = $this->user_field['department_id'] ?? null;
+        $this->user->hirsh = $this->user_field['hirsh'] ?? null;
         $this->user->save();
 
         session()->flash('success_info', 'Информация успешно обновлена!');

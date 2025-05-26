@@ -50,7 +50,7 @@ class UserFillForm extends Component
                     $rules[$key] .= '|in:' . $field->options->pluck('value')->implode(',');
                     break;
                 case 'file':
-                    $rules[$key] .= '|file|mimes:jpg,jpeg,png,pdf|max:10240'; // Example: allow images and PDFs, max 10MB
+                    $rules[$key] .= '|file|max:5120'; // Example: allow images and PDFs, max 5mb
                     break;
                 default:
                     $rules[$key] .= '|string';
@@ -118,15 +118,15 @@ class UserFillForm extends Component
             $this->addError('rows', 'Пожалуйста, добавьте хотя бы один результат.');
             return;
         }
-
-//        if (auth()->user()->limit_ballov_na_kvartal &&
-//            (auth()->user()->limit_ballov_na_kvartal <= ((int)$this->selectedForm->points + auth()->user()->rating))){
-//            session()->flash('error', 'Превышено максимальное количество баллов доступных к получению в этом квартале.');
-//
-//            return;
-//        }
-
         foreach ($this->rows as $index => $row) {
+
+            $points = $this->selectedForm->points * $this->percent;
+
+            if (!$this->checkLimitPoints($points)){
+                $points = 0;
+                session()->flash('warning', 'Превышено максимальное количество баллов доступных к получению в текущем квартале по этому показателю. Внесенные данные будут сохранены, но баллы не будут начислены');
+            }
+
             $entry = FormEntry::create([
                 'form_template_id' => $this->selectedForm->form_template_id,
                 'user_id' => auth()->id(),
@@ -134,6 +134,7 @@ class UserFillForm extends Component
                 'status' => 'review',
                 'date_achievement' => $this->dateAchievement,
                 'percent' => $this->percent,
+                'points' => $points,
             ]);
 
             foreach ($this->templateFields as $field) {
@@ -195,5 +196,25 @@ class UserFillForm extends Component
     public function render()
     {
         return view('livewire.user-fill-form');
+    }
+
+    public function checkLimitPoints($points) : bool
+    {
+        $startDate = now()->startOfQuarter();
+        $endDate = now()->endOfQuarter();
+        $pointsSum = now()->endOfQuarter();
+        $entries = FormEntry::whereBetween('date_achievement', [$startDate, $endDate])
+            ->where('user_id', auth()->id())
+            ->where('form_id', $this->selectedForm->id)
+            ->get();
+
+        $totalScore = $entries
+            ->reduce(
+                fn($carry, $entry) => $carry + $entry->points, 0
+            );
+        if ( ($totalScore + $points) >= $this->selectedForm->limit){
+            return false;
+        }
+        return true;
     }
 }

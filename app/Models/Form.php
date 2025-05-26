@@ -18,6 +18,7 @@ class Form extends Model
         'is_active',
         'single_entry',
         'slug',
+        'limit',
     ];
 
     protected $casts = [

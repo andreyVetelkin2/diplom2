@@ -14,6 +14,7 @@ class UserForm extends Form
     public string $name = '';
     public string $email = '';
     public string $password = '';
+    public string $hirsh = '';
     public int|string|null $position_id = null;
     public int|string|null $department_id = null;
 
@@ -23,6 +24,7 @@ class UserForm extends Form
         $this->name = $user->name;
         $this->email = $user->email;
         $this->position_id = $user->position_id;
+        $this->hirsh = $user->hirsh;
         $this->department_id = $user->department_id;
     }
 
@@ -36,6 +38,7 @@ class UserForm extends Form
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email'],
+            'hirsh' => ['integer', 'nullable'],
             'position_id' => ['nullable', 'integer', Rule::exists('positions', 'id')],
             'password' => [$this->user ? 'nullable' : 'required', 'string', 'min:6'],
             'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')],

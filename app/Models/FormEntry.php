@@ -16,12 +16,13 @@ class FormEntry extends Model
         'comment',
         'status',
         'percent',
+        'points',
         'date_achievement'
     ];
 
-//    protected $casts =[
-//        'date_achievement' => 'date'
-//    ];
+    protected $casts =[
+        'points' => 'float'
+    ];
 
     public function form()
     {
