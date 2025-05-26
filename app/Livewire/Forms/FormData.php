@@ -20,6 +20,9 @@ class FormData extends Form
     #[Validate('nullable|string|max:50')]
     public ?string $points = '';
 
+    #[Validate('nullable|integer')]
+    public ?int $limit = 0;
+
     #[Validate('required|exists:form_templates,id')]
     public ?int $form_template_id = null;
 
@@ -39,6 +42,7 @@ class FormData extends Form
         $this->form_template_id = $form->form_template_id;
         $this->is_active = $form->is_active;
         $this->slug = $form->slug;
+        $this->limit = $form->limit;
     }
 
 
@@ -52,5 +56,6 @@ class FormData extends Form
         $this->is_active = true;
         $this->single_entry = false;
         $this->slug = '';
+        $this->limit = 0;
     }
 }

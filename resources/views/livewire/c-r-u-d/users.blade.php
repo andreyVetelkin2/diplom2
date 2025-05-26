@@ -10,12 +10,16 @@
 
             <form wire:submit.prevent="{{ $editMode ? 'update' : 'store' }}" class="mb-4 row g-2">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" placeholder="Имя" wire:model.defer="form.name">
+                    <input type="text" class="form-control" placeholder="ФИО" wire:model.defer="form.name">
                     @error('form.name') <span class="error">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-4">
                     <input type="email" class="form-control" placeholder="Email" wire:model.defer="form.email">
                     @error('form.email') <span class="error">{{ $message }}</span> @enderror
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Индекс Хирша" wire:model.defer="form.hirsh">
+                    @error('form.hirsh') <span class="error">{{ $message }}</span> @enderror
                 </div>
                 <div class="col-md-4">
                     <select class="form-select" wire:model.defer="form.position_id">

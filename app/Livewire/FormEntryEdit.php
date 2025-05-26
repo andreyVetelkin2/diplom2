@@ -39,7 +39,7 @@ class FormEntryEdit extends Component
     public function executeAction()
     {
         if ($this->modalAction === 'approve') {
-            if (auth()->user()->limit_ballov_na_kvartal) {
+            /*if (auth()->user()->limit_ballov_na_kvartal) {
                 // Проверяем, что дата достижения относится к текущему кварталу
                 $achievementDate = Carbon::parse($this->entry->date_achievement);
                 $isCurrentQuarter = $achievementDate->between(
@@ -54,7 +54,7 @@ class FormEntryEdit extends Component
                     session()->flash('error', 'Превышено максимальное количество баллов, доступных к получению в этом квартале. Для изменения статуса показателя необходимо изменить дату достижения.');
                     return;
                 }
-            }
+            }*/
             $this->entry->status = 'approved';
             $this->entry->comment = $this->comment;
         } elseif ($this->modalAction === 'reject') {

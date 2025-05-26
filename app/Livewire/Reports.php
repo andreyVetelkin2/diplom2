@@ -155,13 +155,12 @@ class Reports extends Component
                                 })->toArray();
 
                                 $totalScore = $entriesByForm
-                                    ->reduce(fn($carry, $entry) => $carry + ($formModel->points * ($entry->percent ?? 0)), 0
+                                    ->reduce(fn($carry, $entry) => $carry + $entry->points, 0
                                     );
 
                                 return [
                                     'name' => $formModel->title,
                                     'slug' => $formModel->slug,
-                                    'points' => $formModel->points,
                                     'count' => count($entries),
                                     'total' => round($totalScore, 2),
                                     'entries' => $entries,
@@ -220,30 +219,38 @@ class Reports extends Component
     public function getExportData(): array
     {
         return [
-            'report_type' => $this->activeTab,      // 'individual', 'department', 'user' или 'position'
+            'report_type' => $this->activeTab,
             'date_from' => $this->dateFrom,
             'date_to' => $this->dateTo,
             'blocks' => array_map(function ($block) {
-                // в groupedData у нас уже лежит нужная информация:
-                //   'user'    => имя
-                //   'sections'=> [ ['category'=>..., 'forms'=>[...]], ... ]
+                // Преобразуем sections в массив, если это коллекция
+                $sections = $block['sections'] instanceof \Illuminate\Support\Collection
+                    ? $block['sections']->toArray()
+                    : (array) $block['sections'];
+
                 return [
                     'full_name' => $block['user'],
                     'position' => User::where('name', $block['user'])->first()?->position->name ?? '',
                     'department' => User::where('name', $block['user'])->first()?->department->name ?? '',
                     'hirsh' => User::where('name', $block['user'])->first()?->hirsh ?? '',
                     'citations' => User::where('name', $block['user'])->first()?->citations ?? '',
-                    'sections' => array_map(fn($s) => [
-                        'category' => $s['category'],
-                        'forms' => array_map(fn($f) => [
-                            'name' => $f['name'],
-                            'code' => $f['slug'],
-                            'points' => $f['points'],
-                            'count' => $f['count'],
-                            'total' => $f['total'],
-                            'entries_data' => collect($f['entries'])->pluck('outputLine')->implode("\n"),
-                        ], $s['forms']->toArray())
-                    ], $block['sections']->toArray()),
+                    'sections' => array_map(function ($s) {
+                        // Преобразуем forms в массив, если это коллекция
+                        $forms = $s['forms'] instanceof \Illuminate\Support\Collection
+                            ? $s['forms']->toArray()
+                            : (array) $s['forms'];
+
+                        return [
+                            'category' => $s['category'],
+                            'forms' => array_map(fn($f) => [
+                                'name' => $f['name'],
+                                'code' => $f['slug'],
+                                'count' => $f['count'],
+                                'total' => $f['total'],
+                                'entries_data' => collect($f['entries'])->pluck('outputLine')->implode("\n"),
+                            ], $forms),
+                        ];
+                    }, $sections),
                 ];
             }, $this->groupedData),
         ];

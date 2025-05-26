@@ -5,6 +5,12 @@
             {{ session('success') }}
         </div>
     @endif
+    @if (session()->has('warning'))
+        <div class="alert alert-warning alert-dismissible">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            {{ session('warning') }}
+        </div>
+    @endif
 
     <div class="row">
         {{-- Левая колонка: категории и активные формы --}}

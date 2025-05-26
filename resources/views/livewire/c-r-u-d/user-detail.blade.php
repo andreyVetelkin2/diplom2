@@ -22,6 +22,12 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Индекс Хирша</label>
+                    <input type="text" class="form-control" placeholder="Индекс Хирша" wire:model.defer="user_field.hirsh">
+                    @error('user_field.hirsh') <span class="error">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Должность</label>
                     <select class="form-select" wire:model.defer="user_field.position_id">
                         <option value="">Выберите должность</option>

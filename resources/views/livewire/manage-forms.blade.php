@@ -133,6 +133,15 @@
                             @error('formData.points')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
+                        {{-- Лимит --}}
+                        <div class="form-floating mb-3">
+                            <input type="number" step="any" class="form-control @error('formData.limit') is-invalid @enderror"
+                                   id="formPoints" placeholder="Лимит баллов по показателю на квартал"
+                                   wire:model.defer="formData.limit">
+                            <label for="formPoints">Лимит баллов по показателю на квартал</label>
+                            @error('formData.limit')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+
                         {{-- Чекбокс: активна --}}
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" id="isActive"
