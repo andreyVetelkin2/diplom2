@@ -198,23 +198,28 @@ class UserFillForm extends Component
         return view('livewire.user-fill-form');
     }
 
-    public function checkLimitPoints($points) : bool
+    public function checkLimitPoints($points): bool
     {
+        // Если лимита нет (0 или null) — разрешаем всегда
+        $limit = $this->selectedForm->limit; // или auth()->user()->limit_ballov_na_kvartal, смотря где он хранится
+        if (!$limit) {
+            return true;
+        }
+
+        // Определяем границы текущего квартала
         $startDate = now()->startOfQuarter();
-        $endDate = now()->endOfQuarter();
-        $pointsSum = now()->endOfQuarter();
+        $endDate   = now()->endOfQuarter();
+
+        // Берём все записи за квартал для текущей формы и пользователя
         $entries = FormEntry::whereBetween('date_achievement', [$startDate, $endDate])
             ->where('user_id', auth()->id())
             ->where('form_id', $this->selectedForm->id)
             ->get();
 
-        $totalScore = $entries
-            ->reduce(
-                fn($carry, $entry) => $carry + $entry->points, 0
-            );
-        if ( ($totalScore + $points) >= $this->selectedForm->limit){
-            return false;
-        }
-        return true;
+        // Суммируем уже набранные баллы
+        $totalScore = $entries->sum('points');
+
+        // Проверяем, не превысит ли новое добавление лимит
+        return ($totalScore + $points) < $limit;
     }
 }

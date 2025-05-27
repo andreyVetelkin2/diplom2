@@ -12,10 +12,10 @@
                             <span>Рейтинг за текущий квартал</span>
                             <span class="fw-bold">
                                 {{ $ratingPoints }}
-                                @if($user->limit_ballov_na_kvartal)
-                                        из
-                                        <span class="fw-bold">{{ $user->limit_ballov_na_kvartal }} </span>
-                                @endif
+{{--                                @if($user->limit_ballov_na_kvartal)--}}
+{{--                                        из--}}
+{{--                                        <span class="fw-bold">{{ $user->limit_ballov_na_kvartal }} </span>--}}
+{{--                                @endif--}}
                             </span>
                             </li>
                         @endif

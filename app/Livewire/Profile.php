@@ -58,23 +58,34 @@ class Profile extends Component
             }
         }
 
+        $this->user = auth()->user();
 
-        // Определяем текущий квартал
+        // границы квартала
         $now = now();
         $currentMonth = $now->month;
-        $quarterStartMonth = ((int)(($currentMonth - 1) / 3)) * 3 + 1;
+        $quarterStartMonth = (int)(floor(($currentMonth - 1) / 3) * 3) + 1;
 
-        $quarterStart = now()->startOfYear()->addMonths($quarterStartMonth - 1)->startOfMonth();
-        $quarterEnd = (clone $quarterStart)->addMonths(3)->subSecond();
+        $quarterStart = $now->copy()
+            ->startOfYear()
+            ->addMonths($quarterStartMonth - 1)
+            ->startOfMonth();
+        $quarterEnd   = $quarterStart->copy()
+            ->addMonths(3)
+            ->subSecond();
 
-        // Фильтрация по статусу и дате текущего квартала
-        $this->user = auth()->user();
-        $this->ratingPoints = $this->user->rating ?? 0;
+        // динамически считаем рейтинг текущего квартала
+        $this->ratingPoints = FormEntry::query()
+            ->where('user_id', $this->user->id)
+            ->where('status', 'approved')
+            ->whereBetween('date_achievement', [$quarterStart, $quarterEnd])
+            ->sum('points');
 
+        // общее число публикаций
         $this->publicationCount = FormEntry::where('user_id', $this->user->id)->count();
 
+        // и остальная логика по листингу $all
         $this->totalAchivments = count($all);
-        $this->achivments = array_slice($all, 0, $this->loaded);
+        $this->achivments      = array_slice($all, 0, $this->loaded);
     }
 
     public function recalculateRating()
