@@ -91,7 +91,7 @@
                                             class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
                                             wire:model.defer="fieldValues.{{ $field->id }}"></textarea>
                                     @elseif($field->type === 'datetime')
-                                        <input type="datetime-local"
+                                        <input type="date"
                                                class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
                                                wire:model.defer="fieldValues.{{ $field->id }}">
                                     @elseif($field->type === 'checkbox')

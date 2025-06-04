@@ -16,7 +16,9 @@
             <div class="col-md-4">
                 <label for="selectedDepartment">Кафедра</label>
                 <select wire:model="selectedDepartment" class="form-select">
-                    <option value="">Все кафедры</option>
+                    @can('report-on-the-departments')
+                        <option value="">Все кафедры</option>
+                    @endcan
                     @foreach($departments as $id => $name)
                         <option value="{{ $id }}">{{ $name }}</option>
                     @endforeach

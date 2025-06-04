@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Interfaces\FormTemplateServiceInterface;
 use App\Livewire\Forms\FormTemplateForm;
+use App\Models\FormEntry;
 use App\Models\FormTemplate;
 use Illuminate\Support\Arr;
 use Livewire\Component;
@@ -72,7 +73,7 @@ class ManageTemplates extends Component
     {
 
             $template = FormTemplate::find($id);
-            if ($template->forms){
+            if ($template->forms->isNotEmpty()){
                 session()->flash('error', 'Шаблон не может быть удален, так как некоторые формы используют его.');
                 return;
             }
