@@ -126,11 +126,20 @@
 
                         {{-- Баллы --}}
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control @error('formData.points') is-invalid @enderror"
+                            <input type="number" step="any" class="form-control @error('formData.points') is-invalid @enderror"
                                    id="formPoints" placeholder="Баллы"
                                    wire:model.defer="formData.points">
                             <label for="formPoints">Баллы</label>
                             @error('formData.points')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+
+                        {{-- Лимит --}}
+                        <div class="form-floating mb-3">
+                            <input type="number" step="any" class="form-control @error('formData.limit') is-invalid @enderror"
+                                   id="formPoints" placeholder="Лимит баллов по показателю на квартал"
+                                   wire:model.defer="formData.limit">
+                            <label for="formPoints">Лимит баллов по показателю на квартал</label>
+                            @error('formData.limit')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
                         {{-- Чекбокс: активна --}}

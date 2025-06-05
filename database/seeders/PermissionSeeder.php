@@ -49,7 +49,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'Установка лимита баллов', 'slug' => 'installation-of-the-point-limit'],
             ['name' => 'Управление штрафными баллами', 'slug' => 'penalty-points-management'],
             ['name' => 'Загрузка достижений', 'slug' => 'loading-achievements'],
-            ['name' => 'Пересчет рейтинга всем пользователям', 'slug' => 'loading-achievements'],
 
             ['name' => 'Отчетность по кафедрам', 'slug' => 'report-on-the-departments'],
             ['name' => 'Отчетность по кафедре', 'slug' => 'report-on-the-department'],

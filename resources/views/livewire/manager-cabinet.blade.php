@@ -92,9 +92,9 @@
     <livewire:achievements-chart/>
 
     <!-- Modal: установить лимит баллов за квартал -->
-    @can('installation-of-the-point-limit')
-        <livewire:bulk-limit-setter/>
-    @endcan
+{{--    @can('installation-of-the-point-limit')--}}
+{{--        <livewire:bulk-limit-setter/>--}}
+{{--    @endcan--}}
 
 </div>
 

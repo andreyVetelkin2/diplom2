@@ -89,6 +89,9 @@ class PenaltyPointsManager extends Component
         $startOfQuarter = now()->firstOfQuarter()->startOfDay();
         $endOfQuarter = now()->firstOfQuarter()->addMonths(3)->subSecond();
 
+        $can_i_check = auth()->user()->can('report-on-the-departments');
+        $currentDepartmentId = auth()->user()->department_id;
+
         return User::query()
             ->select('users.*')
             ->selectSub(function ($query) use ($startOfQuarter, $endOfQuarter) {
@@ -97,6 +100,9 @@ class PenaltyPointsManager extends Component
                     ->whereColumn('penalty_points.user_id', 'users.id')
                     ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter]);
             }, 'penalty_points')
+            ->when(!$can_i_check, function ($query) use ($currentDepartmentId) {
+                $query->where('users.department_id', $currentDepartmentId);
+            })
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('users.name', 'like', "%{$this->search}%")

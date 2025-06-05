@@ -12,13 +12,13 @@
                        wire:click.prevent="switchTab('individual')"
                        href="#individual-tab">👤 Индивидуальный</a>
                 </li>
-                @can('report-on-the-departments')
+                @canany(['report-on-the-departments', 'report-on-the-department'])
                     <li class="nav-item">
                         <a class="nav-link {{ $activeTab === 'department' ? 'active' : '' }}"
                            wire:click.prevent="switchTab('department')"
                            href="#department-tab">🏛 По кафедрам</a>
                     </li>
-                @endcan
+                @endcanany
 
                 @can('report-on-the-user')
                     <li class="nav-item">
@@ -58,13 +58,17 @@
                     </div>
                 @endcan
                 @can('report-on-the-department')
-                    <div class="mt-3">
-                        <label for="department" class="form-label fw-medium">Выберите кафедру:</label>
-                        <select wire:model="selectedDepartment" id="department" multiple class="form-select">
-                                <option value="{{ auth()->user()->department->id }}">{{ auth()->user()->department->name }}</option>
-                        </select>
-                    </div>
+                    @cannot('report-on-the-departments')
+                        <div class="mt-3">
+                            <label for="department" class="form-label fw-medium">Выберите кафедру:</label>
+                            <select wire:model="selectedDepartment" id="department" multiple class="form-select">
+                                <option
+                                    value="{{ auth()->user()->department->id }}">{{ auth()->user()->department->name }}</option>
+                            </select>
+                        </div>
+                    @endcannot
                 @endcan
+
 
             @endif
 

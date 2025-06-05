@@ -15,8 +15,10 @@
             </div>
             <div class="col-md-4">
                 <label for="selectedDepartment">Кафедра</label>
-                <select wire:model="selectedDepartment" class="form-select" >
-                    <option value="">Все кафедры</option>
+                <select wire:model="selectedDepartment" class="form-select">
+                    @can('report-on-the-departments')
+                        <option value="">Все кафедры</option>
+                    @endcan
                     @foreach($departments as $id => $name)
                         <option value="{{ $id }}">{{ $name }}</option>
                     @endforeach
@@ -26,7 +28,6 @@
                 <button type="submit" class="btn btn-primary w-100">Применить</button>
             </div>
         </form>
-
 
 
         <div id="achievements-chart"></div>
@@ -57,7 +58,7 @@
             tooltip: {
                 x: {format: 'MMM yyyy'},
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return val // Можно добавить форматирование значений
                     }
                 }

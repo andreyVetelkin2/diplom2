@@ -18,12 +18,13 @@ class Form extends Model
         'is_active',
         'single_entry',
         'slug',
+        'limit',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'single_entry' => 'boolean',
-        'points' => 'integer'
+        'points' => 'float'
     ];
 
     public function category(): BelongsTo

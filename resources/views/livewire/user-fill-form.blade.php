@@ -5,6 +5,12 @@
             {{ session('success') }}
         </div>
     @endif
+    @if (session()->has('warning'))
+        <div class="alert alert-warning alert-dismissible">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            {{ session('warning') }}
+        </div>
+    @endif
 
     <div class="row">
         {{-- Левая колонка: категории и активные формы --}}
@@ -85,7 +91,7 @@
                                             class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
                                             wire:model.defer="fieldValues.{{ $field->id }}"></textarea>
                                     @elseif($field->type === 'datetime')
-                                        <input type="datetime-local"
+                                        <input type="date"
                                                class="form-control @error('fieldValues.' . $field->id) is-invalid @enderror"
                                                wire:model.defer="fieldValues.{{ $field->id }}">
                                     @elseif($field->type === 'checkbox')

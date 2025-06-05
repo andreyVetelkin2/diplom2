@@ -29,7 +29,19 @@
                 <div class="mb-4">
                     <label class="form-label fw-semibold">Возможное количество баллов за достижение</label>
                     <input type="text" readonly disabled
-                           class="form-control " value="{{ ($entry->form->points) }}" >
+                           class="form-control " value="{{ ($entry->form->points) }}">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Полученные баллы за достижение</label>
+                    <input type="text" readonly disabled
+                           class="form-control " value="{{ ($entry->points) }}">
+                </div>
+
+                <div>
+                    @if($entry->points==0)
+                        <div class="alert alert-warning">Превышен лимит на баллы в квартале</div>
+                    @endif
                 </div>
 
                 <div class="mb-4">
@@ -37,7 +49,8 @@
                     <input type="date"
                            class="form-control @error('date_achievement') is-invalid @enderror"
                            wire:model.defer="date_achievement">
-                    @error('date_achievement')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    @error('date_achievement')
+                    <div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="mb-4">
@@ -45,7 +58,8 @@
                     <input type="text"
                            class="form-control @error('percent') is-invalid @enderror"
                            wire:model.defer="percent">
-                    @error('percent')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    @error('percent')
+                    <div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 @foreach($templateFields as $field)
                     <div class="mb-4 border-bottom pb-3">
@@ -67,9 +81,10 @@
                                     @break
 
                                     @case('textarea')
-                                    <textarea class="form-control @error('fieldValues.' . $field->id . '.value') is-invalid @enderror"
-                                              wire:model.defer="fieldValues.{{ $field->id }}.value"
-                                              rows="3"></textarea>
+                                    <textarea
+                                        class="form-control @error('fieldValues.' . $field->id . '.value') is-invalid @enderror"
+                                        wire:model.defer="fieldValues.{{ $field->id }}.value"
+                                        rows="3"></textarea>
                                     @break
 
                                     @case('datetime')
@@ -90,8 +105,9 @@
                                     @break
 
                                     @case('list')
-                                    <select class="form-select @error('fieldValues.' . $field->id . '.value') is-invalid @enderror"
-                                            wire:model.defer="fieldValues.{{ $field->id }}.value">
+                                    <select
+                                        class="form-select @error('fieldValues.' . $field->id . '.value') is-invalid @enderror"
+                                        wire:model.defer="fieldValues.{{ $field->id }}.value">
                                         <option value="">-- выберите --</option>
                                         @foreach($field->options as $opt)
                                             <option value="{{ $opt->value }}">{{ $opt->label }}</option>
@@ -215,7 +231,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" wire:click="$set('showConfirmModal', false)">
+                        <button type="button" class="btn btn-outline-secondary"
+                                wire:click="$set('showConfirmModal', false)">
                             Отмена
                         </button>
                         <button type="button" class="btn btn-outline-primary" wire:click="executeAction">

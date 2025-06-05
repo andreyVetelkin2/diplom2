@@ -99,8 +99,8 @@ class FormTemplateService implements FormTemplateServiceInterface
                 }
 
 //                // Удаление устаревших опций
-//                $toDeleteOptions = array_diff($existingOptions, $incomingOptions);
-//                $field->options()->whereIn('id', $toDeleteOptions)->delete();
+                $toDeleteOptions = array_diff($existingOptions, $incomingOptions);
+                $field->options()->whereIn('id', $toDeleteOptions)->delete();
             }
         }
 

@@ -133,7 +133,7 @@
                                             </div>
                                             <div class="col-2">
                                                 <button class="btn btn-outline-danger btn-sm"
-                                                        wire:click.prevent="removeOption({{ $index }},(selector) {{ $optIndex }})">
+                                                        wire:click.prevent="removeOption({{ $index }}, {{ $optIndex }})">
                                                     Удалить
                                                 </button>
                                             </div>

@@ -20,12 +20,7 @@
                 <div class="form-text text-muted">Текущее: {{ $user->email }} — это ваш логин</div>
             </div>
 
-            <!-- Должность -->
-            <div class="mb-3">
-                <label class="form-label">Должность</label>
-                <input type="text" class="form-control" wire:model="userpos" placeholder="Введите должность">
-                <div class="form-text text-muted">Текущее: {{ $user->position }}</div>
-            </div>
+
 
             @if (session()->has('success'))
                 <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">

@@ -5,17 +5,17 @@
             <div class="card-body text-center p-4">
                 <h4 class="fw-semibold mb-1">{{ $username }}</h4>
                 <p class="text-muted mb-3">{{ $user->position?->name }}</p>
-
+                <p class="text-muted mb-3">{{ $user->department?->name }}</p>
                 <ul class="list-group list-group-flush text-start mb-3">
                     @if($ratingPoints )
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span>Рейтинг за текущий квартал</span>
                             <span class="fw-bold">
                                 {{ $ratingPoints }}
-                                @if($user->limit_ballov_na_kvartal)
-                                        из
-                                        <span class="fw-bold">{{ $user->limit_ballov_na_kvartal }} </span>
-                                @endif
+{{--                                @if($user->limit_ballov_na_kvartal)--}}
+{{--                                        из--}}
+{{--                                        <span class="fw-bold">{{ $user->limit_ballov_na_kvartal }} </span>--}}
+{{--                                @endif--}}
                             </span>
                             </li>
                         @endif
@@ -33,6 +33,8 @@
                                 <span class="fw-bold">{{ $user->citations }}</span>
                             </li>
                         @endif
+
+
 
                         @if($user->hirsh)
                             <li class="list-group-item d-flex justify-content-between align-items-center">

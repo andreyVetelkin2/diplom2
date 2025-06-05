@@ -60,7 +60,6 @@ class ProfileChanger extends Component
         $this->validate([
             'user.name' => 'string|max:255',
             'user.email' => 'email|max:255|unique:users,email,' . $this->user->id,
-            'user.position' => 'string|max:255',
         ]);
 
         if ($this->username)
@@ -71,10 +70,7 @@ class ProfileChanger extends Component
         {
             $this->user->email = $this->useremail;
         }
-        if ($this->userpos)
-        {
-            $this->user->position = $this->userpos;
-        }
+
 
         // Обновление данных пользователя
         $this->user->save();

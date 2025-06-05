@@ -43,7 +43,15 @@ class Reports extends Component
 
         // загрузка кафедр (можно ограничить доступные кафедры по ролям)
         $this->departments = Department::pluck('name', 'id')->toArray();
-        $this->users = User::pluck('name', 'id')->toArray();
+        if (auth()->user()->can('report-on-the-departments')){
+            $this->users = User::pluck('name', 'id')->toArray();
+
+        }else{
+            $dep = auth()->user()->department->id;
+            $this->users = User::where('department_id', $dep)->pluck('name', 'id')->toArray();
+        }
+
+
         $this->positions = Position::pluck('name', 'id')->toArray();
         $this->forms = Form::pluck('title', 'id')->toArray();
     }
@@ -65,43 +73,78 @@ class Reports extends Component
 
     public function loadGroupedData($startDate, $endDate)
     {
+        $user = auth()->user();
+        $onlyOwnDepartment = !$user->can('report-on-the-departments');
+        $ownDepartmentId = $user->department_id;
+
         $isFormsTab = $this->activeTab === 'forms' && !empty($this->selectedForms);
 
         if (!$isFormsTab) {
-            if ($this->activeTab === 'individual') {
-                $userIds = [auth()->id()];
-            } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
-                $userIds = User::whereIn('department_id', $this->selectedDepartment)
-                    ->pluck('id')->toArray();
-            } elseif ($this->activeTab === 'user' && $this->selectedUser) {
-                $userIds = (array)$this->selectedUser;
-            } elseif ($this->activeTab === 'position' && $this->selectedPositions) {
-                $userIds = User::whereIn('position_id', $this->selectedPositions)
-                    ->pluck('id')->toArray();
-            } else {
-                $this->groupedData = [];
-                return;
+            switch ($this->activeTab) {
+                case 'individual':
+                    $userIds = [$user->id];
+                    break;
+
+                case 'department':
+                    $departments = $onlyOwnDepartment
+                        ? array_intersect($this->selectedDepartment ?? [], [$ownDepartmentId])
+                        : ($this->selectedDepartment ?? []);
+
+                    if (empty($departments)) {
+                        $this->groupedData = [];
+                        return;
+                    }
+
+                    $userIds = User::whereIn('department_id', $departments)->pluck('id')->toArray();
+                    break;
+
+                case 'user':
+                    $userIds = (array) $this->selectedUser;
+                    if ($onlyOwnDepartment) {
+                        $userIds = User::whereIn('id', $userIds)
+                            ->where('department_id', $ownDepartmentId)
+                            ->pluck('id')
+                            ->toArray();
+                    }
+                    break;
+
+                case 'position':
+                    $userQuery = User::whereIn('position_id', $this->selectedPositions ?? []);
+                    if ($onlyOwnDepartment) {
+                        $userQuery->where('department_id', $ownDepartmentId);
+                    }
+                    $userIds = $userQuery->pluck('id')->toArray();
+                    break;
+
+                default:
+                    $this->groupedData = [];
+                    return;
             }
         } else {
+            // Вкладка "forms"
             $formIds = $this->selectedForms;
+
+            $userQuery = User::query();
+            if ($onlyOwnDepartment) {
+                $userQuery->where('department_id', $ownDepartmentId);
+            }
+            $userIds = $userQuery->pluck('id')->toArray();
         }
 
         $this->dateFrom = $startDate;
         $this->dateTo = $endDate;
 
-        // Получаем достижения
         $query = FormEntry::with([
             'fieldEntryValues.templateField',
             'form:id,title,slug,points,category_id',
             'form.category:id,name',
         ])
             ->whereBetween('date_achievement', [$startDate, $endDate])
-            ->where('status', 'approved');
+            ->where('status', 'approved')
+            ->whereIn('user_id', $userIds);
 
         if ($isFormsTab) {
             $query->whereIn('form_id', $formIds);
-        } else {
-            $query->whereIn('user_id', $userIds);
         }
 
         $entries = $query
@@ -110,20 +153,12 @@ class Reports extends Component
             ->orderBy('created_at')
             ->get();
 
-        // Получаем штрафные баллы
         $penaltyPoints = \DB::table('penalty_points')
             ->select('id', 'user_id', 'penalty_points', 'date', 'comment')
-            ->whereBetween('date', [$startDate, $endDate]);
+            ->whereBetween('date', [$startDate, $endDate])
+            ->whereIn('user_id', $userIds)
+            ->get();
 
-        if (!$isFormsTab) {
-            $penaltyPoints->whereIn('user_id', $userIds);
-        } else {
-            $penaltyPoints = collect(); // пустая коллекция, если активна вкладка "Формы"
-        }
-
-        $penaltyPoints = $penaltyPoints->get();
-
-        // Группировка по пользователям
         $this->groupedData = $entries
             ->groupBy('user_id')
             ->map(function ($userEntries, $uid) use ($penaltyPoints) {
@@ -148,14 +183,11 @@ class Reports extends Component
                                     ];
                                 })->toArray();
 
-                                $totalScore = $entriesByForm
-                                    ->reduce(fn($carry, $entry) => $carry + ($formModel->points * ($entry->percent ?? 0)), 0
-                                    );
+                                $totalScore = $entriesByForm->sum('points');
 
                                 return [
                                     'name' => $formModel->title,
                                     'slug' => $formModel->slug,
-                                    'points' => $formModel->points,
                                     'count' => count($entries),
                                     'total' => round($totalScore, 2),
                                     'entries' => $entries,
@@ -172,7 +204,6 @@ class Reports extends Component
                     ->values()
                     ->toArray();
 
-                // Добавляем штрафные баллы как отдельную категорию
                 $penaltiesForUser = $penaltyPoints->where('user_id', $uid);
 
                 if ($penaltiesForUser->isNotEmpty()) {
@@ -211,33 +242,43 @@ class Reports extends Component
     }
 
 
+
+
     public function getExportData(): array
     {
         return [
-            'report_type' => $this->activeTab,      // 'individual', 'department', 'user' или 'position'
+            'report_type' => $this->activeTab,
             'date_from' => $this->dateFrom,
             'date_to' => $this->dateTo,
             'blocks' => array_map(function ($block) {
-                // в groupedData у нас уже лежит нужная информация:
-                //   'user'    => имя
-                //   'sections'=> [ ['category'=>..., 'forms'=>[...]], ... ]
+                // Преобразуем sections в массив, если это коллекция
+                $sections = $block['sections'] instanceof \Illuminate\Support\Collection
+                    ? $block['sections']->toArray()
+                    : (array) $block['sections'];
+
                 return [
                     'full_name' => $block['user'],
                     'position' => User::where('name', $block['user'])->first()?->position->name ?? '',
                     'department' => User::where('name', $block['user'])->first()?->department->name ?? '',
                     'hirsh' => User::where('name', $block['user'])->first()?->hirsh ?? '',
                     'citations' => User::where('name', $block['user'])->first()?->citations ?? '',
-                    'sections' => array_map(fn($s) => [
-                        'category' => $s['category'],
-                        'forms' => array_map(fn($f) => [
-                            'name' => $f['name'],
-                            'code' => $f['slug'],
-                            'points' => $f['points'],
-                            'count' => $f['count'],
-                            'total' => $f['total'],
-                            'entries_data' => collect($f['entries'])->pluck('outputLine')->implode("\n"),
-                        ], $s['forms']->toArray())
-                    ], $block['sections']->toArray()),
+                    'sections' => array_map(function ($s) {
+                        // Преобразуем forms в массив, если это коллекция
+                        $forms = $s['forms'] instanceof \Illuminate\Support\Collection
+                            ? $s['forms']->toArray()
+                            : (array) $s['forms'];
+
+                        return [
+                            'category' => $s['category'],
+                            'forms' => array_map(fn($f) => [
+                                'name' => $f['name'],
+                                'code' => $f['slug'],
+                                'count' => $f['count'],
+                                'total' => $f['total'],
+                                'entries_data' => collect($f['entries'])->pluck('outputLine')->implode("\n"),
+                            ], $forms),
+                        ];
+                    }, $sections),
                 ];
             }, $this->groupedData),
         ];
