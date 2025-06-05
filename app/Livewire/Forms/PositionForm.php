@@ -14,8 +14,8 @@ class PositionForm extends Form
 
     public function setPosition(Position $position): void
     {
-        $this->position = $position;
-        $this->name = $position->name;
+        $this->position = $position??'';
+        $this->name = $position->name??'';
     }
 
     public function resetFields(): void

@@ -73,43 +73,78 @@ class Reports extends Component
 
     public function loadGroupedData($startDate, $endDate)
     {
+        $user = auth()->user();
+        $onlyOwnDepartment = !$user->can('report-on-the-departments');
+        $ownDepartmentId = $user->department_id;
+
         $isFormsTab = $this->activeTab === 'forms' && !empty($this->selectedForms);
 
         if (!$isFormsTab) {
-            if ($this->activeTab === 'individual') {
-                $userIds = [auth()->id()];
-            } elseif ($this->activeTab === 'department' && $this->selectedDepartment) {
-                $userIds = User::whereIn('department_id', $this->selectedDepartment)
-                    ->pluck('id')->toArray();
-            } elseif ($this->activeTab === 'user' && $this->selectedUser) {
-                $userIds = (array)$this->selectedUser;
-            } elseif ($this->activeTab === 'position' && $this->selectedPositions) {
-                $userIds = User::whereIn('position_id', $this->selectedPositions)
-                    ->pluck('id')->toArray();
-            } else {
-                $this->groupedData = [];
-                return;
+            switch ($this->activeTab) {
+                case 'individual':
+                    $userIds = [$user->id];
+                    break;
+
+                case 'department':
+                    $departments = $onlyOwnDepartment
+                        ? array_intersect($this->selectedDepartment ?? [], [$ownDepartmentId])
+                        : ($this->selectedDepartment ?? []);
+
+                    if (empty($departments)) {
+                        $this->groupedData = [];
+                        return;
+                    }
+
+                    $userIds = User::whereIn('department_id', $departments)->pluck('id')->toArray();
+                    break;
+
+                case 'user':
+                    $userIds = (array) $this->selectedUser;
+                    if ($onlyOwnDepartment) {
+                        $userIds = User::whereIn('id', $userIds)
+                            ->where('department_id', $ownDepartmentId)
+                            ->pluck('id')
+                            ->toArray();
+                    }
+                    break;
+
+                case 'position':
+                    $userQuery = User::whereIn('position_id', $this->selectedPositions ?? []);
+                    if ($onlyOwnDepartment) {
+                        $userQuery->where('department_id', $ownDepartmentId);
+                    }
+                    $userIds = $userQuery->pluck('id')->toArray();
+                    break;
+
+                default:
+                    $this->groupedData = [];
+                    return;
             }
         } else {
+            // Вкладка "forms"
             $formIds = $this->selectedForms;
+
+            $userQuery = User::query();
+            if ($onlyOwnDepartment) {
+                $userQuery->where('department_id', $ownDepartmentId);
+            }
+            $userIds = $userQuery->pluck('id')->toArray();
         }
 
         $this->dateFrom = $startDate;
         $this->dateTo = $endDate;
 
-        // Получаем достижения
         $query = FormEntry::with([
             'fieldEntryValues.templateField',
             'form:id,title,slug,points,category_id',
             'form.category:id,name',
         ])
             ->whereBetween('date_achievement', [$startDate, $endDate])
-            ->where('status', 'approved');
+            ->where('status', 'approved')
+            ->whereIn('user_id', $userIds);
 
         if ($isFormsTab) {
             $query->whereIn('form_id', $formIds);
-        } else {
-            $query->whereIn('user_id', $userIds);
         }
 
         $entries = $query
@@ -118,18 +153,12 @@ class Reports extends Component
             ->orderBy('created_at')
             ->get();
 
-        // Получаем штрафные баллы
         $penaltyPoints = \DB::table('penalty_points')
             ->select('id', 'user_id', 'penalty_points', 'date', 'comment')
-            ->whereBetween('date', [$startDate, $endDate]);
+            ->whereBetween('date', [$startDate, $endDate])
+            ->whereIn('user_id', $userIds)
+            ->get();
 
-        if (!$isFormsTab) {
-            $penaltyPoints->whereIn('user_id', $userIds);
-        }
-
-        $penaltyPoints = $penaltyPoints->get();
-
-        // Группировка по пользователям
         $this->groupedData = $entries
             ->groupBy('user_id')
             ->map(function ($userEntries, $uid) use ($penaltyPoints) {
@@ -154,9 +183,7 @@ class Reports extends Component
                                     ];
                                 })->toArray();
 
-                                $totalScore = $entriesByForm
-                                    ->reduce(fn($carry, $entry) => $carry + $entry->points, 0
-                                    );
+                                $totalScore = $entriesByForm->sum('points');
 
                                 return [
                                     'name' => $formModel->title,
@@ -177,7 +204,6 @@ class Reports extends Component
                     ->values()
                     ->toArray();
 
-                // Добавляем штрафные баллы как отдельную категорию
                 $penaltiesForUser = $penaltyPoints->where('user_id', $uid);
 
                 if ($penaltiesForUser->isNotEmpty()) {
@@ -214,6 +240,8 @@ class Reports extends Component
             ->values()
             ->toArray();
     }
+
+
 
 
     public function getExportData(): array

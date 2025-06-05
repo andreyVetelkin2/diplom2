@@ -13,8 +13,8 @@ class InstituteForm extends Form
 
     public function setInstitute(Institute $institute): void
     {
-        $this->institute = $institute;
-        $this->name = $institute->name;
+        $this->institute = $institute??'';
+        $this->name = $institute->name??'';
     }
 
     public function resetFields(): void

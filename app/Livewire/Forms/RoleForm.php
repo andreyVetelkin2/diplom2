@@ -38,6 +38,6 @@ class RoleForm extends Form
 
     public function setRole(?Role $role): void
     {
-        $this->role = $role;
+        $this->role = $role??'';
     }
 }
