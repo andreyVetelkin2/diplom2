@@ -101,13 +101,15 @@ class ScientificReportExporter
         $sect->addText($conf["org_line"], [], ["align" => "center"]);
         $sect->addText($conf["org_labels"], [], ["align" => "center"]);
         $sect->addText("с «{$data["date_from"]}» — «{$data["date_to"]}»");
-        $sect->addText("Индекс Хирша: " . ($data["blocks"][0]["hirsh"] ?? "_____"));
-        $sect->addText("Цитирования: " . ($data["blocks"][0]["citations"] ?? "_____"));
+
         $sect->addTextBreak(1);
 
         // Для каждого блока (пользователя) своя таблица
         foreach ($data["blocks"] as $block) {
+            $sect->addTextBreak(1);
             $sect->addText($block["full_name"], ["bold" => true], ["align" => "center"]);
+            $sect->addText("Индекс Хирша: " . ($block["hirsh"] ?? "_____"));
+            $sect->addText("Цитирования: " . ($block["citations"] ?? "_____"));
             $sect->addText("Должность: {$block["position"]}");
             $sect->addText("Кафедра: {$block["department"]}");
             $sect->addTextBreak(1);

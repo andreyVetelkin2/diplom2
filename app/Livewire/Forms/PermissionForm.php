@@ -38,6 +38,6 @@ class PermissionForm extends Form
 
     public function setPermission(?Permission $permission): void
     {
-        $this->permission = $permission;
+        $this->permission = $permission??'';
     }
 }

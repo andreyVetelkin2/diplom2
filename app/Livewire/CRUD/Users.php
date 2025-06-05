@@ -51,11 +51,20 @@ class Users extends Component implements Crudable
     public function update()
     {
         $validated = $this->form->validate();
+
+        if (empty($validated['password'])) {
+            unset($validated['password']);
+        } else {
+            $validated['password'] = Hash::make($validated['password']);
+        }
+
         $user = User::findOrFail($this->user_id);
         $user->update($validated);
+
         $this->resetFields();
         session()->flash('message', 'Пользователь обновлён');
     }
+
 
     #[On('deleteConfirmed')]
     public function delete($id)

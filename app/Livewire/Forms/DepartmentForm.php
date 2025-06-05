@@ -14,9 +14,9 @@ class DepartmentForm extends Form
 
     public function setDepartment(Department $department): void
     {
-        $this->department = $department;
-        $this->name = $department->name;
-        $this->institute_id = $department->institute_id;
+        $this->department = $department??'';
+        $this->name = $department->name??'';
+        $this->institute_id = $department->institute_id??'';
     }
 
     public function resetFields(): void

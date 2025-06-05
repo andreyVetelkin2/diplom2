@@ -21,11 +21,11 @@ class UserForm extends Form
     public function setUser(User $user): void
     {
         $this->user = $user;
-        $this->name = $user->name;
-        $this->email = $user->email;
-        $this->position_id = $user->position_id;
-        $this->hirsh = $user->hirsh;
-        $this->department_id = $user->department_id;
+        $this->name = $user->name??'';
+        $this->email = $user->email??'';
+        $this->position_id = $user->position_id??'';
+        $this->hirsh = $user->hirsh??'';
+        $this->department_id = $user->department_id??'';
     }
 
     public function resetFields(): void
